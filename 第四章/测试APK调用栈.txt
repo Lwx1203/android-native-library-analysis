@@ -1,0 +1,148 @@
+=== Targeted Call Stacks ===
+
+Stack #1
+    void Lcom/example/jnitest/MainActivity$1; :: onClick(View) ->
+    String Lcom/example/jnitest/DirectBridge; :: callNativeDirect(String) ->
+    String Lcom/example/jnitest/DirectBridge; :: nativeDirectEntry(String) ->
+    int Lorg/example/NativeSummaryAux; :: opaqueInt()
+
+Stack #2
+    void Lcom/example/jnitest/MainActivity$1; :: onClick(View) ->
+    String Lcom/example/jnitest/DirectBridge; :: callNativeDirect(String) ->
+    String Lcom/example/jnitest/DirectBridge; :: nativeDirectEntry(String) ->
+    int Lorg/example/NativeSummaryFuncs; :: fclose(String)
+
+Stack #3
+    void Lcom/example/jnitest/MainActivity$1; :: onClick(View) ->
+    String Lcom/example/jnitest/DirectBridge; :: callNativeDirect(String) ->
+    String Lcom/example/jnitest/DirectBridge; :: nativeDirectEntry(String) ->
+    String Lorg/example/NativeSummaryFuncs; :: fopen(String, unknown, String)
+
+Stack #4
+    void Lcom/example/jnitest/MainActivity$2; :: onClick(View) ->
+    String Lcom/example/jnitest/BusinessManager; :: processRiskCheck(String) ->
+    String Lcom/example/jnitest/RiskAnalyzer; :: analyzeRisk(String) ->
+    String Lcom/example/jnitest/NativeFacade; :: invokeSharedNative(String, unknown, int) ->
+    String Lcom/example/jnitest/NativeFacade; :: nativeSharedEntry(String, unknown, int) ->
+    int Lorg/example/NativeSummaryAux; :: opaqueInt()
+
+Stack #5
+    void Lcom/example/jnitest/MainActivity$5; :: onClick(View) ->
+    String Lcom/example/jnitest/BusinessManager; :: processRiskCheck(String) ->
+    String Lcom/example/jnitest/RiskAnalyzer; :: analyzeRisk(String) ->
+    String Lcom/example/jnitest/NativeFacade; :: invokeSharedNative(String, unknown, int) ->
+    String Lcom/example/jnitest/NativeFacade; :: nativeSharedEntry(String, unknown, int) ->
+    int Lorg/example/NativeSummaryAux; :: opaqueInt()
+
+Stack #6
+    void Lcom/example/jnitest/MainActivity$5; :: onClick(View) ->
+    String Lcom/example/jnitest/UploadController; :: preCheckUpload(String) ->
+    String Lcom/example/jnitest/NativeFacade; :: invokeSharedNative(String, unknown, int) ->
+    String Lcom/example/jnitest/NativeFacade; :: nativeSharedEntry(String, unknown, int) ->
+    int Lorg/example/NativeSummaryAux; :: opaqueInt()
+
+Stack #7
+    void Lcom/example/jnitest/MainActivity$6; :: onClick(View) ->
+    void Lcom/example/jnitest/MainActivity; :: access$300(MainActivity) ->
+    void Lcom/example/jnitest/MainActivity; :: runAllScenarios() ->
+    String Lcom/example/jnitest/BusinessManager; :: processRiskCheck(String) ->
+    String Lcom/example/jnitest/RiskAnalyzer; :: analyzeRisk(String) ->
+    String Lcom/example/jnitest/NativeFacade; :: invokeSharedNative(String, unknown, int) ->
+    String Lcom/example/jnitest/NativeFacade; :: nativeSharedEntry(String, unknown, int) ->
+    int Lorg/example/NativeSummaryAux; :: opaqueInt()
+
+Stack #8
+    void Lcom/example/jnitest/MainActivity$6; :: onClick(View) ->
+    void Lcom/example/jnitest/MainActivity; :: access$300(MainActivity) ->
+    void Lcom/example/jnitest/MainActivity; :: runAllScenarios() ->
+    String Lcom/example/jnitest/NativeFacade; :: invokeSharedNative(String, unknown, int) ->
+    String Lcom/example/jnitest/NativeFacade; :: nativeSharedEntry(String, unknown, int) ->
+    int Lorg/example/NativeSummaryAux; :: opaqueInt()
+
+Stack #9
+    void Lcom/example/jnitest/MainActivity$6; :: onClick(View) ->
+    void Lcom/example/jnitest/MainActivity; :: access$300(MainActivity) ->
+    void Lcom/example/jnitest/MainActivity; :: runAllScenarios() ->
+    void Lcom/example/jnitest/CallbackService; :: executeWithCallback(String) ->
+    void Lcom/example/jnitest/CallbackService; :: nativeWithCallback(String) ->
+    void Lcom/example/jnitest/CallbackService; :: onNativeResult(String) ->
+    void Lcom/example/jnitest/CallbackService$ResultListener; :: onResult(String)
+
+Stack #10
+    void Lcom/example/jnitest/MainActivity$6; :: onClick(View) ->
+    void Lcom/example/jnitest/MainActivity; :: access$300(MainActivity) ->
+    void Lcom/example/jnitest/MainActivity; :: runAllScenarios() ->
+    void Lcom/example/jnitest/CallbackService; :: executeWithCallback(String) ->
+    void Lcom/example/jnitest/CallbackService; :: nativeWithCallback(String) ->
+    int Lorg/example/NativeSummaryAux; :: opaqueInt()
+
+Stack #11
+    void Lcom/example/jnitest/MainActivity$6; :: onClick(View) ->
+    void Lcom/example/jnitest/MainActivity; :: access$300(MainActivity) ->
+    void Lcom/example/jnitest/MainActivity; :: runAllScenarios() ->
+    String Lcom/example/jnitest/DirectBridge; :: callNativeDirect(String) ->
+    String Lcom/example/jnitest/DirectBridge; :: nativeDirectEntry(String) ->
+    int Lorg/example/NativeSummaryAux; :: opaqueInt()
+
+Stack #12
+    void Lcom/example/jnitest/MainActivity$6; :: onClick(View) ->
+    void Lcom/example/jnitest/MainActivity; :: access$300(MainActivity) ->
+    void Lcom/example/jnitest/MainActivity; :: runAllScenarios() ->
+    String Lcom/example/jnitest/DirectBridge; :: callNativeDirect(String) ->
+    String Lcom/example/jnitest/DirectBridge; :: nativeDirectEntry(String) ->
+    int Lorg/example/NativeSummaryFuncs; :: fclose(String)
+
+Stack #13
+    void Lcom/example/jnitest/MainActivity$6; :: onClick(View) ->
+    void Lcom/example/jnitest/MainActivity; :: access$300(MainActivity) ->
+    void Lcom/example/jnitest/MainActivity; :: runAllScenarios() ->
+    String Lcom/example/jnitest/DirectBridge; :: callNativeDirect(String) ->
+    String Lcom/example/jnitest/DirectBridge; :: nativeDirectEntry(String) ->
+    String Lorg/example/NativeSummaryFuncs; :: fopen(String, unknown, String)
+
+Stack #14
+    void Lcom/example/jnitest/MainActivity$6; :: onClick(View) ->
+    void Lcom/example/jnitest/MainActivity; :: access$300(MainActivity) ->
+    void Lcom/example/jnitest/MainActivity; :: runAllScenarios() ->
+    String Lcom/example/jnitest/UploadController; :: preCheckUpload(String) ->
+    String Lcom/example/jnitest/NativeFacade; :: invokeSharedNative(String, unknown, int) ->
+    String Lcom/example/jnitest/NativeFacade; :: nativeSharedEntry(String, unknown, int) ->
+    int Lorg/example/NativeSummaryAux; :: opaqueInt()
+
+Stack #15
+    void Lcom/example/jnitest/MainActivity$3; :: onClick(View) ->
+    String Lcom/example/jnitest/DirectBridge; :: callNativeDirect(String) ->
+    String Lcom/example/jnitest/DirectBridge; :: nativeDirectEntry(String) ->
+    int Lorg/example/NativeSummaryAux; :: opaqueInt()
+
+Stack #16
+    void Lcom/example/jnitest/MainActivity$3; :: onClick(View) ->
+    String Lcom/example/jnitest/DirectBridge; :: callNativeDirect(String) ->
+    String Lcom/example/jnitest/DirectBridge; :: nativeDirectEntry(String) ->
+    int Lorg/example/NativeSummaryFuncs; :: fclose(String)
+
+Stack #17
+    void Lcom/example/jnitest/MainActivity$3; :: onClick(View) ->
+    String Lcom/example/jnitest/DirectBridge; :: callNativeDirect(String) ->
+    String Lcom/example/jnitest/DirectBridge; :: nativeDirectEntry(String) ->
+    String Lorg/example/NativeSummaryFuncs; :: fopen(String, unknown, String)
+
+Stack #18
+    void Lcom/example/jnitest/MainActivity$3; :: onClick(View) ->
+    String Lcom/example/jnitest/NativeFacade; :: invokeSharedNative(String, unknown, int) ->
+    String Lcom/example/jnitest/NativeFacade; :: nativeSharedEntry(String, unknown, int) ->
+    int Lorg/example/NativeSummaryAux; :: opaqueInt()
+
+Stack #19
+    void Lcom/example/jnitest/MainActivity$4; :: onClick(View) ->
+    void Lcom/example/jnitest/CallbackService; :: executeWithCallback(String) ->
+    void Lcom/example/jnitest/CallbackService; :: nativeWithCallback(String) ->
+    void Lcom/example/jnitest/CallbackService; :: onNativeResult(String) ->
+    void Lcom/example/jnitest/CallbackService$ResultListener; :: onResult(String)
+
+Stack #20
+    void Lcom/example/jnitest/MainActivity$4; :: onClick(View) ->
+    void Lcom/example/jnitest/CallbackService; :: executeWithCallback(String) ->
+    void Lcom/example/jnitest/CallbackService; :: nativeWithCallback(String) ->
+    int Lorg/example/NativeSummaryAux; :: opaqueInt()
+
