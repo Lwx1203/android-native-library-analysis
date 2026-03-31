@@ -1,0 +1,3120 @@
+{
+  "app": "org.zamedev.gloomydungeons2.opensource",
+  "commented_jni_total": 1,
+  "with_code_count": 1,
+  "with_stacks_count": 1,
+  "total_stacks_collected": 40,
+  "functions": [
+    {
+      "function_name": "Java_zame_game_engine_Renderer_renderTriangles",
+      "class_name": "Lzame/game/engine/Renderer;",
+      "method_name": "renderTriangles",
+      "descriptor": "([F [F [I [S I)V",
+      "source_so": "librenderer.so",
+      "file_path": "H:\\fdroid\\source_code\\org.zamedev.gloomydungeons2.opensource\\src\\main\\jni\\renderer.c",
+      "comment_before": null,
+      "comment_inside": "// jfloatArray textureBuffer,\n// jfloat *nativeTextureBuffer = (textureBuffer == NULL ? NULL : (*env)->GetFloatArrayElements(env, textureBuffer, NULL));\n// glTexCoordPointer(2, GL_FLOAT, 0, nativeTextureBuffer);\n// (*env)->ReleaseFloatArrayElements(env, textureBuffer, nativeTextureBuffer, 0);",
+      "code": "JNICALL Java_zame_game_engine_Renderer_renderTriangles(\n\tJNIEnv *env,\n\tjobject obj,\n\tjfloatArray vertexBuffer,\n\tjfloatArray colorsBuffer,\n\t// jfloatArray textureBuffer,\n\tjintArray textureBuffer,\n\tjshortArray indicesBuffer,\n\tjint indicesBufferPos)\n{\n\tjfloat *nativeVertexBuffer = (*env)->GetFloatArrayElements(env, vertexBuffer, NULL);\n\tjfloat *nativeColorsBuffer = (*env)->GetFloatArrayElements(env, colorsBuffer, NULL);\n\t// jfloat *nativeTextureBuffer = (textureBuffer == NULL ? NULL : (*env)->GetFloatArrayElements(env, textureBuffer, NULL));\n\tjint *nativeTextureBuffer = (textureBuffer == NULL ? NULL : (*env)->GetIntArrayElements(env, textureBuffer, NULL));\n\tjshort *nativeIndicesBuffer = (*env)->GetShortArrayElements(env, indicesBuffer, NULL);\n\n\tglVertexPointer(3, GL_FLOAT, 0, nativeVertexBuffer);\n\tglColorPointer(4, GL_FLOAT, 0, nativeColorsBuffer);\n\n\tif (nativeTextureBuffer != NULL) {\n\t\t// glTexCoordPointer(2, GL_FLOAT, 0, nativeTextureBuffer);\n\t\tglTexCoordPointer(2, GL_FIXED, 0, nativeTextureBuffer);\n\t}\n\n\tglDrawElements(GL_TRIANGLES, indicesBufferPos, GL_UNSIGNED_SHORT, nativeIndicesBuffer);\n\n\t(*env)->ReleaseShortArrayElements(env, indicesBuffer, nativeIndicesBuffer, 0);\n\n\tif (nativeTextureBuffer != NULL) {\n\t\t// (*env)->ReleaseFloatArrayElements(env, textureBuffer, nativeTextureBuffer, 0);\n\t\t(*env)->ReleaseIntArrayElements(env, textureBuffer, nativeTextureBuffer, 0);\n\t}\n\n\t(*env)->ReleaseFloatArrayElements(env, colorsBuffer, nativeColorsBuffer, 0);\n\t(*env)->ReleaseFloatArrayElements(env, vertexBuffer, nativeVertexBuffer, 0);\n}",
+      "call_stacks_count": 40,
+      "call_stacks": [
+        {
+          "stack_id": 2,
+          "source_so": "librenderer.so",
+          "call_chain_text": "[Intent Domain] void a :: a(GL10) (W=0.12)\n    -> [Intent Domain] void i :: b(GL10) (W=0.14)\n    -> [Intent Domain] void i :: e(GL10) (W=0.17)\n    -> [Intent Domain] void l :: c(GL10) (W=0.20)\n    -> [Intent Domain] void ag :: a(GL10, unknown, long) (W=0.25)\n    -> [Intent Domain] void Renderer :: a(GL10) (W=0.33)\n    -> [Intent Domain] void Renderer :: a(GL10, unknown, boolean) (W=0.50)\n    -> [Target JNI Anchor] void Renderer :: renderTriangles(float[], unknown, float[], unknown, int[], unknown, short[], unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/misc/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.125
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.1429
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "e",
+              "params": "GL10",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/l;",
+              "class_short_name": "l",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/ag;",
+              "class_short_name": "ag",
+              "method_name": "a",
+              "params": "GL10, unknown, long",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "renderTriangles",
+              "params": "float[], unknown, float[], unknown, int[], unknown, short[], unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 4,
+          "source_so": "librenderer.so",
+          "call_chain_text": "[Intent Domain] void a :: a(GL10) (W=0.14)\n    -> [Intent Domain] void i :: b(GL10) (W=0.17)\n    -> [Intent Domain] void i :: e(GL10) (W=0.20)\n    -> [Intent Domain] void l :: c(GL10) (W=0.25)\n    -> [Intent Domain] void l :: a(GL10) (W=0.33)\n    -> [Intent Domain] void Renderer :: a(GL10, unknown, boolean) (W=0.50)\n    -> [Target JNI Anchor] void Renderer :: renderTriangles(float[], unknown, float[], unknown, int[], unknown, short[], unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/misc/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.1429
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "e",
+              "params": "GL10",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/l;",
+              "class_short_name": "l",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/l;",
+              "class_short_name": "l",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "renderTriangles",
+              "params": "float[], unknown, float[], unknown, int[], unknown, short[], unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 6,
+          "source_so": "librenderer.so",
+          "call_chain_text": "[Intent Domain] void a :: a(GL10) (W=0.09)\n    -> [Intent Domain] void i :: b(GL10) (W=0.10)\n    -> [Intent Domain] void i :: e(GL10) (W=0.11)\n    -> [Intent Domain] void l :: c(GL10) (W=0.12)\n    -> [Intent Domain] void y :: b(GL10) (W=0.14)\n    -> [Intent Domain] void y :: a(GL10, unknown, float, unknown, float, unknown, String, unknown, float) (W=0.17)\n    -> [Intent Domain] void r :: c(GL10) (W=0.20)\n    -> [Intent Domain] void r :: b(GL10, unknown, boolean) (W=0.25)\n    -> [Intent Domain] void Renderer :: a(GL10) (W=0.33)\n    -> [Intent Domain] void Renderer :: a(GL10, unknown, boolean) (W=0.50)\n    -> [Target JNI Anchor] void Renderer :: renderTriangles(float[], unknown, float[], unknown, int[], unknown, short[], unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/misc/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.0909
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.1
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "e",
+              "params": "GL10",
+              "weight": 0.1111
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/l;",
+              "class_short_name": "l",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.125
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/y;",
+              "class_short_name": "y",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.1429
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/y;",
+              "class_short_name": "y",
+              "method_name": "a",
+              "params": "GL10, unknown, float, unknown, float, unknown, String, unknown, float",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/r;",
+              "class_short_name": "r",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/r;",
+              "class_short_name": "r",
+              "method_name": "b",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "renderTriangles",
+              "params": "float[], unknown, float[], unknown, int[], unknown, short[], unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 8,
+          "source_so": "librenderer.so",
+          "call_chain_text": "[Intent Domain] void a :: a(GL10) (W=0.12)\n    -> [Intent Domain] void i :: b(GL10) (W=0.14)\n    -> [Intent Domain] void i :: e(GL10) (W=0.17)\n    -> [Intent Domain] void l :: c(GL10) (W=0.20)\n    -> [Intent Domain] void y :: b(GL10) (W=0.25)\n    -> [Intent Domain] void y :: a(GL10, unknown, float, unknown, float, unknown, String, unknown, float) (W=0.33)\n    -> [Intent Domain] void Renderer :: a(GL10, unknown, boolean) (W=0.50)\n    -> [Target JNI Anchor] void Renderer :: renderTriangles(float[], unknown, float[], unknown, int[], unknown, short[], unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/misc/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.125
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.1429
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "e",
+              "params": "GL10",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/l;",
+              "class_short_name": "l",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/y;",
+              "class_short_name": "y",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/y;",
+              "class_short_name": "y",
+              "method_name": "a",
+              "params": "GL10, unknown, float, unknown, float, unknown, String, unknown, float",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "renderTriangles",
+              "params": "float[], unknown, float[], unknown, int[], unknown, short[], unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 10,
+          "source_so": "librenderer.so",
+          "call_chain_text": "[Intent Domain] void a :: a(GL10) (W=0.10)\n    -> [Intent Domain] void i :: b(GL10) (W=0.11)\n    -> [Intent Domain] void i :: e(GL10) (W=0.12)\n    -> [Intent Domain] void l :: c(GL10) (W=0.14)\n    -> [Intent Domain] void y :: b(GL10) (W=0.17)\n    -> [Intent Domain] void r :: c(GL10) (W=0.20)\n    -> [Intent Domain] void r :: b(GL10, unknown, boolean) (W=0.25)\n    -> [Intent Domain] void Renderer :: a(GL10) (W=0.33)\n    -> [Intent Domain] void Renderer :: a(GL10, unknown, boolean) (W=0.50)\n    -> [Target JNI Anchor] void Renderer :: renderTriangles(float[], unknown, float[], unknown, int[], unknown, short[], unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/misc/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.1
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.1111
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "e",
+              "params": "GL10",
+              "weight": 0.125
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/l;",
+              "class_short_name": "l",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.1429
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/y;",
+              "class_short_name": "y",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/r;",
+              "class_short_name": "r",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/r;",
+              "class_short_name": "r",
+              "method_name": "b",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "renderTriangles",
+              "params": "float[], unknown, float[], unknown, int[], unknown, short[], unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 12,
+          "source_so": "librenderer.so",
+          "call_chain_text": "[Intent Domain] void a :: a(GL10) (W=0.10)\n    -> [Intent Domain] void i :: b(GL10) (W=0.11)\n    -> [Intent Domain] void i :: e(GL10) (W=0.12)\n    -> [Intent Domain] void l :: c(GL10) (W=0.14)\n    -> [Intent Domain] void n :: a(GL10) (W=0.17)\n    -> [Intent Domain] void r :: c(GL10) (W=0.20)\n    -> [Intent Domain] void r :: b(GL10, unknown, boolean) (W=0.25)\n    -> [Intent Domain] void Renderer :: a(GL10) (W=0.33)\n    -> [Intent Domain] void Renderer :: a(GL10, unknown, boolean) (W=0.50)\n    -> [Target JNI Anchor] void Renderer :: renderTriangles(float[], unknown, float[], unknown, int[], unknown, short[], unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/misc/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.1
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.1111
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "e",
+              "params": "GL10",
+              "weight": 0.125
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/l;",
+              "class_short_name": "l",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.1429
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/n;",
+              "class_short_name": "n",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/r;",
+              "class_short_name": "r",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/r;",
+              "class_short_name": "r",
+              "method_name": "b",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "renderTriangles",
+              "params": "float[], unknown, float[], unknown, int[], unknown, short[], unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 14,
+          "source_so": "librenderer.so",
+          "call_chain_text": "[Intent Domain] void a :: a(GL10) (W=0.14)\n    -> [Intent Domain] void i :: b(GL10) (W=0.17)\n    -> [Intent Domain] void i :: e(GL10) (W=0.20)\n    -> [Intent Domain] void l :: c(GL10) (W=0.25)\n    -> [Intent Domain] void u :: a(GL10) (W=0.33)\n    -> [Intent Domain] void Renderer :: a(GL10, unknown, boolean) (W=0.50)\n    -> [Target JNI Anchor] void Renderer :: renderTriangles(float[], unknown, float[], unknown, int[], unknown, short[], unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/misc/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.1429
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "e",
+              "params": "GL10",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/l;",
+              "class_short_name": "l",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/u;",
+              "class_short_name": "u",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "renderTriangles",
+              "params": "float[], unknown, float[], unknown, int[], unknown, short[], unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 16,
+          "source_so": "librenderer.so",
+          "call_chain_text": "[Intent Domain] void a :: a(GL10) (W=0.14)\n    -> [Intent Domain] void i :: b(GL10) (W=0.17)\n    -> [Intent Domain] void i :: e(GL10) (W=0.20)\n    -> [Intent Domain] void l :: c(GL10) (W=0.25)\n    -> [Intent Domain] void y :: c(GL10) (W=0.33)\n    -> [Intent Domain] void Renderer :: a(GL10, unknown, boolean) (W=0.50)\n    -> [Target JNI Anchor] void Renderer :: renderTriangles(float[], unknown, float[], unknown, int[], unknown, short[], unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/misc/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.1429
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "e",
+              "params": "GL10",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/l;",
+              "class_short_name": "l",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/y;",
+              "class_short_name": "y",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "renderTriangles",
+              "params": "float[], unknown, float[], unknown, int[], unknown, short[], unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 18,
+          "source_so": "librenderer.so",
+          "call_chain_text": "[Intent Domain] void a :: a(GL10) (W=0.14)\n    -> [Intent Domain] void i :: b(GL10) (W=0.17)\n    -> [Intent Domain] void i :: e(GL10) (W=0.20)\n    -> [Intent Domain] void l :: c(GL10) (W=0.25)\n    -> [Intent Domain] void y :: a(GL10, unknown, float) (W=0.33)\n    -> [Intent Domain] void Renderer :: a(GL10, unknown, boolean) (W=0.50)\n    -> [Target JNI Anchor] void Renderer :: renderTriangles(float[], unknown, float[], unknown, int[], unknown, short[], unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/misc/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.1429
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "e",
+              "params": "GL10",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/l;",
+              "class_short_name": "l",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/y;",
+              "class_short_name": "y",
+              "method_name": "a",
+              "params": "GL10, unknown, float",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "renderTriangles",
+              "params": "float[], unknown, float[], unknown, int[], unknown, short[], unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 20,
+          "source_so": "librenderer.so",
+          "call_chain_text": "[Intent Domain] void a :: a(GL10) (W=0.10)\n    -> [Intent Domain] void i :: b(GL10) (W=0.11)\n    -> [Intent Domain] void i :: e(GL10) (W=0.12)\n    -> [Intent Domain] void l :: c(GL10) (W=0.14)\n    -> [Intent Domain] void h :: a(GL10) (W=0.17)\n    -> [Intent Domain] void r :: c(GL10) (W=0.20)\n    -> [Intent Domain] void r :: b(GL10, unknown, boolean) (W=0.25)\n    -> [Intent Domain] void Renderer :: a(GL10) (W=0.33)\n    -> [Intent Domain] void Renderer :: a(GL10, unknown, boolean) (W=0.50)\n    -> [Target JNI Anchor] void Renderer :: renderTriangles(float[], unknown, float[], unknown, int[], unknown, short[], unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/misc/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.1
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.1111
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "e",
+              "params": "GL10",
+              "weight": 0.125
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/l;",
+              "class_short_name": "l",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.1429
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/h;",
+              "class_short_name": "h",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/r;",
+              "class_short_name": "r",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/r;",
+              "class_short_name": "r",
+              "method_name": "b",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "renderTriangles",
+              "params": "float[], unknown, float[], unknown, int[], unknown, short[], unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 22,
+          "source_so": "librenderer.so",
+          "call_chain_text": "[Intent Domain] void a :: a(GL10) (W=0.12)\n    -> [Intent Domain] void i :: b(GL10) (W=0.14)\n    -> [Intent Domain] void i :: e(GL10) (W=0.17)\n    -> [Intent Domain] void l :: c(GL10) (W=0.20)\n    -> [Intent Domain] void l :: b(GL10) (W=0.25)\n    -> [Intent Domain] void Renderer :: a(GL10) (W=0.33)\n    -> [Intent Domain] void Renderer :: a(GL10, unknown, boolean) (W=0.50)\n    -> [Target JNI Anchor] void Renderer :: renderTriangles(float[], unknown, float[], unknown, int[], unknown, short[], unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/misc/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.125
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.1429
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "e",
+              "params": "GL10",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/l;",
+              "class_short_name": "l",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/l;",
+              "class_short_name": "l",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "renderTriangles",
+              "params": "float[], unknown, float[], unknown, int[], unknown, short[], unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 24,
+          "source_so": "librenderer.so",
+          "call_chain_text": "[Intent Domain] void a :: a(GL10) (W=0.12)\n    -> [Intent Domain] void i :: b(GL10) (W=0.14)\n    -> [Intent Domain] void i :: e(GL10) (W=0.17)\n    -> [Intent Domain] void l :: c(GL10) (W=0.20)\n    -> [Intent Domain] void ab :: a(GL10) (W=0.25)\n    -> [Intent Domain] void Renderer :: a(GL10) (W=0.33)\n    -> [Intent Domain] void Renderer :: a(GL10, unknown, boolean) (W=0.50)\n    -> [Target JNI Anchor] void Renderer :: renderTriangles(float[], unknown, float[], unknown, int[], unknown, short[], unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/misc/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.125
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.1429
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "e",
+              "params": "GL10",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/l;",
+              "class_short_name": "l",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/ab;",
+              "class_short_name": "ab",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "renderTriangles",
+              "params": "float[], unknown, float[], unknown, int[], unknown, short[], unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 26,
+          "source_so": "librenderer.so",
+          "call_chain_text": "[Intent Domain] void a :: a(GL10) (W=0.12)\n    -> [Intent Domain] void i :: b(GL10) (W=0.14)\n    -> [Intent Domain] void i :: e(GL10) (W=0.17)\n    -> [Intent Domain] void l :: c(GL10) (W=0.20)\n    -> [Intent Domain] void u :: a(GL10, unknown, long, unknown, float) (W=0.25)\n    -> [Intent Domain] void Renderer :: a(GL10) (W=0.33)\n    -> [Intent Domain] void Renderer :: a(GL10, unknown, boolean) (W=0.50)\n    -> [Target JNI Anchor] void Renderer :: renderTriangles(float[], unknown, float[], unknown, int[], unknown, short[], unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/misc/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.125
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.1429
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "e",
+              "params": "GL10",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/l;",
+              "class_short_name": "l",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/u;",
+              "class_short_name": "u",
+              "method_name": "a",
+              "params": "GL10, unknown, long, unknown, float",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "renderTriangles",
+              "params": "float[], unknown, float[], unknown, int[], unknown, short[], unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 28,
+          "source_so": "librenderer.so",
+          "call_chain_text": "[Intent Domain] void a :: a(GL10) (W=0.14)\n    -> [Intent Domain] void i :: b(GL10) (W=0.17)\n    -> [Intent Domain] void i :: e(GL10) (W=0.20)\n    -> [Intent Domain] void l :: c(GL10) (W=0.25)\n    -> [Intent Domain] void y :: a(GL10) (W=0.33)\n    -> [Intent Domain] void Renderer :: a(GL10, unknown, boolean) (W=0.50)\n    -> [Target JNI Anchor] void Renderer :: renderTriangles(float[], unknown, float[], unknown, int[], unknown, short[], unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/misc/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.1429
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "e",
+              "params": "GL10",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/l;",
+              "class_short_name": "l",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/y;",
+              "class_short_name": "y",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "renderTriangles",
+              "params": "float[], unknown, float[], unknown, int[], unknown, short[], unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 30,
+          "source_so": "librenderer.so",
+          "call_chain_text": "[Intent Domain] void a :: a(GL10) (W=0.10)\n    -> [Intent Domain] void i :: b(GL10) (W=0.11)\n    -> [Intent Domain] void i :: e(GL10) (W=0.12)\n    -> [Intent Domain] void l :: c(GL10) (W=0.14)\n    -> [Intent Domain] void i :: f(GL10) (W=0.17)\n    -> [Intent Domain] void r :: c(GL10) (W=0.20)\n    -> [Intent Domain] void r :: b(GL10, unknown, boolean) (W=0.25)\n    -> [Intent Domain] void Renderer :: a(GL10) (W=0.33)\n    -> [Intent Domain] void Renderer :: a(GL10, unknown, boolean) (W=0.50)\n    -> [Target JNI Anchor] void Renderer :: renderTriangles(float[], unknown, float[], unknown, int[], unknown, short[], unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/misc/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.1
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.1111
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "e",
+              "params": "GL10",
+              "weight": 0.125
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/l;",
+              "class_short_name": "l",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.1429
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "f",
+              "params": "GL10",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/r;",
+              "class_short_name": "r",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/r;",
+              "class_short_name": "r",
+              "method_name": "b",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "renderTriangles",
+              "params": "float[], unknown, float[], unknown, int[], unknown, short[], unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 32,
+          "source_so": "librenderer.so",
+          "call_chain_text": "[Intent Domain] void a :: a(GL10) (W=0.17)\n    -> [Intent Domain] void i :: b(GL10) (W=0.20)\n    -> [Intent Domain] void i :: e(GL10) (W=0.25)\n    -> [Intent Domain] void i :: d(GL10) (W=0.33)\n    -> [Intent Domain] void Renderer :: a(GL10, unknown, boolean) (W=0.50)\n    -> [Target JNI Anchor] void Renderer :: renderTriangles(float[], unknown, float[], unknown, int[], unknown, short[], unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/misc/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "e",
+              "params": "GL10",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "d",
+              "params": "GL10",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "renderTriangles",
+              "params": "float[], unknown, float[], unknown, int[], unknown, short[], unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 34,
+          "source_so": "librenderer.so",
+          "call_chain_text": "[Intent Domain] void a :: a(GL10) (W=0.17)\n    -> [Intent Domain] void i :: b(GL10) (W=0.20)\n    -> [Intent Domain] void i :: e(GL10) (W=0.25)\n    -> [Intent Domain] void Renderer :: a(GL10) (W=0.33)\n    -> [Intent Domain] void Renderer :: a(GL10, unknown, boolean) (W=0.50)\n    -> [Target JNI Anchor] void Renderer :: renderTriangles(float[], unknown, float[], unknown, int[], unknown, short[], unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/misc/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "e",
+              "params": "GL10",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "renderTriangles",
+              "params": "float[], unknown, float[], unknown, int[], unknown, short[], unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 36,
+          "source_so": "librenderer.so",
+          "call_chain_text": "[Intent Domain] void a :: a(GL10) (W=0.14)\n    -> [Intent Domain] void i :: b(GL10) (W=0.17)\n    -> [Intent Domain] void i :: e(GL10) (W=0.20)\n    -> [Intent Domain] void i :: c(GL10) (W=0.25)\n    -> [Intent Domain] void Renderer :: a(GL10) (W=0.33)\n    -> [Intent Domain] void Renderer :: a(GL10, unknown, boolean) (W=0.50)\n    -> [Target JNI Anchor] void Renderer :: renderTriangles(float[], unknown, float[], unknown, int[], unknown, short[], unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/misc/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.1429
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "e",
+              "params": "GL10",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "renderTriangles",
+              "params": "float[], unknown, float[], unknown, int[], unknown, short[], unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 38,
+          "source_so": "librenderer.so",
+          "call_chain_text": "[Intent Domain] void MyWallpaperService$a :: onDrawFrame(GL10) (W=0.12)\n    -> [Intent Domain] void i :: b(GL10) (W=0.14)\n    -> [Intent Domain] void i :: e(GL10) (W=0.17)\n    -> [Intent Domain] void l :: c(GL10) (W=0.20)\n    -> [Intent Domain] void ag :: a(GL10, unknown, long) (W=0.25)\n    -> [Intent Domain] void Renderer :: a(GL10) (W=0.33)\n    -> [Intent Domain] void Renderer :: a(GL10, unknown, boolean) (W=0.50)\n    -> [Target JNI Anchor] void Renderer :: renderTriangles(float[], unknown, float[], unknown, int[], unknown, short[], unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/MyWallpaperService$a;",
+              "class_short_name": "MyWallpaperService$a",
+              "method_name": "onDrawFrame",
+              "params": "GL10",
+              "weight": 0.125
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.1429
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "e",
+              "params": "GL10",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/l;",
+              "class_short_name": "l",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/ag;",
+              "class_short_name": "ag",
+              "method_name": "a",
+              "params": "GL10, unknown, long",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "renderTriangles",
+              "params": "float[], unknown, float[], unknown, int[], unknown, short[], unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 40,
+          "source_so": "librenderer.so",
+          "call_chain_text": "[Intent Domain] void MyWallpaperService$a :: onDrawFrame(GL10) (W=0.14)\n    -> [Intent Domain] void i :: b(GL10) (W=0.17)\n    -> [Intent Domain] void i :: e(GL10) (W=0.20)\n    -> [Intent Domain] void l :: c(GL10) (W=0.25)\n    -> [Intent Domain] void l :: a(GL10) (W=0.33)\n    -> [Intent Domain] void Renderer :: a(GL10, unknown, boolean) (W=0.50)\n    -> [Target JNI Anchor] void Renderer :: renderTriangles(float[], unknown, float[], unknown, int[], unknown, short[], unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/MyWallpaperService$a;",
+              "class_short_name": "MyWallpaperService$a",
+              "method_name": "onDrawFrame",
+              "params": "GL10",
+              "weight": 0.1429
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "e",
+              "params": "GL10",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/l;",
+              "class_short_name": "l",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/l;",
+              "class_short_name": "l",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "renderTriangles",
+              "params": "float[], unknown, float[], unknown, int[], unknown, short[], unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 42,
+          "source_so": "librenderer.so",
+          "call_chain_text": "[Intent Domain] void MyWallpaperService$a :: onDrawFrame(GL10) (W=0.09)\n    -> [Intent Domain] void i :: b(GL10) (W=0.10)\n    -> [Intent Domain] void i :: e(GL10) (W=0.11)\n    -> [Intent Domain] void l :: c(GL10) (W=0.12)\n    -> [Intent Domain] void y :: b(GL10) (W=0.14)\n    -> [Intent Domain] void y :: a(GL10, unknown, float, unknown, float, unknown, String, unknown, float) (W=0.17)\n    -> [Intent Domain] void r :: c(GL10) (W=0.20)\n    -> [Intent Domain] void r :: b(GL10, unknown, boolean) (W=0.25)\n    -> [Intent Domain] void Renderer :: a(GL10) (W=0.33)\n    -> [Intent Domain] void Renderer :: a(GL10, unknown, boolean) (W=0.50)\n    -> [Target JNI Anchor] void Renderer :: renderTriangles(float[], unknown, float[], unknown, int[], unknown, short[], unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/MyWallpaperService$a;",
+              "class_short_name": "MyWallpaperService$a",
+              "method_name": "onDrawFrame",
+              "params": "GL10",
+              "weight": 0.0909
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.1
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "e",
+              "params": "GL10",
+              "weight": 0.1111
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/l;",
+              "class_short_name": "l",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.125
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/y;",
+              "class_short_name": "y",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.1429
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/y;",
+              "class_short_name": "y",
+              "method_name": "a",
+              "params": "GL10, unknown, float, unknown, float, unknown, String, unknown, float",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/r;",
+              "class_short_name": "r",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/r;",
+              "class_short_name": "r",
+              "method_name": "b",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "renderTriangles",
+              "params": "float[], unknown, float[], unknown, int[], unknown, short[], unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 44,
+          "source_so": "librenderer.so",
+          "call_chain_text": "[Intent Domain] void MyWallpaperService$a :: onDrawFrame(GL10) (W=0.12)\n    -> [Intent Domain] void i :: b(GL10) (W=0.14)\n    -> [Intent Domain] void i :: e(GL10) (W=0.17)\n    -> [Intent Domain] void l :: c(GL10) (W=0.20)\n    -> [Intent Domain] void y :: b(GL10) (W=0.25)\n    -> [Intent Domain] void y :: a(GL10, unknown, float, unknown, float, unknown, String, unknown, float) (W=0.33)\n    -> [Intent Domain] void Renderer :: a(GL10, unknown, boolean) (W=0.50)\n    -> [Target JNI Anchor] void Renderer :: renderTriangles(float[], unknown, float[], unknown, int[], unknown, short[], unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/MyWallpaperService$a;",
+              "class_short_name": "MyWallpaperService$a",
+              "method_name": "onDrawFrame",
+              "params": "GL10",
+              "weight": 0.125
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.1429
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "e",
+              "params": "GL10",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/l;",
+              "class_short_name": "l",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/y;",
+              "class_short_name": "y",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/y;",
+              "class_short_name": "y",
+              "method_name": "a",
+              "params": "GL10, unknown, float, unknown, float, unknown, String, unknown, float",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "renderTriangles",
+              "params": "float[], unknown, float[], unknown, int[], unknown, short[], unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 46,
+          "source_so": "librenderer.so",
+          "call_chain_text": "[Intent Domain] void MyWallpaperService$a :: onDrawFrame(GL10) (W=0.10)\n    -> [Intent Domain] void i :: b(GL10) (W=0.11)\n    -> [Intent Domain] void i :: e(GL10) (W=0.12)\n    -> [Intent Domain] void l :: c(GL10) (W=0.14)\n    -> [Intent Domain] void y :: b(GL10) (W=0.17)\n    -> [Intent Domain] void r :: c(GL10) (W=0.20)\n    -> [Intent Domain] void r :: b(GL10, unknown, boolean) (W=0.25)\n    -> [Intent Domain] void Renderer :: a(GL10) (W=0.33)\n    -> [Intent Domain] void Renderer :: a(GL10, unknown, boolean) (W=0.50)\n    -> [Target JNI Anchor] void Renderer :: renderTriangles(float[], unknown, float[], unknown, int[], unknown, short[], unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/MyWallpaperService$a;",
+              "class_short_name": "MyWallpaperService$a",
+              "method_name": "onDrawFrame",
+              "params": "GL10",
+              "weight": 0.1
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.1111
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "e",
+              "params": "GL10",
+              "weight": 0.125
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/l;",
+              "class_short_name": "l",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.1429
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/y;",
+              "class_short_name": "y",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/r;",
+              "class_short_name": "r",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/r;",
+              "class_short_name": "r",
+              "method_name": "b",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "renderTriangles",
+              "params": "float[], unknown, float[], unknown, int[], unknown, short[], unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 48,
+          "source_so": "librenderer.so",
+          "call_chain_text": "[Intent Domain] void MyWallpaperService$a :: onDrawFrame(GL10) (W=0.10)\n    -> [Intent Domain] void i :: b(GL10) (W=0.11)\n    -> [Intent Domain] void i :: e(GL10) (W=0.12)\n    -> [Intent Domain] void l :: c(GL10) (W=0.14)\n    -> [Intent Domain] void n :: a(GL10) (W=0.17)\n    -> [Intent Domain] void r :: c(GL10) (W=0.20)\n    -> [Intent Domain] void r :: b(GL10, unknown, boolean) (W=0.25)\n    -> [Intent Domain] void Renderer :: a(GL10) (W=0.33)\n    -> [Intent Domain] void Renderer :: a(GL10, unknown, boolean) (W=0.50)\n    -> [Target JNI Anchor] void Renderer :: renderTriangles(float[], unknown, float[], unknown, int[], unknown, short[], unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/MyWallpaperService$a;",
+              "class_short_name": "MyWallpaperService$a",
+              "method_name": "onDrawFrame",
+              "params": "GL10",
+              "weight": 0.1
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.1111
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "e",
+              "params": "GL10",
+              "weight": 0.125
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/l;",
+              "class_short_name": "l",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.1429
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/n;",
+              "class_short_name": "n",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/r;",
+              "class_short_name": "r",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/r;",
+              "class_short_name": "r",
+              "method_name": "b",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "renderTriangles",
+              "params": "float[], unknown, float[], unknown, int[], unknown, short[], unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 50,
+          "source_so": "librenderer.so",
+          "call_chain_text": "[Intent Domain] void MyWallpaperService$a :: onDrawFrame(GL10) (W=0.14)\n    -> [Intent Domain] void i :: b(GL10) (W=0.17)\n    -> [Intent Domain] void i :: e(GL10) (W=0.20)\n    -> [Intent Domain] void l :: c(GL10) (W=0.25)\n    -> [Intent Domain] void u :: a(GL10) (W=0.33)\n    -> [Intent Domain] void Renderer :: a(GL10, unknown, boolean) (W=0.50)\n    -> [Target JNI Anchor] void Renderer :: renderTriangles(float[], unknown, float[], unknown, int[], unknown, short[], unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/MyWallpaperService$a;",
+              "class_short_name": "MyWallpaperService$a",
+              "method_name": "onDrawFrame",
+              "params": "GL10",
+              "weight": 0.1429
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "e",
+              "params": "GL10",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/l;",
+              "class_short_name": "l",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/u;",
+              "class_short_name": "u",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "renderTriangles",
+              "params": "float[], unknown, float[], unknown, int[], unknown, short[], unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 52,
+          "source_so": "librenderer.so",
+          "call_chain_text": "[Intent Domain] void MyWallpaperService$a :: onDrawFrame(GL10) (W=0.14)\n    -> [Intent Domain] void i :: b(GL10) (W=0.17)\n    -> [Intent Domain] void i :: e(GL10) (W=0.20)\n    -> [Intent Domain] void l :: c(GL10) (W=0.25)\n    -> [Intent Domain] void y :: c(GL10) (W=0.33)\n    -> [Intent Domain] void Renderer :: a(GL10, unknown, boolean) (W=0.50)\n    -> [Target JNI Anchor] void Renderer :: renderTriangles(float[], unknown, float[], unknown, int[], unknown, short[], unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/MyWallpaperService$a;",
+              "class_short_name": "MyWallpaperService$a",
+              "method_name": "onDrawFrame",
+              "params": "GL10",
+              "weight": 0.1429
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "e",
+              "params": "GL10",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/l;",
+              "class_short_name": "l",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/y;",
+              "class_short_name": "y",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "renderTriangles",
+              "params": "float[], unknown, float[], unknown, int[], unknown, short[], unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 54,
+          "source_so": "librenderer.so",
+          "call_chain_text": "[Intent Domain] void MyWallpaperService$a :: onDrawFrame(GL10) (W=0.14)\n    -> [Intent Domain] void i :: b(GL10) (W=0.17)\n    -> [Intent Domain] void i :: e(GL10) (W=0.20)\n    -> [Intent Domain] void l :: c(GL10) (W=0.25)\n    -> [Intent Domain] void y :: a(GL10, unknown, float) (W=0.33)\n    -> [Intent Domain] void Renderer :: a(GL10, unknown, boolean) (W=0.50)\n    -> [Target JNI Anchor] void Renderer :: renderTriangles(float[], unknown, float[], unknown, int[], unknown, short[], unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/MyWallpaperService$a;",
+              "class_short_name": "MyWallpaperService$a",
+              "method_name": "onDrawFrame",
+              "params": "GL10",
+              "weight": 0.1429
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "e",
+              "params": "GL10",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/l;",
+              "class_short_name": "l",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/y;",
+              "class_short_name": "y",
+              "method_name": "a",
+              "params": "GL10, unknown, float",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "renderTriangles",
+              "params": "float[], unknown, float[], unknown, int[], unknown, short[], unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 56,
+          "source_so": "librenderer.so",
+          "call_chain_text": "[Intent Domain] void MyWallpaperService$a :: onDrawFrame(GL10) (W=0.10)\n    -> [Intent Domain] void i :: b(GL10) (W=0.11)\n    -> [Intent Domain] void i :: e(GL10) (W=0.12)\n    -> [Intent Domain] void l :: c(GL10) (W=0.14)\n    -> [Intent Domain] void h :: a(GL10) (W=0.17)\n    -> [Intent Domain] void r :: c(GL10) (W=0.20)\n    -> [Intent Domain] void r :: b(GL10, unknown, boolean) (W=0.25)\n    -> [Intent Domain] void Renderer :: a(GL10) (W=0.33)\n    -> [Intent Domain] void Renderer :: a(GL10, unknown, boolean) (W=0.50)\n    -> [Target JNI Anchor] void Renderer :: renderTriangles(float[], unknown, float[], unknown, int[], unknown, short[], unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/MyWallpaperService$a;",
+              "class_short_name": "MyWallpaperService$a",
+              "method_name": "onDrawFrame",
+              "params": "GL10",
+              "weight": 0.1
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.1111
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "e",
+              "params": "GL10",
+              "weight": 0.125
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/l;",
+              "class_short_name": "l",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.1429
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/h;",
+              "class_short_name": "h",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/r;",
+              "class_short_name": "r",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/r;",
+              "class_short_name": "r",
+              "method_name": "b",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "renderTriangles",
+              "params": "float[], unknown, float[], unknown, int[], unknown, short[], unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 58,
+          "source_so": "librenderer.so",
+          "call_chain_text": "[Intent Domain] void MyWallpaperService$a :: onDrawFrame(GL10) (W=0.12)\n    -> [Intent Domain] void i :: b(GL10) (W=0.14)\n    -> [Intent Domain] void i :: e(GL10) (W=0.17)\n    -> [Intent Domain] void l :: c(GL10) (W=0.20)\n    -> [Intent Domain] void l :: b(GL10) (W=0.25)\n    -> [Intent Domain] void Renderer :: a(GL10) (W=0.33)\n    -> [Intent Domain] void Renderer :: a(GL10, unknown, boolean) (W=0.50)\n    -> [Target JNI Anchor] void Renderer :: renderTriangles(float[], unknown, float[], unknown, int[], unknown, short[], unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/MyWallpaperService$a;",
+              "class_short_name": "MyWallpaperService$a",
+              "method_name": "onDrawFrame",
+              "params": "GL10",
+              "weight": 0.125
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.1429
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "e",
+              "params": "GL10",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/l;",
+              "class_short_name": "l",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/l;",
+              "class_short_name": "l",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "renderTriangles",
+              "params": "float[], unknown, float[], unknown, int[], unknown, short[], unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 60,
+          "source_so": "librenderer.so",
+          "call_chain_text": "[Intent Domain] void MyWallpaperService$a :: onDrawFrame(GL10) (W=0.12)\n    -> [Intent Domain] void i :: b(GL10) (W=0.14)\n    -> [Intent Domain] void i :: e(GL10) (W=0.17)\n    -> [Intent Domain] void l :: c(GL10) (W=0.20)\n    -> [Intent Domain] void ab :: a(GL10) (W=0.25)\n    -> [Intent Domain] void Renderer :: a(GL10) (W=0.33)\n    -> [Intent Domain] void Renderer :: a(GL10, unknown, boolean) (W=0.50)\n    -> [Target JNI Anchor] void Renderer :: renderTriangles(float[], unknown, float[], unknown, int[], unknown, short[], unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/MyWallpaperService$a;",
+              "class_short_name": "MyWallpaperService$a",
+              "method_name": "onDrawFrame",
+              "params": "GL10",
+              "weight": 0.125
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.1429
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "e",
+              "params": "GL10",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/l;",
+              "class_short_name": "l",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/ab;",
+              "class_short_name": "ab",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "renderTriangles",
+              "params": "float[], unknown, float[], unknown, int[], unknown, short[], unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 62,
+          "source_so": "librenderer.so",
+          "call_chain_text": "[Intent Domain] void MyWallpaperService$a :: onDrawFrame(GL10) (W=0.12)\n    -> [Intent Domain] void i :: b(GL10) (W=0.14)\n    -> [Intent Domain] void i :: e(GL10) (W=0.17)\n    -> [Intent Domain] void l :: c(GL10) (W=0.20)\n    -> [Intent Domain] void u :: a(GL10, unknown, long, unknown, float) (W=0.25)\n    -> [Intent Domain] void Renderer :: a(GL10) (W=0.33)\n    -> [Intent Domain] void Renderer :: a(GL10, unknown, boolean) (W=0.50)\n    -> [Target JNI Anchor] void Renderer :: renderTriangles(float[], unknown, float[], unknown, int[], unknown, short[], unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/MyWallpaperService$a;",
+              "class_short_name": "MyWallpaperService$a",
+              "method_name": "onDrawFrame",
+              "params": "GL10",
+              "weight": 0.125
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.1429
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "e",
+              "params": "GL10",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/l;",
+              "class_short_name": "l",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/u;",
+              "class_short_name": "u",
+              "method_name": "a",
+              "params": "GL10, unknown, long, unknown, float",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "renderTriangles",
+              "params": "float[], unknown, float[], unknown, int[], unknown, short[], unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 64,
+          "source_so": "librenderer.so",
+          "call_chain_text": "[Intent Domain] void MyWallpaperService$a :: onDrawFrame(GL10) (W=0.14)\n    -> [Intent Domain] void i :: b(GL10) (W=0.17)\n    -> [Intent Domain] void i :: e(GL10) (W=0.20)\n    -> [Intent Domain] void l :: c(GL10) (W=0.25)\n    -> [Intent Domain] void y :: a(GL10) (W=0.33)\n    -> [Intent Domain] void Renderer :: a(GL10, unknown, boolean) (W=0.50)\n    -> [Target JNI Anchor] void Renderer :: renderTriangles(float[], unknown, float[], unknown, int[], unknown, short[], unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/MyWallpaperService$a;",
+              "class_short_name": "MyWallpaperService$a",
+              "method_name": "onDrawFrame",
+              "params": "GL10",
+              "weight": 0.1429
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "e",
+              "params": "GL10",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/l;",
+              "class_short_name": "l",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/y;",
+              "class_short_name": "y",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "renderTriangles",
+              "params": "float[], unknown, float[], unknown, int[], unknown, short[], unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 66,
+          "source_so": "librenderer.so",
+          "call_chain_text": "[Intent Domain] void MyWallpaperService$a :: onDrawFrame(GL10) (W=0.10)\n    -> [Intent Domain] void i :: b(GL10) (W=0.11)\n    -> [Intent Domain] void i :: e(GL10) (W=0.12)\n    -> [Intent Domain] void l :: c(GL10) (W=0.14)\n    -> [Intent Domain] void i :: f(GL10) (W=0.17)\n    -> [Intent Domain] void r :: c(GL10) (W=0.20)\n    -> [Intent Domain] void r :: b(GL10, unknown, boolean) (W=0.25)\n    -> [Intent Domain] void Renderer :: a(GL10) (W=0.33)\n    -> [Intent Domain] void Renderer :: a(GL10, unknown, boolean) (W=0.50)\n    -> [Target JNI Anchor] void Renderer :: renderTriangles(float[], unknown, float[], unknown, int[], unknown, short[], unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/MyWallpaperService$a;",
+              "class_short_name": "MyWallpaperService$a",
+              "method_name": "onDrawFrame",
+              "params": "GL10",
+              "weight": 0.1
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.1111
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "e",
+              "params": "GL10",
+              "weight": 0.125
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/l;",
+              "class_short_name": "l",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.1429
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "f",
+              "params": "GL10",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/r;",
+              "class_short_name": "r",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/r;",
+              "class_short_name": "r",
+              "method_name": "b",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "renderTriangles",
+              "params": "float[], unknown, float[], unknown, int[], unknown, short[], unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 68,
+          "source_so": "librenderer.so",
+          "call_chain_text": "[Intent Domain] void MyWallpaperService$a :: onDrawFrame(GL10) (W=0.17)\n    -> [Intent Domain] void i :: b(GL10) (W=0.20)\n    -> [Intent Domain] void i :: e(GL10) (W=0.25)\n    -> [Intent Domain] void i :: d(GL10) (W=0.33)\n    -> [Intent Domain] void Renderer :: a(GL10, unknown, boolean) (W=0.50)\n    -> [Target JNI Anchor] void Renderer :: renderTriangles(float[], unknown, float[], unknown, int[], unknown, short[], unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/MyWallpaperService$a;",
+              "class_short_name": "MyWallpaperService$a",
+              "method_name": "onDrawFrame",
+              "params": "GL10",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "e",
+              "params": "GL10",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "d",
+              "params": "GL10",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "renderTriangles",
+              "params": "float[], unknown, float[], unknown, int[], unknown, short[], unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 70,
+          "source_so": "librenderer.so",
+          "call_chain_text": "[Intent Domain] void MyWallpaperService$a :: onDrawFrame(GL10) (W=0.17)\n    -> [Intent Domain] void i :: b(GL10) (W=0.20)\n    -> [Intent Domain] void i :: e(GL10) (W=0.25)\n    -> [Intent Domain] void Renderer :: a(GL10) (W=0.33)\n    -> [Intent Domain] void Renderer :: a(GL10, unknown, boolean) (W=0.50)\n    -> [Target JNI Anchor] void Renderer :: renderTriangles(float[], unknown, float[], unknown, int[], unknown, short[], unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/MyWallpaperService$a;",
+              "class_short_name": "MyWallpaperService$a",
+              "method_name": "onDrawFrame",
+              "params": "GL10",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "e",
+              "params": "GL10",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "renderTriangles",
+              "params": "float[], unknown, float[], unknown, int[], unknown, short[], unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 72,
+          "source_so": "librenderer.so",
+          "call_chain_text": "[Intent Domain] void MyWallpaperService$a :: onDrawFrame(GL10) (W=0.14)\n    -> [Intent Domain] void i :: b(GL10) (W=0.17)\n    -> [Intent Domain] void i :: e(GL10) (W=0.20)\n    -> [Intent Domain] void i :: c(GL10) (W=0.25)\n    -> [Intent Domain] void Renderer :: a(GL10) (W=0.33)\n    -> [Intent Domain] void Renderer :: a(GL10, unknown, boolean) (W=0.50)\n    -> [Target JNI Anchor] void Renderer :: renderTriangles(float[], unknown, float[], unknown, int[], unknown, short[], unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/MyWallpaperService$a;",
+              "class_short_name": "MyWallpaperService$a",
+              "method_name": "onDrawFrame",
+              "params": "GL10",
+              "weight": 0.1429
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "b",
+              "params": "GL10",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "e",
+              "params": "GL10",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/i;",
+              "class_short_name": "i",
+              "method_name": "c",
+              "params": "GL10",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "renderTriangles",
+              "params": "float[], unknown, float[], unknown, int[], unknown, short[], unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 74,
+          "source_so": "librenderer.so",
+          "call_chain_text": "[Intent Domain] void q :: a(GL10, unknown, boolean, unknown, boolean, unknown, long) (W=0.20)\n    -> [Intent Domain] void b :: a(GL10, unknown, long, unknown, boolean, unknown, boolean, unknown, long) (W=0.25)\n    -> [Intent Domain] void b :: a(GL10, unknown, long, unknown, long) (W=0.33)\n    -> [Intent Domain] void Renderer :: a(GL10, unknown, boolean) (W=0.50)\n    -> [Target JNI Anchor] void Renderer :: renderTriangles(float[], unknown, float[], unknown, int[], unknown, short[], unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/q;",
+              "class_short_name": "q",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean, unknown, boolean, unknown, long",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/a/b;",
+              "class_short_name": "b",
+              "method_name": "a",
+              "params": "GL10, unknown, long, unknown, boolean, unknown, boolean, unknown, long",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/a/b;",
+              "class_short_name": "b",
+              "method_name": "a",
+              "params": "GL10, unknown, long, unknown, long",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "renderTriangles",
+              "params": "float[], unknown, float[], unknown, int[], unknown, short[], unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 76,
+          "source_so": "librenderer.so",
+          "call_chain_text": "[Intent Domain] void q :: a(GL10, unknown, boolean, unknown, boolean, unknown, long) (W=0.14)\n    -> [Intent Domain] void b :: a(GL10, unknown, long, unknown, boolean, unknown, boolean, unknown, long) (W=0.17)\n    -> [Intent Domain] void b :: a(GL10, unknown, boolean) (W=0.20)\n    -> [Intent Domain] void r :: b(GL10, unknown, boolean) (W=0.25)\n    -> [Intent Domain] void Renderer :: a(GL10) (W=0.33)\n    -> [Intent Domain] void Renderer :: a(GL10, unknown, boolean) (W=0.50)\n    -> [Target JNI Anchor] void Renderer :: renderTriangles(float[], unknown, float[], unknown, int[], unknown, short[], unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/q;",
+              "class_short_name": "q",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean, unknown, boolean, unknown, long",
+              "weight": 0.1429
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/a/b;",
+              "class_short_name": "b",
+              "method_name": "a",
+              "params": "GL10, unknown, long, unknown, boolean, unknown, boolean, unknown, long",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/a/b;",
+              "class_short_name": "b",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/r;",
+              "class_short_name": "r",
+              "method_name": "b",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "renderTriangles",
+              "params": "float[], unknown, float[], unknown, int[], unknown, short[], unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 78,
+          "source_so": "librenderer.so",
+          "call_chain_text": "[Intent Domain] void q :: a(GL10, unknown, boolean, unknown, boolean, unknown, long) (W=0.20)\n    -> [Intent Domain] void b :: a(GL10, unknown, long, unknown, boolean, unknown, boolean, unknown, long) (W=0.25)\n    -> [Intent Domain] void b :: a(GL10, unknown, boolean) (W=0.33)\n    -> [Intent Domain] void Renderer :: a(GL10, unknown, boolean) (W=0.50)\n    -> [Target JNI Anchor] void Renderer :: renderTriangles(float[], unknown, float[], unknown, int[], unknown, short[], unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/q;",
+              "class_short_name": "q",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean, unknown, boolean, unknown, long",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/a/b;",
+              "class_short_name": "b",
+              "method_name": "a",
+              "params": "GL10, unknown, long, unknown, boolean, unknown, boolean, unknown, long",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/a/b;",
+              "class_short_name": "b",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "renderTriangles",
+              "params": "float[], unknown, float[], unknown, int[], unknown, short[], unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 80,
+          "source_so": "librenderer.so",
+          "call_chain_text": "[Intent Domain] void q :: a(GL10, unknown, boolean, unknown, boolean, unknown, long) (W=0.17)\n    -> [Intent Domain] void b :: a(GL10, unknown, long, unknown, boolean, unknown, boolean, unknown, long) (W=0.20)\n    -> [Intent Domain] void b :: a(GL10, unknown, long) (W=0.25)\n    -> [Intent Domain] void Renderer :: a(GL10) (W=0.33)\n    -> [Intent Domain] void Renderer :: a(GL10, unknown, boolean) (W=0.50)\n    -> [Target JNI Anchor] void Renderer :: renderTriangles(float[], unknown, float[], unknown, int[], unknown, short[], unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/q;",
+              "class_short_name": "q",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean, unknown, boolean, unknown, long",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/a/b;",
+              "class_short_name": "b",
+              "method_name": "a",
+              "params": "GL10, unknown, long, unknown, boolean, unknown, boolean, unknown, long",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/a/b;",
+              "class_short_name": "b",
+              "method_name": "a",
+              "params": "GL10, unknown, long",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "a",
+              "params": "GL10, unknown, boolean",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lzame/game/engine/Renderer;",
+              "class_short_name": "Renderer",
+              "method_name": "renderTriangles",
+              "params": "float[], unknown, float[], unknown, int[], unknown, short[], unknown, int",
+              "weight": 1.0
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,3829 @@
+{
+  "app": "org.lyrion.squeezelite",
+  "commented_jni_total": 1,
+  "with_code_count": 1,
+  "with_stacks_count": 1,
+  "total_stacks_collected": 86,
+  "functions": [
+    {
+      "function_name": "Java_org_lyrion_squeezelite_Library_start",
+      "class_name": "Lorg/lyrion/squeezelite/Library;",
+      "method_name": "start",
+      "descriptor": "(Ljava/lang/String; Ljava/lang/String; Ljava/lang/String; I I I I I I)V",
+      "source_so": "libsqueezelite.so",
+      "file_path": "H:\\260311\\org.lyrion.squeezelite\\squeezelite-android\\android\\src\\android.c",
+      "comment_before": null,
+      "comment_inside": "// set later\n// set the output buffer size if not specified on the command line, take account of resampling",
+      "code": "JNICALL Java_org_lyrion_squeezelite_Library_start(JNIEnv *env, jobject jobj, jstring lms_param, jstring mac_param, jstring name_param, jint idle, jint fixed_vol, jint loglevel, jint mobile_network, jint buffer_size) {\n\tconst char *server = (*env)->GetStringUTFChars(env, lms_param, NULL);\n\tconst char *mac_str = (*env)->GetStringUTFChars(env, mac_param, NULL);\n\tchar *output_device = \"default\";\n\tchar *include_codecs = NULL;\n\tchar *exclude_codecs = \"\";\n\tconst char *name = (*env)->GetStringUTFChars(env, name_param, NULL);\n\tchar *namefile = NULL;\n\tconst char *modelname = \"SqueezeLiteAndroid\";\n\tu8_t mac[6];\n\tunsigned stream_buf_size = buffer_size>0 ? buffer_size*1024*1024 : STREAMBUF_SIZE;\n\tunsigned output_buf_size = 0; // set later\n\tunsigned rates[MAX_SUPPORTED_SAMPLERATES] = { 0 };\n\tunsigned rate_delay = 0;\n\tchar *resample = NULL;\n\tchar *output_params = NULL;\n#if DSD\n\tunsigned dsd_delay = 0;\n\tdsd_format dsd_outfmt = PCM;\n#endif\n\tlog_level log_output = loglevel;\n\tlog_level log_stream = loglevel;\n\tlog_level log_decode = loglevel;\n\tlog_level log_slimproto = loglevel;\n\n\tif (LibAAudio_init()) {\n\t\tPaOpenSLES_ENABLED = 0;\n\t\tPaAAudio_ENABLED = 1;\n\t\tLOG_DEBUG(\"Using AAudio\");\n\t} else {\n\t\tPaOpenSLES_ENABLED = 1;\n\t\tPaAAudio_ENABLED = 0;\n\t\tLOG_DEBUG(\"Using OpenSL ES\");\n\t}\n\n\tif (mac_str) {\n\t\tint byte = 0;\n\t\tchar *tmp;\n\t\tchar *t = strtok(mac_str, \":\");\n\t\twhile (t && byte < 6) {\n\t\t\tmac[byte++] = (u8_t)strtoul(t, &tmp, 16);\n\t\t\tt = strtok(NULL, \":\");\n\t\t}\n\t}\n\n\tinit_jvm(env, jobj);\n\tsignal(SIGINT, sighandler);\n\tsignal(SIGTERM, sighandler);\n#if defined(SIGQUIT)\n\tsignal(SIGQUIT, sighandler);\n#endif\n#if defined(SIGHUP)\n\tsignal(SIGHUP, sighandler);\n#endif\n\tsignal(SIGSEGV, segv_handler);\n\tsignal(SIGABRT, segv_handler);\n\n#if USE_SSL && !LINKALL && !NO_SSLSYM\n\tssl_loaded = load_ssl_symbols();\n#endif\n\n\t// set the output buffer size if not specified on the command line, take account of resampling\n\tif (!output_buf_size) {\n\t\toutput_buf_size = OUTPUTBUF_SIZE;\n\t\tif (resample) {\n\t\t\tunsigned scale = 8;\n\t\t\tif (rates[0]) {\n\t\t\t\tscale = rates[0] / 44100;\n\t\t\t\tif (scale > 8) scale = 8;\n\t\t\t\tif (scale < 1) scale = 1;\n\t\t\t}\n\t\t\toutput_buf_size *= scale;\n\t\t}\n\t}\n\n\tstream_init(log_stream, stream_buf_size);\n\n\toutput_init_pa(log_output, output_device, output_buf_size, output_params, rates, rate_delay, (unsigned int)idle, 0!=fixed_vol);\n\n#if DSD\n\tdsd_init(dsd_outfmt, dsd_delay);\n#endif\n\n\tdecode_init(log_decode, include_codecs, exclude_codecs);\n\n#if RESAMPLE\n\tif (resample) {\n\t\tprocess_init(resample);\n\t}\n#endif\n\n\tslimproto(log_slimproto, !server || strlen(server)==0 ? NULL : server, mac, name, namefile, modelname, 0, mobile_network);\n\n\tdecode_close();\n\tstream_close();\n\n\toutput_close_pa();\n\n#if USE_SSL && !LINKALL && !NO_SSLSYM\n\tfree_ssl_symbols();\n#endif\n\n\t(*env)->ReleaseStringUTFChars(env, lms_param, server);\n\t(*env)->ReleaseStringUTFChars(env, mac_param, mac_str);\n\t(*env)->ReleaseStringUTFChars(env, name_param, name);\n}",
+      "call_stacks_count": 86,
+      "call_stacks": [
+        {
+          "stack_id": 9,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: close(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "close",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 10,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] String NativeSummaryFuncs :: signal(int, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "String",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "signal",
+              "params": "int, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 11,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: calloc(int, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "calloc",
+              "params": "int, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 12,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: select(int, unknown, Object, unknown, Object, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "select",
+              "params": "int, unknown, Object, unknown, Object, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 13,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: strstr(Object, unknown, String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "strstr",
+              "params": "Object, unknown, String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 14,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: getaddrinfo(String, unknown, Object, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "getaddrinfo",
+              "params": "String, unknown, Object, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 15,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] String NativeSummaryFuncs :: malloc(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "String",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "malloc",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 16,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] String NativeSummaryFuncs :: strtok(String, unknown, String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "String",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "strtok",
+              "params": "String, unknown, String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 17,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] String NativeSummaryFuncs :: strtok(Object, unknown, String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "String",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "strtok",
+              "params": "Object, unknown, String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 18,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] String NativeSummaryFuncs :: vsnprintf(Object, unknown, int, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "String",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "vsnprintf",
+              "params": "Object, unknown, int, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 19,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: pthread_attr_destroy(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "pthread_attr_destroy",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 20,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: pthread_attr_init(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "pthread_attr_init",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 21,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] String NativeSummaryFuncs :: sprintf(Object, unknown, String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "String",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "sprintf",
+              "params": "Object, unknown, String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 22,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: strchr(String, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "strchr",
+              "params": "String, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 23,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: strstr(String, unknown, String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "strstr",
+              "params": "String, unknown, String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 24,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: close(String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "close",
+              "params": "String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 25,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: fopen(Object, unknown, String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fopen",
+              "params": "Object, unknown, String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 26,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: fflush(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fflush",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 27,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: malloc(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "malloc",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 28,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryAux :: opaqueInt() (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryAux;",
+              "class_short_name": "NativeSummaryAux",
+              "method_name": "opaqueInt",
+              "params": "",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 29,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] String NativeSummaryFuncs :: calloc(int, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "String",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "calloc",
+              "params": "int, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 30,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] String NativeSummaryFuncs :: fcntl(int, unknown, int, unknown, String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "String",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fcntl",
+              "params": "int, unknown, int, unknown, String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 31,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: memset(Object, unknown, Object, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "memset",
+              "params": "Object, unknown, Object, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 32,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: sendto(String, unknown, Object, unknown, int, unknown, Object, unknown, Object, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "sendto",
+              "params": "String, unknown, Object, unknown, int, unknown, Object, unknown, Object, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 33,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] String NativeSummaryFuncs :: pthread_mutex_init(Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "String",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "pthread_mutex_init",
+              "params": "Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 34,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: poll(Object, unknown, int, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "poll",
+              "params": "Object, unknown, int, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 35,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: exit(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "exit",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 36,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] String NativeSummaryFuncs :: pthread_mutex_unlock(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "String",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "pthread_mutex_unlock",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 37,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] String NativeSummaryFuncs :: poll(Object, unknown, int, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "String",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "poll",
+              "params": "Object, unknown, int, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 38,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: free(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "free",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 39,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: setsockopt(String, unknown, int, unknown, int, unknown, Object, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "setsockopt",
+              "params": "String, unknown, int, unknown, int, unknown, Object, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 40,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: pthread_mutexattr_init(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "pthread_mutexattr_init",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 41,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: exit(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "exit",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 42,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Interaction Domain] void Library :: connectionStateChanged(String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Interaction Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "connectionStateChanged",
+              "params": "String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 43,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Interaction Domain] void Library :: connectionStateChanged(String) (W=0.50)\n    -> [Interaction Domain] void m :: u(String[], unknown, g) (W=0.33)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Interaction Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "connectionStateChanged",
+              "params": "String",
+              "weight": 0.5
+            },
+            {
+              "label": "Interaction Domain",
+              "return_type": "void",
+              "class_name": "LL/m;",
+              "class_short_name": "m",
+              "method_name": "u",
+              "params": "String[], unknown, g",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "stack_id": 44,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Interaction Domain] void Library :: connectionStateChanged(String) (W=0.50)\n    -> [Interaction Domain] void m :: u(String[], unknown, g) (W=0.33)\n    -> [Interaction Domain] void k :: a(a) (W=0.25)\n    -> [Interaction Domain] void a :: a(String) (W=0.20)\n    -> [Interaction Domain] void n :: a(String, unknown, long) (W=0.17)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Interaction Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "connectionStateChanged",
+              "params": "String",
+              "weight": 0.5
+            },
+            {
+              "label": "Interaction Domain",
+              "return_type": "void",
+              "class_name": "LL/m;",
+              "class_short_name": "m",
+              "method_name": "u",
+              "params": "String[], unknown, g",
+              "weight": 0.3333
+            },
+            {
+              "label": "Interaction Domain",
+              "return_type": "void",
+              "class_name": "Ln0/k;",
+              "class_short_name": "k",
+              "method_name": "a",
+              "params": "a",
+              "weight": 0.25
+            },
+            {
+              "label": "Interaction Domain",
+              "return_type": "void",
+              "class_name": "Ld1/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "String",
+              "weight": 0.2
+            },
+            {
+              "label": "Interaction Domain",
+              "return_type": "void",
+              "class_name": "Ln0/n;",
+              "class_short_name": "n",
+              "method_name": "a",
+              "params": "String, unknown, long",
+              "weight": 0.1667
+            }
+          ]
+        },
+        {
+          "stack_id": 45,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Interaction Domain] void Library :: connectionStateChanged(String) (W=0.50)\n    -> [Interaction Domain] void m :: u(String[], unknown, g) (W=0.33)\n    -> [Interaction Domain] void k :: a(a) (W=0.25)\n    -> [Interaction Domain] void k :: b() (W=0.20)\n    -> [Interaction Domain] void c :: g(Object) (W=0.17)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Interaction Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "connectionStateChanged",
+              "params": "String",
+              "weight": 0.5
+            },
+            {
+              "label": "Interaction Domain",
+              "return_type": "void",
+              "class_name": "LL/m;",
+              "class_short_name": "m",
+              "method_name": "u",
+              "params": "String[], unknown, g",
+              "weight": 0.3333
+            },
+            {
+              "label": "Interaction Domain",
+              "return_type": "void",
+              "class_name": "Ln0/k;",
+              "class_short_name": "k",
+              "method_name": "a",
+              "params": "a",
+              "weight": 0.25
+            },
+            {
+              "label": "Interaction Domain",
+              "return_type": "void",
+              "class_name": "Ln0/k;",
+              "class_short_name": "k",
+              "method_name": "b",
+              "params": "",
+              "weight": 0.2
+            },
+            {
+              "label": "Interaction Domain",
+              "return_type": "void",
+              "class_name": "Landroid/support/v4/media/c;",
+              "class_short_name": "c",
+              "method_name": "g",
+              "params": "Object",
+              "weight": 0.1667
+            }
+          ]
+        },
+        {
+          "stack_id": 46,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Interaction Domain] void Library :: connectionStateChanged(String) (W=0.50)\n    -> [Interaction Domain] void m :: u(String[], unknown, g) (W=0.33)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Interaction Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "connectionStateChanged",
+              "params": "String",
+              "weight": 0.5
+            },
+            {
+              "label": "Interaction Domain",
+              "return_type": "void",
+              "class_name": "LL/m;",
+              "class_short_name": "m",
+              "method_name": "u",
+              "params": "String[], unknown, g",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "stack_id": 47,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Interaction Domain] void Library :: connectionStateChanged(String) (W=0.50)\n    -> [Interaction Domain] void m :: u(String[], unknown, g) (W=0.33)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Interaction Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "connectionStateChanged",
+              "params": "String",
+              "weight": 0.5
+            },
+            {
+              "label": "Interaction Domain",
+              "return_type": "void",
+              "class_name": "LL/m;",
+              "class_short_name": "m",
+              "method_name": "u",
+              "params": "String[], unknown, g",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "stack_id": 48,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Interaction Domain] void Library :: connectionStateChanged(String) (W=0.50)\n    -> [Interaction Domain] boolean e :: y(String) (W=0.33)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Interaction Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "connectionStateChanged",
+              "params": "String",
+              "weight": 0.5
+            },
+            {
+              "label": "Interaction Domain",
+              "return_type": "boolean",
+              "class_name": "LT/e;",
+              "class_short_name": "e",
+              "method_name": "y",
+              "params": "String",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "stack_id": 49,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Interaction Domain] void Library :: connectionStateChanged(String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Interaction Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "connectionStateChanged",
+              "params": "String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 50,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: strchr(Object, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "strchr",
+              "params": "Object, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 51,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: clock_gettime(int, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "clock_gettime",
+              "params": "int, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 52,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: pthread_attr_setstacksize(Object, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "pthread_attr_setstacksize",
+              "params": "Object, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 53,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: getsockname(int, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "getsockname",
+              "params": "int, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 54,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: connect(int, unknown, Object, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "connect",
+              "params": "int, unknown, Object, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 55,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: free(String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "free",
+              "params": "String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 56,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: strerror(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "strerror",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 57,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] String NativeSummaryFuncs :: strerror(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "String",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "strerror",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 58,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: fcntl(int, unknown, int, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fcntl",
+              "params": "int, unknown, int, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 59,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: vfprintf(Object, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "vfprintf",
+              "params": "Object, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 60,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] String NativeSummaryFuncs :: calloc(int, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "String",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "calloc",
+              "params": "int, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 61,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: recvfrom(String, unknown, Object, unknown, int, unknown, Object, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "recvfrom",
+              "params": "String, unknown, Object, unknown, int, unknown, Object, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 62,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: pthread_mutex_destroy(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "pthread_mutex_destroy",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 63,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: send(int, unknown, int, unknown, int, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "send",
+              "params": "int, unknown, int, unknown, int, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 64,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: eventfd(Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "eventfd",
+              "params": "Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 65,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: socket(int, unknown, int, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "socket",
+              "params": "int, unknown, int, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 66,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: free(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "free",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 67,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: pthread_create(Object, unknown, Object, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "pthread_create",
+              "params": "Object, unknown, Object, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 68,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: pthread_mutexattr_setprotocol(Object, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "pthread_mutexattr_setprotocol",
+              "params": "Object, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 69,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] String NativeSummaryFuncs :: pthread_mutex_lock(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "String",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "pthread_mutex_lock",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 70,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] String NativeSummaryFuncs :: strstr(Object, unknown, String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "String",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "strstr",
+              "params": "Object, unknown, String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 71,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: usleep(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "usleep",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 72,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: pthread_mutex_unlock(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "pthread_mutex_unlock",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 73,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: getsockopt(int, unknown, int, unknown, int, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "getsockopt",
+              "params": "int, unknown, int, unknown, int, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 74,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] String NativeSummaryFuncs :: inet_ntoa(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "String",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "inet_ntoa",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 75,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: memset(int, unknown, int, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "memset",
+              "params": "int, unknown, int, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 76,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: freeaddrinfo(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "freeaddrinfo",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 77,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: calloc(int, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "calloc",
+              "params": "int, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 78,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: inet_ntop(int, unknown, Object, unknown, String, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "inet_ntop",
+              "params": "int, unknown, Object, unknown, String, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 79,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] String NativeSummaryFuncs :: strstr(String, unknown, String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "String",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "strstr",
+              "params": "String, unknown, String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 80,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: DetachCurrentThread(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "DetachCurrentThread",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 81,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: signal(int, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "signal",
+              "params": "int, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 82,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: gettimeofday(Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "gettimeofday",
+              "params": "Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 83,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] String NativeSummaryFuncs :: pthread_attr_destroy(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "String",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "pthread_attr_destroy",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 84,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] String NativeSummaryFuncs :: usleep(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "String",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "usleep",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 85,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: fclose(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fclose",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 86,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: pthread_mutex_lock(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "pthread_mutex_lock",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 87,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: snprintf(Object, unknown, int, unknown, String, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "snprintf",
+              "params": "Object, unknown, int, unknown, String, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 88,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] String NativeSummaryFuncs :: snprintf(String, unknown, int, unknown, String, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "String",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "snprintf",
+              "params": "String, unknown, int, unknown, String, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 89,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: inet_ntoa(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "inet_ntoa",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 90,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: AttachCurrentThread(Object, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "AttachCurrentThread",
+              "params": "Object, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 91,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: pthread_mutexattr_destroy(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "pthread_mutexattr_destroy",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 92,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: strtok(String, unknown, String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "strtok",
+              "params": "String, unknown, String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 93,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: sysconf(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "sysconf",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 94,
+          "source_so": "libsqueezelite.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] void Library :: a(Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void Library :: start(String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] String NativeSummaryFuncs :: strtoul(String, unknown, Object, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ld1/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "a",
+              "params": "Library, unknown, String, unknown, String, unknown, boolean, unknown, boolean, unknown, boolean, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/lyrion/squeezelite/Library;",
+              "class_short_name": "Library",
+              "method_name": "start",
+              "params": "String, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "String",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "strtoul",
+              "params": "String, unknown, Object, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

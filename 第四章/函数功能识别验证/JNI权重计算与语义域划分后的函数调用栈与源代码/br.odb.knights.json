@@ -1,0 +1,57 @@
+{
+  "app": "br.odb.knights",
+  "commented_jni_total": 1,
+  "with_code_count": 1,
+  "with_stacks_count": 1,
+  "total_stacks_collected": 1,
+  "functions": [
+    {
+      "function_name": "Java_br_odb_GL2JNILib_setMapWithSplatsAndActors",
+      "class_name": "Lbr/odb/GL2JNILib;",
+      "method_name": "setMapWithSplatsAndActors",
+      "descriptor": "([I [I [I)V",
+      "source_so": "libNdkGlue.so",
+      "file_path": "H:\\260311\\br.odb.knights\\knightsofalentejo-master\\app\\src\\main\\cpp\\NdkGlue.cpp",
+      "comment_before": null,
+      "comment_inside": "//splat?\n//\t\t\t\todb::LightningStrategy::castPointLight( lightMap, 16, map, x, y);",
+      "code": "JNIEXPORT void JNICALL\nJava_br_odb_GL2JNILib_setMapWithSplatsAndActors(JNIEnv *env, jclass type, jintArray map_,\n                                                jintArray actors_, jintArray splats_) {\n    jint *level = env->GetIntArrayElements(map_, NULL);\n    jint *actors = env->GetIntArrayElements(actors_, NULL);\n    jint *splats = env->GetIntArrayElements(splats_, NULL);\n\n    int position;\n    for (int y = 0; y < 20; ++y) {\n        for (int x = 0; x < 20; ++x) {\n            position = (y * 20) + x;\n            map[y][x] = (odb::ETextures) level[position];\n            snapshot[y][x] = (odb::ETextures) actors[position];\n            splat[y][x] = (odb::ETextures) splats[position];\n            lightMap[y][x] = lightMapCache[y][x];\n        }\n    }\n\n    for (int y = 0; y < 20; ++y) {\n        for (int x = 0; x < 20; ++x) {\n\n            if (map[y][x] == odb::ETextures::BricksCandles) {\n\n                if (!hasCache) {\n                    odb::LightningStrategy::castLightInAllDirections(lightMapCache, 255, map, x, y);\n                    odb::LightningStrategy::castLightInAllDirections(lightMap, 255, map, x, y);\n                }\n            }\n\n            //splat?\n            if (snapshot[y][x] != odb::ETextures::None) {\n//\t\t\t\todb::LightningStrategy::castPointLight( lightMap, 16, map, x, y);\n            }\n\n        }\n    }\n\n    hasCache = true;\n\n    env->ReleaseIntArrayElements(map_, level, 0);\n    env->ReleaseIntArrayElements(actors_, actors, 0);\n    env->ReleaseIntArrayElements(splats_, splats, 0);\n}",
+      "call_stacks_count": 1,
+      "call_stacks": [
+        {
+          "stack_id": 10,
+          "source_so": "libNdkGlue.so",
+          "call_chain_text": "[Intent Domain] void GameViewGLES2 :: onDrawFrame(GL10) (W=0.33)\n    -> [Intent Domain] void GameViewGLES2 :: updateNativeSnapshot() (W=0.50)\n    -> [Target JNI Anchor] void GL2JNILib :: setMapWithSplatsAndActors(int[], unknown, int[], unknown, int[]) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lbr/odb/knights/GameViewGLES2;",
+              "class_short_name": "GameViewGLES2",
+              "method_name": "onDrawFrame",
+              "params": "GL10",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lbr/odb/knights/GameViewGLES2;",
+              "class_short_name": "GameViewGLES2",
+              "method_name": "updateNativeSnapshot",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lbr/odb/GL2JNILib;",
+              "class_short_name": "GL2JNILib",
+              "method_name": "setMapWithSplatsAndActors",
+              "params": "int[], unknown, int[], unknown, int[]",
+              "weight": 1.0
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

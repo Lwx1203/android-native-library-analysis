@@ -1,0 +1,152 @@
+{
+  "app": "io.github.muntashirakon.setedit",
+  "commented_jni_total": 1,
+  "with_code_count": 1,
+  "with_stacks_count": 1,
+  "total_stacks_collected": 3,
+  "functions": [
+    {
+      "function_name": "Java_io_github_muntashirakon_setedit_Native_readAndroidPropertyPre26",
+      "class_name": "Lio/github/muntashirakon/setedit/Native;",
+      "method_name": "readAndroidPropertyPre26",
+      "descriptor": "(I [Ljava/lang/String;)Z",
+      "source_so": "libnative-lib.so",
+      "file_path": "H:\\fdroid\\source_code\\io.github.muntashirakon.setedit\\app\\src\\main\\cpp\\native-lib.cpp",
+      "comment_before": null,
+      "comment_inside": "// true",
+      "code": "JNIEXPORT jboolean JNICALL\r\nJava_io_github_muntashirakon_setedit_Native_readAndroidPropertyPre26(JNIEnv *env, jclass __unused clazz, jint n, jobjectArray property) {\r\n    get_from_libc(\"__system_property_find_nth\", &property_find_nth);\r\n    if (property_find_nth == nullptr) return 0;\r\n    const prop_info *propInfo = property_find_nth(n);\r\n    if (propInfo == nullptr) return 0;\r\n    get_from_libc(\"__system_property_read\", &property_read);\r\n    if (property_read == nullptr) return 0;\r\n    property_read(propInfo, gName, gValue);\r\n    env->SetObjectArrayElement(property, 0, env->NewStringUTF(gName));\r\n    env->SetObjectArrayElement(property, 1, env->NewStringUTF(gValue));\r\n    return 1;  // true\r\n}",
+      "call_stacks_count": 3,
+      "call_stacks": [
+        {
+          "stack_id": 2,
+          "source_so": "libnative-lib.so",
+          "call_chain_text": "[Intent Domain] void g :: s(String, unknown, String) (W=0.33)\n    -> [Intent Domain] void g :: q() (W=0.50)\n    -> [Target JNI Anchor] boolean Native :: readAndroidPropertyPre26(int, unknown, String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryAux :: opaqueInt() (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lj2/g;",
+              "class_short_name": "g",
+              "method_name": "s",
+              "params": "String, unknown, String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lj2/g;",
+              "class_short_name": "g",
+              "method_name": "q",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "boolean",
+              "class_name": "Lio/github/muntashirakon/setedit/Native;",
+              "class_short_name": "Native",
+              "method_name": "readAndroidPropertyPre26",
+              "params": "int, unknown, String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryAux;",
+              "class_short_name": "NativeSummaryAux",
+              "method_name": "opaqueInt",
+              "params": "",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 4,
+          "source_so": "libnative-lib.so",
+          "call_chain_text": "[Intent Domain] void EditorActivity :: onItemSelected(AdapterView, unknown, View, unknown, int, unknown, long) (W=0.33)\n    -> [Intent Domain] void g :: q() (W=0.50)\n    -> [Target JNI Anchor] boolean Native :: readAndroidPropertyPre26(int, unknown, String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryAux :: opaqueInt() (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lio/github/muntashirakon/setedit/EditorActivity;",
+              "class_short_name": "EditorActivity",
+              "method_name": "onItemSelected",
+              "params": "AdapterView, unknown, View, unknown, int, unknown, long",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lj2/g;",
+              "class_short_name": "g",
+              "method_name": "q",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "boolean",
+              "class_name": "Lio/github/muntashirakon/setedit/Native;",
+              "class_short_name": "Native",
+              "method_name": "readAndroidPropertyPre26",
+              "params": "int, unknown, String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryAux;",
+              "class_short_name": "NativeSummaryAux",
+              "method_name": "opaqueInt",
+              "params": "",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 6,
+          "source_so": "libnative-lib.so",
+          "call_chain_text": "[Intent Domain] void g :: j(String) (W=0.33)\n    -> [Intent Domain] void g :: q() (W=0.50)\n    -> [Target JNI Anchor] boolean Native :: readAndroidPropertyPre26(int, unknown, String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryAux :: opaqueInt() (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lj2/g;",
+              "class_short_name": "g",
+              "method_name": "j",
+              "params": "String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lj2/g;",
+              "class_short_name": "g",
+              "method_name": "q",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "boolean",
+              "class_name": "Lio/github/muntashirakon/setedit/Native;",
+              "class_short_name": "Native",
+              "method_name": "readAndroidPropertyPre26",
+              "params": "int, unknown, String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryAux;",
+              "class_short_name": "NativeSummaryAux",
+              "method_name": "opaqueInt",
+              "params": "",
+              "weight": 0.5
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

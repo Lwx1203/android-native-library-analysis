@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="JNI 跨语言调用测试应用"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:paddingBottom="12dp" />
+
+    <Button
+        android:id="@+id/btn_scenario1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="场景1: 直接调用 Native"
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/btn_scenario2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="场景2: 多层间接调用 Native"
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/btn_scenario34"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="场景3&amp;4: C库调用 + 本地库间调用"
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/btn_scenario5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="场景5: JNI 回调托管层"
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/btn_scenario7"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="场景7: 多入口共享 Native 函数"
+        android:textAllCaps="false" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp">
+
+        <Button
+            android:id="@+id/btn_run_all"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="全部执行"
+            android:textAllCaps="false"
+            android:layout_marginEnd="4dp" />
+
+        <Button
+            android:id="@+id/btn_clear"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="清空日志"
+            android:textAllCaps="false"
+            android:layout_marginStart="4dp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#CCCCCC"
+        android:layout_marginVertical="8dp" />
+
+    <ScrollView
+        android:id="@+id/scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#F5F5F5"
+        android:padding="8dp">
+
+        <TextView
+            android:id="@+id/tv_result"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="点击按钮执行测试场景..."
+            android:textSize="13sp"
+            android:fontFamily="monospace"
+            android:textColor="#333333" />
+    </ScrollView>
+
+</LinearLayout>

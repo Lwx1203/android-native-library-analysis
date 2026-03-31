@@ -1,0 +1,261 @@
+{
+  "app": "com.proch.practicehub",
+  "commented_jni_total": 1,
+  "with_code_count": 1,
+  "with_stacks_count": 1,
+  "total_stacks_collected": 7,
+  "functions": [
+    {
+      "function_name": "Java_com_proch_practicehub_Tuner_processSampleData",
+      "class_name": "Lcom/proch/practicehub/Tuner;",
+      "method_name": "processSampleData",
+      "descriptor": "([B I)D",
+      "source_so": "libFFT.so",
+      "file_path": "H:\\260311\\com.proch.practicehub\\music-practice-tools-master\\jni\\processRawData.c",
+      "comment_before": null,
+      "comment_inside": "// big to little endian and hanning",
+      "code": "jdouble Java_com_proch_practicehub_Tuner_processSampleData(JNIEnv* env,\n\t\tjobject thiz, jbyteArray sample, jint sampleRate) {\n\tjsize sampleLength = (*env)->GetArrayLength(env, sample);\n\tjbyte* localSample = (*env)->GetByteArrayElements(env, sample, 0);\n\tdouble padSample[sampleLength / 2];\n\tint i;\n\t// big to little endian and hanning\n\tfor (i = 0; i < sampleLength; i += 2) {\n\t\tpadSample[i >> 1] = (short) ((localSample[i] & 0xFF) | ((localSample[i\n\t\t\t\t+ 1] & 0xFF) << 8));\n\t\tpadSample[i >> 1] = singleHanning(padSample[i >> 1], i >> 1,\n\t\t\t\tsampleLength / 2);\n\t}\n\tjdouble result = newFFT(padSample, sampleLength / 2, sampleRate);\n\tresult = normalizeFreq(result);\n\t(*env)->ReleaseByteArrayElements(env, sample, localSample, 0);\n\treturn result;\n}",
+      "call_stacks_count": 7,
+      "call_stacks": [
+        {
+          "stack_id": 1,
+          "source_so": "libFFT.so",
+          "call_chain_text": "[Intent Domain] void Tuner :: run() (W=0.50)\n    -> [Target JNI Anchor] double Tuner :: processSampleData(byte[], unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: GetArrayLength(Object, unknown, byte[]) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/proch/practicehub/Tuner;",
+              "class_short_name": "Tuner",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "double",
+              "class_name": "Lcom/proch/practicehub/Tuner;",
+              "class_short_name": "Tuner",
+              "method_name": "processSampleData",
+              "params": "byte[], unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "GetArrayLength",
+              "params": "Object, unknown, byte[]",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 2,
+          "source_so": "libFFT.so",
+          "call_chain_text": "[Intent Domain] void Tuner :: run() (W=0.50)\n    -> [Target JNI Anchor] double Tuner :: processSampleData(byte[], unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryAux :: opaqueInt() (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/proch/practicehub/Tuner;",
+              "class_short_name": "Tuner",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "double",
+              "class_name": "Lcom/proch/practicehub/Tuner;",
+              "class_short_name": "Tuner",
+              "method_name": "processSampleData",
+              "params": "byte[], unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryAux;",
+              "class_short_name": "NativeSummaryAux",
+              "method_name": "opaqueInt",
+              "params": "",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 3,
+          "source_so": "libFFT.so",
+          "call_chain_text": "[Intent Domain] void Tuner :: run() (W=0.50)\n    -> [Target JNI Anchor] double Tuner :: processSampleData(byte[], unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: cos(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/proch/practicehub/Tuner;",
+              "class_short_name": "Tuner",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "double",
+              "class_name": "Lcom/proch/practicehub/Tuner;",
+              "class_short_name": "Tuner",
+              "method_name": "processSampleData",
+              "params": "byte[], unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "cos",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 4,
+          "source_so": "libFFT.so",
+          "call_chain_text": "[Intent Domain] void Tuner :: run() (W=0.50)\n    -> [Target JNI Anchor] double Tuner :: processSampleData(byte[], unknown, int) (W=1.00)\n    -> [Core Execution Domain] double NativeSummaryFuncs :: sin(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/proch/practicehub/Tuner;",
+              "class_short_name": "Tuner",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "double",
+              "class_name": "Lcom/proch/practicehub/Tuner;",
+              "class_short_name": "Tuner",
+              "method_name": "processSampleData",
+              "params": "byte[], unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "double",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "sin",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 5,
+          "source_so": "libFFT.so",
+          "call_chain_text": "[Intent Domain] void Tuner :: run() (W=0.50)\n    -> [Target JNI Anchor] double Tuner :: processSampleData(byte[], unknown, int) (W=1.00)\n    -> [Core Execution Domain] double NativeSummaryFuncs :: cos(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/proch/practicehub/Tuner;",
+              "class_short_name": "Tuner",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "double",
+              "class_name": "Lcom/proch/practicehub/Tuner;",
+              "class_short_name": "Tuner",
+              "method_name": "processSampleData",
+              "params": "byte[], unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "double",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "cos",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 6,
+          "source_so": "libFFT.so",
+          "call_chain_text": "[Intent Domain] void Tuner :: run() (W=0.50)\n    -> [Target JNI Anchor] double Tuner :: processSampleData(byte[], unknown, int) (W=1.00)\n    -> [Core Execution Domain] double NativeSummaryFuncs :: sqrt(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/proch/practicehub/Tuner;",
+              "class_short_name": "Tuner",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "double",
+              "class_name": "Lcom/proch/practicehub/Tuner;",
+              "class_short_name": "Tuner",
+              "method_name": "processSampleData",
+              "params": "byte[], unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "double",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "sqrt",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 7,
+          "source_so": "libFFT.so",
+          "call_chain_text": "[Intent Domain] void Tuner :: run() (W=0.50)\n    -> [Target JNI Anchor] double Tuner :: processSampleData(byte[], unknown, int) (W=1.00)\n    -> [Core Execution Domain] double NativeSummaryFuncs :: cos(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/proch/practicehub/Tuner;",
+              "class_short_name": "Tuner",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "double",
+              "class_name": "Lcom/proch/practicehub/Tuner;",
+              "class_short_name": "Tuner",
+              "method_name": "processSampleData",
+              "params": "byte[], unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "double",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "cos",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

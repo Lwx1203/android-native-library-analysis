@@ -1,0 +1,2935 @@
+{
+  "app": "com.sgr_b2.compass",
+  "commented_jni_total": 2,
+  "with_code_count": 2,
+  "with_stacks_count": 2,
+  "total_stacks_collected": 45,
+  "functions": [
+    {
+      "function_name": "Java_com_sgr_1b2_compass_jni_CCJNI_cmps_1hrt_1marshall",
+      "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+      "method_name": "cmps_hrt_marshall",
+      "descriptor": "(Ljava/lang/String; F F)Ljava/lang/String;",
+      "source_so": "libcompass.so",
+      "file_path": "H:\\fdroid\\source_code\\com.sgr_b2.compass\\jni\\compass_jni_hrt.c",
+      "comment_before": null,
+      "comment_inside": "/* include space for trailing 0 */",
+      "code": "jstring JNICALL Java_com_sgr_1b2_compass_jni_CCJNI_cmps_1hrt_1marshall(JNIEnv *env, jclass cls, jstring title, jfloat lat, jfloat lon) {\n\tconst char *c_title = (title == 0 ? 0 : (*env)->GetStringUTFChars(env, title, 0));\n\n\tint text_size = cmps_hrt_marshall(0, 0, c_title, lat, lon);\n\tif (text_size <= 0) {\n\t\tif (c_title != 0) {\n\t\t\t(*env)->ReleaseStringUTFChars(env, title, c_title);\n\t\t}\n\n\t\treturn 0;\n\t}\n\n\tchar *text = malloc(++text_size); /* include space for trailing 0 */\n\tcmps_hrt_marshall(text, text_size, c_title, lat, lon);\n\tjstring j_text = (*env)->NewStringUTF(env, text);\n\tfree(text);\n\n\tif (c_title != 0) {\n\t\t(*env)->ReleaseStringUTFChars(env, title, c_title);\n\t}\n\n\treturn j_text;\n}",
+      "call_stacks_count": 33,
+      "call_stacks": [
+        {
+          "stack_id": 22,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] boolean BookmarksActivity :: onContextItemSelected(MenuItem) (W=0.20)\n    -> [Intent Domain] boolean a :: a(Context, unknown, d) (W=0.25)\n    -> [Intent Domain] String f :: a(Context, unknown, d, unknown, String) (W=0.33)\n    -> [Intent Domain] String e :: a(String, unknown, float, unknown, float) (W=0.50)\n    -> [Target JNI Anchor] String CCJNI :: cmps_hrt_marshall(String, unknown, float, unknown, float) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: snprintf(Object, unknown, Object, unknown, String, unknown, String, unknown, String, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/BookmarksActivity;",
+              "class_short_name": "BookmarksActivity",
+              "method_name": "onContextItemSelected",
+              "params": "MenuItem",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "Context, unknown, d",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/b/f;",
+              "class_short_name": "f",
+              "method_name": "a",
+              "params": "Context, unknown, d, unknown, String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_marshall",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "snprintf",
+              "params": "Object, unknown, Object, unknown, String, unknown, String, unknown, String, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 23,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] boolean BookmarksActivity :: onContextItemSelected(MenuItem) (W=0.20)\n    -> [Intent Domain] boolean a :: a(Context, unknown, d) (W=0.25)\n    -> [Intent Domain] String f :: a(Context, unknown, d, unknown, String) (W=0.33)\n    -> [Intent Domain] String e :: a(String, unknown, float, unknown, float) (W=0.50)\n    -> [Target JNI Anchor] String CCJNI :: cmps_hrt_marshall(String, unknown, float, unknown, float) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: snprintf(int, unknown, String, unknown, String, unknown, String, unknown, int, unknown, Object, unknown, String, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/BookmarksActivity;",
+              "class_short_name": "BookmarksActivity",
+              "method_name": "onContextItemSelected",
+              "params": "MenuItem",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "Context, unknown, d",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/b/f;",
+              "class_short_name": "f",
+              "method_name": "a",
+              "params": "Context, unknown, d, unknown, String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_marshall",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "snprintf",
+              "params": "int, unknown, String, unknown, String, unknown, String, unknown, int, unknown, Object, unknown, String, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 24,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] boolean BookmarksActivity :: onContextItemSelected(MenuItem) (W=0.20)\n    -> [Intent Domain] boolean a :: a(Context, unknown, d) (W=0.25)\n    -> [Intent Domain] String f :: a(Context, unknown, d, unknown, String) (W=0.33)\n    -> [Intent Domain] String e :: a(String, unknown, float, unknown, float) (W=0.50)\n    -> [Target JNI Anchor] String CCJNI :: cmps_hrt_marshall(String, unknown, float, unknown, float) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: modff(float, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/BookmarksActivity;",
+              "class_short_name": "BookmarksActivity",
+              "method_name": "onContextItemSelected",
+              "params": "MenuItem",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "Context, unknown, d",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/b/f;",
+              "class_short_name": "f",
+              "method_name": "a",
+              "params": "Context, unknown, d, unknown, String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_marshall",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "modff",
+              "params": "float, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 25,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] boolean BookmarksActivity :: onContextItemSelected(MenuItem) (W=0.20)\n    -> [Intent Domain] boolean a :: a(Context, unknown, d) (W=0.25)\n    -> [Intent Domain] String f :: a(Context, unknown, d, unknown, String) (W=0.33)\n    -> [Intent Domain] String e :: a(String, unknown, float, unknown, float) (W=0.50)\n    -> [Target JNI Anchor] String CCJNI :: cmps_hrt_marshall(String, unknown, float, unknown, float) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: snprintf(Object, unknown, Object, unknown, String, unknown, String, unknown, String, unknown, Object, unknown, Object, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/BookmarksActivity;",
+              "class_short_name": "BookmarksActivity",
+              "method_name": "onContextItemSelected",
+              "params": "MenuItem",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "Context, unknown, d",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/b/f;",
+              "class_short_name": "f",
+              "method_name": "a",
+              "params": "Context, unknown, d, unknown, String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_marshall",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "snprintf",
+              "params": "Object, unknown, Object, unknown, String, unknown, String, unknown, String, unknown, Object, unknown, Object, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 26,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] boolean BookmarksActivity :: onContextItemSelected(MenuItem) (W=0.20)\n    -> [Intent Domain] boolean a :: a(Context, unknown, d) (W=0.25)\n    -> [Intent Domain] String f :: a(Context, unknown, d, unknown, String) (W=0.33)\n    -> [Intent Domain] String e :: a(String, unknown, float, unknown, float) (W=0.50)\n    -> [Target JNI Anchor] String CCJNI :: cmps_hrt_marshall(String, unknown, float, unknown, float) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: snprintf(Object, unknown, Object, unknown, String, unknown, String, unknown, int, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/BookmarksActivity;",
+              "class_short_name": "BookmarksActivity",
+              "method_name": "onContextItemSelected",
+              "params": "MenuItem",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "Context, unknown, d",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/b/f;",
+              "class_short_name": "f",
+              "method_name": "a",
+              "params": "Context, unknown, d, unknown, String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_marshall",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "snprintf",
+              "params": "Object, unknown, Object, unknown, String, unknown, String, unknown, int, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 27,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] boolean BookmarksActivity :: onContextItemSelected(MenuItem) (W=0.20)\n    -> [Intent Domain] boolean a :: a(Context, unknown, d) (W=0.25)\n    -> [Intent Domain] String f :: a(Context, unknown, d, unknown, String) (W=0.33)\n    -> [Intent Domain] String e :: a(String, unknown, float, unknown, float) (W=0.50)\n    -> [Target JNI Anchor] String CCJNI :: cmps_hrt_marshall(String, unknown, float, unknown, float) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryAux :: opaqueInt() (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/BookmarksActivity;",
+              "class_short_name": "BookmarksActivity",
+              "method_name": "onContextItemSelected",
+              "params": "MenuItem",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "Context, unknown, d",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/b/f;",
+              "class_short_name": "f",
+              "method_name": "a",
+              "params": "Context, unknown, d, unknown, String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_marshall",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryAux;",
+              "class_short_name": "NativeSummaryAux",
+              "method_name": "opaqueInt",
+              "params": "",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 28,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] boolean BookmarksActivity :: onContextItemSelected(MenuItem) (W=0.20)\n    -> [Intent Domain] boolean a :: a(Context, unknown, d) (W=0.25)\n    -> [Intent Domain] String f :: a(Context, unknown, d, unknown, String) (W=0.33)\n    -> [Intent Domain] String e :: a(String, unknown, float, unknown, float) (W=0.50)\n    -> [Target JNI Anchor] String CCJNI :: cmps_hrt_marshall(String, unknown, float, unknown, float) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: snprintf(Object, unknown, Object, unknown, String, unknown, String, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/BookmarksActivity;",
+              "class_short_name": "BookmarksActivity",
+              "method_name": "onContextItemSelected",
+              "params": "MenuItem",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "Context, unknown, d",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/b/f;",
+              "class_short_name": "f",
+              "method_name": "a",
+              "params": "Context, unknown, d, unknown, String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_marshall",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "snprintf",
+              "params": "Object, unknown, Object, unknown, String, unknown, String, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 29,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] boolean BookmarksActivity :: onContextItemSelected(MenuItem) (W=0.20)\n    -> [Intent Domain] boolean a :: a(Context, unknown, d) (W=0.25)\n    -> [Intent Domain] String f :: a(Context, unknown, d, unknown, String) (W=0.33)\n    -> [Intent Domain] String e :: a(String, unknown, float, unknown, float) (W=0.50)\n    -> [Target JNI Anchor] String CCJNI :: cmps_hrt_marshall(String, unknown, float, unknown, float) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: snprintf(int, unknown, String, unknown, String, unknown, String, unknown, String, unknown, int, unknown, Object, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/BookmarksActivity;",
+              "class_short_name": "BookmarksActivity",
+              "method_name": "onContextItemSelected",
+              "params": "MenuItem",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "Context, unknown, d",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/b/f;",
+              "class_short_name": "f",
+              "method_name": "a",
+              "params": "Context, unknown, d, unknown, String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_marshall",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "snprintf",
+              "params": "int, unknown, String, unknown, String, unknown, String, unknown, String, unknown, int, unknown, Object, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 30,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] boolean BookmarksActivity :: onContextItemSelected(MenuItem) (W=0.20)\n    -> [Intent Domain] boolean a :: a(Context, unknown, d) (W=0.25)\n    -> [Intent Domain] String f :: a(Context, unknown, d, unknown, String) (W=0.33)\n    -> [Intent Domain] String e :: a(String, unknown, float, unknown, float) (W=0.50)\n    -> [Target JNI Anchor] String CCJNI :: cmps_hrt_marshall(String, unknown, float, unknown, float) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: free(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/BookmarksActivity;",
+              "class_short_name": "BookmarksActivity",
+              "method_name": "onContextItemSelected",
+              "params": "MenuItem",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "Context, unknown, d",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/b/f;",
+              "class_short_name": "f",
+              "method_name": "a",
+              "params": "Context, unknown, d, unknown, String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_marshall",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "free",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 31,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] boolean BookmarksActivity :: onContextItemSelected(MenuItem) (W=0.20)\n    -> [Intent Domain] boolean a :: a(Context, unknown, d) (W=0.25)\n    -> [Intent Domain] String f :: a(Context, unknown, d, unknown, String) (W=0.33)\n    -> [Intent Domain] String e :: a(String, unknown, float, unknown, float) (W=0.50)\n    -> [Target JNI Anchor] String CCJNI :: cmps_hrt_marshall(String, unknown, float, unknown, float) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: snprintf(Object, unknown, Object, unknown, String, unknown, String, unknown, Object, unknown, Object, unknown, String, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/BookmarksActivity;",
+              "class_short_name": "BookmarksActivity",
+              "method_name": "onContextItemSelected",
+              "params": "MenuItem",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "Context, unknown, d",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/b/f;",
+              "class_short_name": "f",
+              "method_name": "a",
+              "params": "Context, unknown, d, unknown, String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_marshall",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "snprintf",
+              "params": "Object, unknown, Object, unknown, String, unknown, String, unknown, Object, unknown, Object, unknown, String, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 32,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] boolean BookmarksActivity :: onContextItemSelected(MenuItem) (W=0.20)\n    -> [Intent Domain] boolean a :: a(Context, unknown, d) (W=0.25)\n    -> [Intent Domain] String f :: a(Context, unknown, d, unknown, String) (W=0.33)\n    -> [Intent Domain] String e :: a(String, unknown, float, unknown, float) (W=0.50)\n    -> [Target JNI Anchor] String CCJNI :: cmps_hrt_marshall(String, unknown, float, unknown, float) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: malloc(String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/BookmarksActivity;",
+              "class_short_name": "BookmarksActivity",
+              "method_name": "onContextItemSelected",
+              "params": "MenuItem",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "Context, unknown, d",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/b/f;",
+              "class_short_name": "f",
+              "method_name": "a",
+              "params": "Context, unknown, d, unknown, String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_marshall",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "malloc",
+              "params": "String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 55,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] void DistressCallService :: onLocationChanged(Location) (W=0.17)\n    -> [Intent Domain] boolean DistressCallService :: b(Location) (W=0.20)\n    -> [Intent Domain] String DistressCallService :: a(Location) (W=0.25)\n    -> [Intent Domain] String f :: a(Context, unknown, d, unknown, String) (W=0.33)\n    -> [Intent Domain] String e :: a(String, unknown, float, unknown, float) (W=0.50)\n    -> [Target JNI Anchor] String CCJNI :: cmps_hrt_marshall(String, unknown, float, unknown, float) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: snprintf(Object, unknown, Object, unknown, String, unknown, String, unknown, String, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/sgr_b2/compass/activities/DistressCallService;",
+              "class_short_name": "DistressCallService",
+              "method_name": "onLocationChanged",
+              "params": "Location",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/DistressCallService;",
+              "class_short_name": "DistressCallService",
+              "method_name": "b",
+              "params": "Location",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/activities/DistressCallService;",
+              "class_short_name": "DistressCallService",
+              "method_name": "a",
+              "params": "Location",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/b/f;",
+              "class_short_name": "f",
+              "method_name": "a",
+              "params": "Context, unknown, d, unknown, String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_marshall",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "snprintf",
+              "params": "Object, unknown, Object, unknown, String, unknown, String, unknown, String, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 56,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] void DistressCallService :: onLocationChanged(Location) (W=0.17)\n    -> [Intent Domain] boolean DistressCallService :: b(Location) (W=0.20)\n    -> [Intent Domain] String DistressCallService :: a(Location) (W=0.25)\n    -> [Intent Domain] String f :: a(Context, unknown, d, unknown, String) (W=0.33)\n    -> [Intent Domain] String e :: a(String, unknown, float, unknown, float) (W=0.50)\n    -> [Target JNI Anchor] String CCJNI :: cmps_hrt_marshall(String, unknown, float, unknown, float) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: snprintf(int, unknown, String, unknown, String, unknown, String, unknown, int, unknown, Object, unknown, String, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/sgr_b2/compass/activities/DistressCallService;",
+              "class_short_name": "DistressCallService",
+              "method_name": "onLocationChanged",
+              "params": "Location",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/DistressCallService;",
+              "class_short_name": "DistressCallService",
+              "method_name": "b",
+              "params": "Location",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/activities/DistressCallService;",
+              "class_short_name": "DistressCallService",
+              "method_name": "a",
+              "params": "Location",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/b/f;",
+              "class_short_name": "f",
+              "method_name": "a",
+              "params": "Context, unknown, d, unknown, String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_marshall",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "snprintf",
+              "params": "int, unknown, String, unknown, String, unknown, String, unknown, int, unknown, Object, unknown, String, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 57,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] void DistressCallService :: onLocationChanged(Location) (W=0.17)\n    -> [Intent Domain] boolean DistressCallService :: b(Location) (W=0.20)\n    -> [Intent Domain] String DistressCallService :: a(Location) (W=0.25)\n    -> [Intent Domain] String f :: a(Context, unknown, d, unknown, String) (W=0.33)\n    -> [Intent Domain] String e :: a(String, unknown, float, unknown, float) (W=0.50)\n    -> [Target JNI Anchor] String CCJNI :: cmps_hrt_marshall(String, unknown, float, unknown, float) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: modff(float, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/sgr_b2/compass/activities/DistressCallService;",
+              "class_short_name": "DistressCallService",
+              "method_name": "onLocationChanged",
+              "params": "Location",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/DistressCallService;",
+              "class_short_name": "DistressCallService",
+              "method_name": "b",
+              "params": "Location",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/activities/DistressCallService;",
+              "class_short_name": "DistressCallService",
+              "method_name": "a",
+              "params": "Location",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/b/f;",
+              "class_short_name": "f",
+              "method_name": "a",
+              "params": "Context, unknown, d, unknown, String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_marshall",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "modff",
+              "params": "float, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 58,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] void DistressCallService :: onLocationChanged(Location) (W=0.17)\n    -> [Intent Domain] boolean DistressCallService :: b(Location) (W=0.20)\n    -> [Intent Domain] String DistressCallService :: a(Location) (W=0.25)\n    -> [Intent Domain] String f :: a(Context, unknown, d, unknown, String) (W=0.33)\n    -> [Intent Domain] String e :: a(String, unknown, float, unknown, float) (W=0.50)\n    -> [Target JNI Anchor] String CCJNI :: cmps_hrt_marshall(String, unknown, float, unknown, float) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: snprintf(Object, unknown, Object, unknown, String, unknown, String, unknown, String, unknown, Object, unknown, Object, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/sgr_b2/compass/activities/DistressCallService;",
+              "class_short_name": "DistressCallService",
+              "method_name": "onLocationChanged",
+              "params": "Location",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/DistressCallService;",
+              "class_short_name": "DistressCallService",
+              "method_name": "b",
+              "params": "Location",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/activities/DistressCallService;",
+              "class_short_name": "DistressCallService",
+              "method_name": "a",
+              "params": "Location",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/b/f;",
+              "class_short_name": "f",
+              "method_name": "a",
+              "params": "Context, unknown, d, unknown, String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_marshall",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "snprintf",
+              "params": "Object, unknown, Object, unknown, String, unknown, String, unknown, String, unknown, Object, unknown, Object, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 59,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] void DistressCallService :: onLocationChanged(Location) (W=0.17)\n    -> [Intent Domain] boolean DistressCallService :: b(Location) (W=0.20)\n    -> [Intent Domain] String DistressCallService :: a(Location) (W=0.25)\n    -> [Intent Domain] String f :: a(Context, unknown, d, unknown, String) (W=0.33)\n    -> [Intent Domain] String e :: a(String, unknown, float, unknown, float) (W=0.50)\n    -> [Target JNI Anchor] String CCJNI :: cmps_hrt_marshall(String, unknown, float, unknown, float) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: snprintf(Object, unknown, Object, unknown, String, unknown, String, unknown, int, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/sgr_b2/compass/activities/DistressCallService;",
+              "class_short_name": "DistressCallService",
+              "method_name": "onLocationChanged",
+              "params": "Location",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/DistressCallService;",
+              "class_short_name": "DistressCallService",
+              "method_name": "b",
+              "params": "Location",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/activities/DistressCallService;",
+              "class_short_name": "DistressCallService",
+              "method_name": "a",
+              "params": "Location",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/b/f;",
+              "class_short_name": "f",
+              "method_name": "a",
+              "params": "Context, unknown, d, unknown, String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_marshall",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "snprintf",
+              "params": "Object, unknown, Object, unknown, String, unknown, String, unknown, int, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 60,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] void DistressCallService :: onLocationChanged(Location) (W=0.17)\n    -> [Intent Domain] boolean DistressCallService :: b(Location) (W=0.20)\n    -> [Intent Domain] String DistressCallService :: a(Location) (W=0.25)\n    -> [Intent Domain] String f :: a(Context, unknown, d, unknown, String) (W=0.33)\n    -> [Intent Domain] String e :: a(String, unknown, float, unknown, float) (W=0.50)\n    -> [Target JNI Anchor] String CCJNI :: cmps_hrt_marshall(String, unknown, float, unknown, float) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryAux :: opaqueInt() (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/sgr_b2/compass/activities/DistressCallService;",
+              "class_short_name": "DistressCallService",
+              "method_name": "onLocationChanged",
+              "params": "Location",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/DistressCallService;",
+              "class_short_name": "DistressCallService",
+              "method_name": "b",
+              "params": "Location",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/activities/DistressCallService;",
+              "class_short_name": "DistressCallService",
+              "method_name": "a",
+              "params": "Location",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/b/f;",
+              "class_short_name": "f",
+              "method_name": "a",
+              "params": "Context, unknown, d, unknown, String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_marshall",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryAux;",
+              "class_short_name": "NativeSummaryAux",
+              "method_name": "opaqueInt",
+              "params": "",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 61,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] void DistressCallService :: onLocationChanged(Location) (W=0.17)\n    -> [Intent Domain] boolean DistressCallService :: b(Location) (W=0.20)\n    -> [Intent Domain] String DistressCallService :: a(Location) (W=0.25)\n    -> [Intent Domain] String f :: a(Context, unknown, d, unknown, String) (W=0.33)\n    -> [Intent Domain] String e :: a(String, unknown, float, unknown, float) (W=0.50)\n    -> [Target JNI Anchor] String CCJNI :: cmps_hrt_marshall(String, unknown, float, unknown, float) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: snprintf(Object, unknown, Object, unknown, String, unknown, String, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/sgr_b2/compass/activities/DistressCallService;",
+              "class_short_name": "DistressCallService",
+              "method_name": "onLocationChanged",
+              "params": "Location",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/DistressCallService;",
+              "class_short_name": "DistressCallService",
+              "method_name": "b",
+              "params": "Location",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/activities/DistressCallService;",
+              "class_short_name": "DistressCallService",
+              "method_name": "a",
+              "params": "Location",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/b/f;",
+              "class_short_name": "f",
+              "method_name": "a",
+              "params": "Context, unknown, d, unknown, String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_marshall",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "snprintf",
+              "params": "Object, unknown, Object, unknown, String, unknown, String, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 62,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] void DistressCallService :: onLocationChanged(Location) (W=0.17)\n    -> [Intent Domain] boolean DistressCallService :: b(Location) (W=0.20)\n    -> [Intent Domain] String DistressCallService :: a(Location) (W=0.25)\n    -> [Intent Domain] String f :: a(Context, unknown, d, unknown, String) (W=0.33)\n    -> [Intent Domain] String e :: a(String, unknown, float, unknown, float) (W=0.50)\n    -> [Target JNI Anchor] String CCJNI :: cmps_hrt_marshall(String, unknown, float, unknown, float) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: snprintf(int, unknown, String, unknown, String, unknown, String, unknown, String, unknown, int, unknown, Object, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/sgr_b2/compass/activities/DistressCallService;",
+              "class_short_name": "DistressCallService",
+              "method_name": "onLocationChanged",
+              "params": "Location",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/DistressCallService;",
+              "class_short_name": "DistressCallService",
+              "method_name": "b",
+              "params": "Location",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/activities/DistressCallService;",
+              "class_short_name": "DistressCallService",
+              "method_name": "a",
+              "params": "Location",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/b/f;",
+              "class_short_name": "f",
+              "method_name": "a",
+              "params": "Context, unknown, d, unknown, String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_marshall",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "snprintf",
+              "params": "int, unknown, String, unknown, String, unknown, String, unknown, String, unknown, int, unknown, Object, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 63,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] void DistressCallService :: onLocationChanged(Location) (W=0.17)\n    -> [Intent Domain] boolean DistressCallService :: b(Location) (W=0.20)\n    -> [Intent Domain] String DistressCallService :: a(Location) (W=0.25)\n    -> [Intent Domain] String f :: a(Context, unknown, d, unknown, String) (W=0.33)\n    -> [Intent Domain] String e :: a(String, unknown, float, unknown, float) (W=0.50)\n    -> [Target JNI Anchor] String CCJNI :: cmps_hrt_marshall(String, unknown, float, unknown, float) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: free(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/sgr_b2/compass/activities/DistressCallService;",
+              "class_short_name": "DistressCallService",
+              "method_name": "onLocationChanged",
+              "params": "Location",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/DistressCallService;",
+              "class_short_name": "DistressCallService",
+              "method_name": "b",
+              "params": "Location",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/activities/DistressCallService;",
+              "class_short_name": "DistressCallService",
+              "method_name": "a",
+              "params": "Location",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/b/f;",
+              "class_short_name": "f",
+              "method_name": "a",
+              "params": "Context, unknown, d, unknown, String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_marshall",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "free",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 64,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] void DistressCallService :: onLocationChanged(Location) (W=0.17)\n    -> [Intent Domain] boolean DistressCallService :: b(Location) (W=0.20)\n    -> [Intent Domain] String DistressCallService :: a(Location) (W=0.25)\n    -> [Intent Domain] String f :: a(Context, unknown, d, unknown, String) (W=0.33)\n    -> [Intent Domain] String e :: a(String, unknown, float, unknown, float) (W=0.50)\n    -> [Target JNI Anchor] String CCJNI :: cmps_hrt_marshall(String, unknown, float, unknown, float) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: snprintf(Object, unknown, Object, unknown, String, unknown, String, unknown, Object, unknown, Object, unknown, String, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/sgr_b2/compass/activities/DistressCallService;",
+              "class_short_name": "DistressCallService",
+              "method_name": "onLocationChanged",
+              "params": "Location",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/DistressCallService;",
+              "class_short_name": "DistressCallService",
+              "method_name": "b",
+              "params": "Location",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/activities/DistressCallService;",
+              "class_short_name": "DistressCallService",
+              "method_name": "a",
+              "params": "Location",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/b/f;",
+              "class_short_name": "f",
+              "method_name": "a",
+              "params": "Context, unknown, d, unknown, String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_marshall",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "snprintf",
+              "params": "Object, unknown, Object, unknown, String, unknown, String, unknown, Object, unknown, Object, unknown, String, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 65,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] void DistressCallService :: onLocationChanged(Location) (W=0.17)\n    -> [Intent Domain] boolean DistressCallService :: b(Location) (W=0.20)\n    -> [Intent Domain] String DistressCallService :: a(Location) (W=0.25)\n    -> [Intent Domain] String f :: a(Context, unknown, d, unknown, String) (W=0.33)\n    -> [Intent Domain] String e :: a(String, unknown, float, unknown, float) (W=0.50)\n    -> [Target JNI Anchor] String CCJNI :: cmps_hrt_marshall(String, unknown, float, unknown, float) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: malloc(String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/sgr_b2/compass/activities/DistressCallService;",
+              "class_short_name": "DistressCallService",
+              "method_name": "onLocationChanged",
+              "params": "Location",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/DistressCallService;",
+              "class_short_name": "DistressCallService",
+              "method_name": "b",
+              "params": "Location",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/activities/DistressCallService;",
+              "class_short_name": "DistressCallService",
+              "method_name": "a",
+              "params": "Location",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/b/f;",
+              "class_short_name": "f",
+              "method_name": "a",
+              "params": "Context, unknown, d, unknown, String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_marshall",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "malloc",
+              "params": "String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 82,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] boolean MainActivity :: onOptionsItemSelected(MenuItem) (W=0.20)\n    -> [Intent Domain] boolean a :: a(Context, unknown, d) (W=0.25)\n    -> [Intent Domain] String f :: a(Context, unknown, d, unknown, String) (W=0.33)\n    -> [Intent Domain] String e :: a(String, unknown, float, unknown, float) (W=0.50)\n    -> [Target JNI Anchor] String CCJNI :: cmps_hrt_marshall(String, unknown, float, unknown, float) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: snprintf(Object, unknown, Object, unknown, String, unknown, String, unknown, String, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/MainActivity;",
+              "class_short_name": "MainActivity",
+              "method_name": "onOptionsItemSelected",
+              "params": "MenuItem",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "Context, unknown, d",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/b/f;",
+              "class_short_name": "f",
+              "method_name": "a",
+              "params": "Context, unknown, d, unknown, String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_marshall",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "snprintf",
+              "params": "Object, unknown, Object, unknown, String, unknown, String, unknown, String, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 83,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] boolean MainActivity :: onOptionsItemSelected(MenuItem) (W=0.20)\n    -> [Intent Domain] boolean a :: a(Context, unknown, d) (W=0.25)\n    -> [Intent Domain] String f :: a(Context, unknown, d, unknown, String) (W=0.33)\n    -> [Intent Domain] String e :: a(String, unknown, float, unknown, float) (W=0.50)\n    -> [Target JNI Anchor] String CCJNI :: cmps_hrt_marshall(String, unknown, float, unknown, float) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: snprintf(int, unknown, String, unknown, String, unknown, String, unknown, int, unknown, Object, unknown, String, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/MainActivity;",
+              "class_short_name": "MainActivity",
+              "method_name": "onOptionsItemSelected",
+              "params": "MenuItem",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "Context, unknown, d",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/b/f;",
+              "class_short_name": "f",
+              "method_name": "a",
+              "params": "Context, unknown, d, unknown, String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_marshall",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "snprintf",
+              "params": "int, unknown, String, unknown, String, unknown, String, unknown, int, unknown, Object, unknown, String, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 84,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] boolean MainActivity :: onOptionsItemSelected(MenuItem) (W=0.20)\n    -> [Intent Domain] boolean a :: a(Context, unknown, d) (W=0.25)\n    -> [Intent Domain] String f :: a(Context, unknown, d, unknown, String) (W=0.33)\n    -> [Intent Domain] String e :: a(String, unknown, float, unknown, float) (W=0.50)\n    -> [Target JNI Anchor] String CCJNI :: cmps_hrt_marshall(String, unknown, float, unknown, float) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: modff(float, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/MainActivity;",
+              "class_short_name": "MainActivity",
+              "method_name": "onOptionsItemSelected",
+              "params": "MenuItem",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "Context, unknown, d",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/b/f;",
+              "class_short_name": "f",
+              "method_name": "a",
+              "params": "Context, unknown, d, unknown, String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_marshall",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "modff",
+              "params": "float, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 85,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] boolean MainActivity :: onOptionsItemSelected(MenuItem) (W=0.20)\n    -> [Intent Domain] boolean a :: a(Context, unknown, d) (W=0.25)\n    -> [Intent Domain] String f :: a(Context, unknown, d, unknown, String) (W=0.33)\n    -> [Intent Domain] String e :: a(String, unknown, float, unknown, float) (W=0.50)\n    -> [Target JNI Anchor] String CCJNI :: cmps_hrt_marshall(String, unknown, float, unknown, float) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: snprintf(Object, unknown, Object, unknown, String, unknown, String, unknown, String, unknown, Object, unknown, Object, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/MainActivity;",
+              "class_short_name": "MainActivity",
+              "method_name": "onOptionsItemSelected",
+              "params": "MenuItem",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "Context, unknown, d",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/b/f;",
+              "class_short_name": "f",
+              "method_name": "a",
+              "params": "Context, unknown, d, unknown, String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_marshall",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "snprintf",
+              "params": "Object, unknown, Object, unknown, String, unknown, String, unknown, String, unknown, Object, unknown, Object, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 86,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] boolean MainActivity :: onOptionsItemSelected(MenuItem) (W=0.20)\n    -> [Intent Domain] boolean a :: a(Context, unknown, d) (W=0.25)\n    -> [Intent Domain] String f :: a(Context, unknown, d, unknown, String) (W=0.33)\n    -> [Intent Domain] String e :: a(String, unknown, float, unknown, float) (W=0.50)\n    -> [Target JNI Anchor] String CCJNI :: cmps_hrt_marshall(String, unknown, float, unknown, float) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: snprintf(Object, unknown, Object, unknown, String, unknown, String, unknown, int, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/MainActivity;",
+              "class_short_name": "MainActivity",
+              "method_name": "onOptionsItemSelected",
+              "params": "MenuItem",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "Context, unknown, d",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/b/f;",
+              "class_short_name": "f",
+              "method_name": "a",
+              "params": "Context, unknown, d, unknown, String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_marshall",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "snprintf",
+              "params": "Object, unknown, Object, unknown, String, unknown, String, unknown, int, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 87,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] boolean MainActivity :: onOptionsItemSelected(MenuItem) (W=0.20)\n    -> [Intent Domain] boolean a :: a(Context, unknown, d) (W=0.25)\n    -> [Intent Domain] String f :: a(Context, unknown, d, unknown, String) (W=0.33)\n    -> [Intent Domain] String e :: a(String, unknown, float, unknown, float) (W=0.50)\n    -> [Target JNI Anchor] String CCJNI :: cmps_hrt_marshall(String, unknown, float, unknown, float) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryAux :: opaqueInt() (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/MainActivity;",
+              "class_short_name": "MainActivity",
+              "method_name": "onOptionsItemSelected",
+              "params": "MenuItem",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "Context, unknown, d",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/b/f;",
+              "class_short_name": "f",
+              "method_name": "a",
+              "params": "Context, unknown, d, unknown, String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_marshall",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryAux;",
+              "class_short_name": "NativeSummaryAux",
+              "method_name": "opaqueInt",
+              "params": "",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 88,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] boolean MainActivity :: onOptionsItemSelected(MenuItem) (W=0.20)\n    -> [Intent Domain] boolean a :: a(Context, unknown, d) (W=0.25)\n    -> [Intent Domain] String f :: a(Context, unknown, d, unknown, String) (W=0.33)\n    -> [Intent Domain] String e :: a(String, unknown, float, unknown, float) (W=0.50)\n    -> [Target JNI Anchor] String CCJNI :: cmps_hrt_marshall(String, unknown, float, unknown, float) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: snprintf(Object, unknown, Object, unknown, String, unknown, String, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/MainActivity;",
+              "class_short_name": "MainActivity",
+              "method_name": "onOptionsItemSelected",
+              "params": "MenuItem",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "Context, unknown, d",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/b/f;",
+              "class_short_name": "f",
+              "method_name": "a",
+              "params": "Context, unknown, d, unknown, String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_marshall",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "snprintf",
+              "params": "Object, unknown, Object, unknown, String, unknown, String, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 89,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] boolean MainActivity :: onOptionsItemSelected(MenuItem) (W=0.20)\n    -> [Intent Domain] boolean a :: a(Context, unknown, d) (W=0.25)\n    -> [Intent Domain] String f :: a(Context, unknown, d, unknown, String) (W=0.33)\n    -> [Intent Domain] String e :: a(String, unknown, float, unknown, float) (W=0.50)\n    -> [Target JNI Anchor] String CCJNI :: cmps_hrt_marshall(String, unknown, float, unknown, float) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: snprintf(int, unknown, String, unknown, String, unknown, String, unknown, String, unknown, int, unknown, Object, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/MainActivity;",
+              "class_short_name": "MainActivity",
+              "method_name": "onOptionsItemSelected",
+              "params": "MenuItem",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "Context, unknown, d",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/b/f;",
+              "class_short_name": "f",
+              "method_name": "a",
+              "params": "Context, unknown, d, unknown, String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_marshall",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "snprintf",
+              "params": "int, unknown, String, unknown, String, unknown, String, unknown, String, unknown, int, unknown, Object, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 90,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] boolean MainActivity :: onOptionsItemSelected(MenuItem) (W=0.20)\n    -> [Intent Domain] boolean a :: a(Context, unknown, d) (W=0.25)\n    -> [Intent Domain] String f :: a(Context, unknown, d, unknown, String) (W=0.33)\n    -> [Intent Domain] String e :: a(String, unknown, float, unknown, float) (W=0.50)\n    -> [Target JNI Anchor] String CCJNI :: cmps_hrt_marshall(String, unknown, float, unknown, float) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: free(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/MainActivity;",
+              "class_short_name": "MainActivity",
+              "method_name": "onOptionsItemSelected",
+              "params": "MenuItem",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "Context, unknown, d",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/b/f;",
+              "class_short_name": "f",
+              "method_name": "a",
+              "params": "Context, unknown, d, unknown, String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_marshall",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "free",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 91,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] boolean MainActivity :: onOptionsItemSelected(MenuItem) (W=0.20)\n    -> [Intent Domain] boolean a :: a(Context, unknown, d) (W=0.25)\n    -> [Intent Domain] String f :: a(Context, unknown, d, unknown, String) (W=0.33)\n    -> [Intent Domain] String e :: a(String, unknown, float, unknown, float) (W=0.50)\n    -> [Target JNI Anchor] String CCJNI :: cmps_hrt_marshall(String, unknown, float, unknown, float) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: snprintf(Object, unknown, Object, unknown, String, unknown, String, unknown, Object, unknown, Object, unknown, String, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/MainActivity;",
+              "class_short_name": "MainActivity",
+              "method_name": "onOptionsItemSelected",
+              "params": "MenuItem",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "Context, unknown, d",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/b/f;",
+              "class_short_name": "f",
+              "method_name": "a",
+              "params": "Context, unknown, d, unknown, String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_marshall",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "snprintf",
+              "params": "Object, unknown, Object, unknown, String, unknown, String, unknown, Object, unknown, Object, unknown, String, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 92,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] boolean MainActivity :: onOptionsItemSelected(MenuItem) (W=0.20)\n    -> [Intent Domain] boolean a :: a(Context, unknown, d) (W=0.25)\n    -> [Intent Domain] String f :: a(Context, unknown, d, unknown, String) (W=0.33)\n    -> [Intent Domain] String e :: a(String, unknown, float, unknown, float) (W=0.50)\n    -> [Target JNI Anchor] String CCJNI :: cmps_hrt_marshall(String, unknown, float, unknown, float) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: malloc(String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/MainActivity;",
+              "class_short_name": "MainActivity",
+              "method_name": "onOptionsItemSelected",
+              "params": "MenuItem",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/activities/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "Context, unknown, d",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/b/f;",
+              "class_short_name": "f",
+              "method_name": "a",
+              "params": "Context, unknown, d, unknown, String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_marshall",
+              "params": "String, unknown, float, unknown, float",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "malloc",
+              "params": "String",
+              "weight": 0.5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function_name": "Java_com_sgr_1b2_compass_jni_CCJNI_cmps_1hrt_1unmarshall",
+      "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+      "method_name": "cmps_hrt_unmarshall",
+      "descriptor": "(Ljava/lang/String;)J",
+      "source_so": "libcompass.so",
+      "file_path": "H:\\fdroid\\source_code\\com.sgr_b2.compass\\jni\\compass_jni_hrt.c",
+      "comment_before": null,
+      "comment_inside": "/* might be 0, title is optional */",
+      "code": "jlong JNICALL Java_com_sgr_1b2_compass_jni_CCJNI_cmps_1hrt_1unmarshall(JNIEnv *env, jclass cls, jstring text) {\n\tconst char *title = 0;\n\tfloat lat = 0, lon = 0;\n\n\tconst char *c_text = (*env)->GetStringUTFChars(env, text, 0);\n\n\tint title_len = cmps_hrt_unmarshall(c_text, &title, &lat, &lon);\n\tif (title_len < 0) { /* might be 0, title is optional */\n\t\tif (c_text != 0) {\n\t\t\t(*env)->ReleaseStringUTFChars(env, text, c_text);\n\t\t}\n\n\t\treturn 0;\n\t}\n\n\tcmps_jni_bookmark_t *bookmark = malloc(sizeof(*bookmark));\n\tmemset(bookmark, 0, sizeof(*bookmark));\n\n\tbookmark->lat = lat;\n\tbookmark->lon = lon;\n\n\tif (title_len > 0) {\n\t\tbookmark->title = malloc(title_len + 1);\n\t\tmemcpy(bookmark->title, title, title_len);\n\t\tbookmark->title[title_len] = 0;\n\t}\n\n\tif (c_text != 0) {\n\t\t(*env)->ReleaseStringUTFChars(env, text, c_text);\n\t}\n\n\treturn (jlong)(long)(bookmark);\n}",
+      "call_stacks_count": 12,
+      "call_stacks": [
+        {
+          "stack_id": 133,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] void ImportActivity :: onCreate(Bundle) (W=0.20)\n    -> [Intent Domain] f g :: a(String, unknown, int) (W=0.25)\n    -> [Intent Domain] a e :: a(String) (W=0.33)\n    -> [Intent Domain] a a :: a(String) (W=0.50)\n    -> [Target JNI Anchor] long CCJNI :: cmps_hrt_unmarshall(String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: sscanf(String, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/sgr_b2/compass/activities/ImportActivity;",
+              "class_short_name": "ImportActivity",
+              "method_name": "onCreate",
+              "params": "Bundle",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "f",
+              "class_name": "Lcom/sgr_b2/compass/phone/g;",
+              "class_short_name": "g",
+              "method_name": "a",
+              "params": "String, unknown, int",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "a",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "a",
+              "class_name": "Lcom/sgr_b2/compass/jni/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "String",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "long",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_unmarshall",
+              "params": "String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "sscanf",
+              "params": "String, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 134,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] void ImportActivity :: onCreate(Bundle) (W=0.20)\n    -> [Intent Domain] f g :: a(String, unknown, int) (W=0.25)\n    -> [Intent Domain] a e :: a(String) (W=0.33)\n    -> [Intent Domain] a a :: a(String) (W=0.50)\n    -> [Target JNI Anchor] long CCJNI :: cmps_hrt_unmarshall(String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: malloc(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/sgr_b2/compass/activities/ImportActivity;",
+              "class_short_name": "ImportActivity",
+              "method_name": "onCreate",
+              "params": "Bundle",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "f",
+              "class_name": "Lcom/sgr_b2/compass/phone/g;",
+              "class_short_name": "g",
+              "method_name": "a",
+              "params": "String, unknown, int",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "a",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "a",
+              "class_name": "Lcom/sgr_b2/compass/jni/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "String",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "long",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_unmarshall",
+              "params": "String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "malloc",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 135,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] void ImportActivity :: onCreate(Bundle) (W=0.20)\n    -> [Intent Domain] f g :: a(String, unknown, int) (W=0.25)\n    -> [Intent Domain] a e :: a(String) (W=0.33)\n    -> [Intent Domain] a a :: a(String) (W=0.50)\n    -> [Target JNI Anchor] long CCJNI :: cmps_hrt_unmarshall(String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryAux :: opaqueInt() (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/sgr_b2/compass/activities/ImportActivity;",
+              "class_short_name": "ImportActivity",
+              "method_name": "onCreate",
+              "params": "Bundle",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "f",
+              "class_name": "Lcom/sgr_b2/compass/phone/g;",
+              "class_short_name": "g",
+              "method_name": "a",
+              "params": "String, unknown, int",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "a",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "a",
+              "class_name": "Lcom/sgr_b2/compass/jni/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "String",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "long",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_unmarshall",
+              "params": "String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryAux;",
+              "class_short_name": "NativeSummaryAux",
+              "method_name": "opaqueInt",
+              "params": "",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 136,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] void ImportActivity :: onCreate(Bundle) (W=0.20)\n    -> [Intent Domain] f g :: a(String, unknown, int) (W=0.25)\n    -> [Intent Domain] a e :: a(String) (W=0.33)\n    -> [Intent Domain] a a :: a(String) (W=0.50)\n    -> [Target JNI Anchor] long CCJNI :: cmps_hrt_unmarshall(String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: malloc(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/sgr_b2/compass/activities/ImportActivity;",
+              "class_short_name": "ImportActivity",
+              "method_name": "onCreate",
+              "params": "Bundle",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "f",
+              "class_name": "Lcom/sgr_b2/compass/phone/g;",
+              "class_short_name": "g",
+              "method_name": "a",
+              "params": "String, unknown, int",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "a",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "a",
+              "class_name": "Lcom/sgr_b2/compass/jni/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "String",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "long",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_unmarshall",
+              "params": "String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "malloc",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 137,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] void ImportActivity :: onCreate(Bundle) (W=0.20)\n    -> [Intent Domain] f g :: a(String, unknown, int) (W=0.25)\n    -> [Intent Domain] a e :: a(String) (W=0.33)\n    -> [Intent Domain] a a :: a(String) (W=0.50)\n    -> [Target JNI Anchor] long CCJNI :: cmps_hrt_unmarshall(String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: sscanf(Object, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/sgr_b2/compass/activities/ImportActivity;",
+              "class_short_name": "ImportActivity",
+              "method_name": "onCreate",
+              "params": "Bundle",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "f",
+              "class_name": "Lcom/sgr_b2/compass/phone/g;",
+              "class_short_name": "g",
+              "method_name": "a",
+              "params": "String, unknown, int",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "a",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "a",
+              "class_name": "Lcom/sgr_b2/compass/jni/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "String",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "long",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_unmarshall",
+              "params": "String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "sscanf",
+              "params": "Object, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 138,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] void ImportActivity :: onCreate(Bundle) (W=0.20)\n    -> [Intent Domain] f g :: a(String, unknown, int) (W=0.25)\n    -> [Intent Domain] a e :: a(String) (W=0.33)\n    -> [Intent Domain] a a :: a(String) (W=0.50)\n    -> [Target JNI Anchor] long CCJNI :: cmps_hrt_unmarshall(String) (W=1.00)\n    -> [Core Execution Domain] String NativeSummaryFuncs :: strchr(String, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/sgr_b2/compass/activities/ImportActivity;",
+              "class_short_name": "ImportActivity",
+              "method_name": "onCreate",
+              "params": "Bundle",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "f",
+              "class_name": "Lcom/sgr_b2/compass/phone/g;",
+              "class_short_name": "g",
+              "method_name": "a",
+              "params": "String, unknown, int",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "a",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "a",
+              "class_name": "Lcom/sgr_b2/compass/jni/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "String",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "long",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_unmarshall",
+              "params": "String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "String",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "strchr",
+              "params": "String, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 181,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] Object b :: doInBackground(Object[]) (W=0.17)\n    -> [Intent Domain] boolean b :: b() (W=0.20)\n    -> [Intent Domain] f g :: a(String, unknown, int) (W=0.25)\n    -> [Intent Domain] a e :: a(String) (W=0.33)\n    -> [Intent Domain] a a :: a(String) (W=0.50)\n    -> [Target JNI Anchor] long CCJNI :: cmps_hrt_unmarshall(String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: sscanf(String, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lcom/sgr_b2/compass/c/b;",
+              "class_short_name": "b",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/c/b;",
+              "class_short_name": "b",
+              "method_name": "b",
+              "params": "",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "f",
+              "class_name": "Lcom/sgr_b2/compass/phone/g;",
+              "class_short_name": "g",
+              "method_name": "a",
+              "params": "String, unknown, int",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "a",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "a",
+              "class_name": "Lcom/sgr_b2/compass/jni/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "String",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "long",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_unmarshall",
+              "params": "String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "sscanf",
+              "params": "String, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 182,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] Object b :: doInBackground(Object[]) (W=0.17)\n    -> [Intent Domain] boolean b :: b() (W=0.20)\n    -> [Intent Domain] f g :: a(String, unknown, int) (W=0.25)\n    -> [Intent Domain] a e :: a(String) (W=0.33)\n    -> [Intent Domain] a a :: a(String) (W=0.50)\n    -> [Target JNI Anchor] long CCJNI :: cmps_hrt_unmarshall(String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: malloc(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lcom/sgr_b2/compass/c/b;",
+              "class_short_name": "b",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/c/b;",
+              "class_short_name": "b",
+              "method_name": "b",
+              "params": "",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "f",
+              "class_name": "Lcom/sgr_b2/compass/phone/g;",
+              "class_short_name": "g",
+              "method_name": "a",
+              "params": "String, unknown, int",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "a",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "a",
+              "class_name": "Lcom/sgr_b2/compass/jni/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "String",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "long",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_unmarshall",
+              "params": "String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "malloc",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 183,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] Object b :: doInBackground(Object[]) (W=0.17)\n    -> [Intent Domain] boolean b :: b() (W=0.20)\n    -> [Intent Domain] f g :: a(String, unknown, int) (W=0.25)\n    -> [Intent Domain] a e :: a(String) (W=0.33)\n    -> [Intent Domain] a a :: a(String) (W=0.50)\n    -> [Target JNI Anchor] long CCJNI :: cmps_hrt_unmarshall(String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryAux :: opaqueInt() (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lcom/sgr_b2/compass/c/b;",
+              "class_short_name": "b",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/c/b;",
+              "class_short_name": "b",
+              "method_name": "b",
+              "params": "",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "f",
+              "class_name": "Lcom/sgr_b2/compass/phone/g;",
+              "class_short_name": "g",
+              "method_name": "a",
+              "params": "String, unknown, int",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "a",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "a",
+              "class_name": "Lcom/sgr_b2/compass/jni/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "String",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "long",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_unmarshall",
+              "params": "String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryAux;",
+              "class_short_name": "NativeSummaryAux",
+              "method_name": "opaqueInt",
+              "params": "",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 184,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] Object b :: doInBackground(Object[]) (W=0.17)\n    -> [Intent Domain] boolean b :: b() (W=0.20)\n    -> [Intent Domain] f g :: a(String, unknown, int) (W=0.25)\n    -> [Intent Domain] a e :: a(String) (W=0.33)\n    -> [Intent Domain] a a :: a(String) (W=0.50)\n    -> [Target JNI Anchor] long CCJNI :: cmps_hrt_unmarshall(String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: malloc(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lcom/sgr_b2/compass/c/b;",
+              "class_short_name": "b",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/c/b;",
+              "class_short_name": "b",
+              "method_name": "b",
+              "params": "",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "f",
+              "class_name": "Lcom/sgr_b2/compass/phone/g;",
+              "class_short_name": "g",
+              "method_name": "a",
+              "params": "String, unknown, int",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "a",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "a",
+              "class_name": "Lcom/sgr_b2/compass/jni/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "String",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "long",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_unmarshall",
+              "params": "String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "malloc",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 185,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] Object b :: doInBackground(Object[]) (W=0.17)\n    -> [Intent Domain] boolean b :: b() (W=0.20)\n    -> [Intent Domain] f g :: a(String, unknown, int) (W=0.25)\n    -> [Intent Domain] a e :: a(String) (W=0.33)\n    -> [Intent Domain] a a :: a(String) (W=0.50)\n    -> [Target JNI Anchor] long CCJNI :: cmps_hrt_unmarshall(String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: sscanf(Object, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lcom/sgr_b2/compass/c/b;",
+              "class_short_name": "b",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/c/b;",
+              "class_short_name": "b",
+              "method_name": "b",
+              "params": "",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "f",
+              "class_name": "Lcom/sgr_b2/compass/phone/g;",
+              "class_short_name": "g",
+              "method_name": "a",
+              "params": "String, unknown, int",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "a",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "a",
+              "class_name": "Lcom/sgr_b2/compass/jni/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "String",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "long",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_unmarshall",
+              "params": "String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "sscanf",
+              "params": "Object, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 186,
+          "source_so": "libcompass.so",
+          "call_chain_text": "[Intent Domain] Object b :: doInBackground(Object[]) (W=0.17)\n    -> [Intent Domain] boolean b :: b() (W=0.20)\n    -> [Intent Domain] f g :: a(String, unknown, int) (W=0.25)\n    -> [Intent Domain] a e :: a(String) (W=0.33)\n    -> [Intent Domain] a a :: a(String) (W=0.50)\n    -> [Target JNI Anchor] long CCJNI :: cmps_hrt_unmarshall(String) (W=1.00)\n    -> [Core Execution Domain] String NativeSummaryFuncs :: strchr(String, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lcom/sgr_b2/compass/c/b;",
+              "class_short_name": "b",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lcom/sgr_b2/compass/c/b;",
+              "class_short_name": "b",
+              "method_name": "b",
+              "params": "",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "f",
+              "class_name": "Lcom/sgr_b2/compass/phone/g;",
+              "class_short_name": "g",
+              "method_name": "a",
+              "params": "String, unknown, int",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "a",
+              "class_name": "Lcom/sgr_b2/compass/jni/e;",
+              "class_short_name": "e",
+              "method_name": "a",
+              "params": "String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "a",
+              "class_name": "Lcom/sgr_b2/compass/jni/a;",
+              "class_short_name": "a",
+              "method_name": "a",
+              "params": "String",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "long",
+              "class_name": "Lcom/sgr_b2/compass/jni/CCJNI;",
+              "class_short_name": "CCJNI",
+              "method_name": "cmps_hrt_unmarshall",
+              "params": "String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "String",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "strchr",
+              "params": "String, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,2607 @@
+{
+  "app": "android.game.prboom",
+  "commented_jni_total": 1,
+  "with_code_count": 1,
+  "with_stacks_count": 1,
+  "total_stacks_collected": 76,
+  "functions": [
+    {
+      "function_name": "Java_doom_util_Natives_DoomMain",
+      "class_name": "Ldoom/util/Natives;",
+      "method_name": "DoomMain",
+      "descriptor": "([Ljava/lang/String;)I",
+      "source_so": "libprboom_jni.so",
+      "file_path": "H:\\260311\\android.game.prboom\\swh_1_dir_155e1b440e3c35718b9b0a7f7279e49214225f93\\trunk\\jni\\prboom\\jni_doom.c",
+      "comment_before": null,
+      "comment_inside": "// obtain a global ref to the caller jclass\n//g_jniEnv = env;\n// Extract char ** args from Java array\n// free java string jrow\n/*\n\t * Load the Image update class (called many times)\n\t */\n// Load doom.util.Natives.OnImageUpdate(char[])\n// Load OnStartSound(String name, int vol)\n// Load OnInfoMessage(String name, boolean longDisplay)\n// Invoke Doom's main sub. This will loop forever\n// Program args come from Java",
+      "code": "JNICALL Java_doom_util_Natives_DoomMain\n  (JNIEnv * env, jclass class, jobjectArray jargv)\n{\n\t// obtain a global ref to the caller jclass\n\t//g_jniEnv = env;\n\n\t(*env)->GetJavaVM(env, &g_VM);\n\n\t// Extract char ** args from Java array\n\tjsize clen =  getArrayLen(env, jargv);\n\n\tchar * args[(int)clen];\n\n\tint i;\n\tjstring jrow;\n\tfor (i = 0; i < clen; i++)\n\t{\n\t    jrow = (jstring)(*env)->GetObjectArrayElement(env, jargv, i);\n\t    const char *row  = (*env)->GetStringUTFChars(env, jrow, 0);\n\n\t    args[i] = malloc( strlen(row) + 1);\n\t    strcpy (args[i], row);\n\n\t    jni_printf(\"Main argv[%d]=%s\", i, args[i]);\n\n\t    // free java string jrow\n\t    (*env)->ReleaseStringUTFChars(env, jrow, row);\n\t}\n\n\t/*\n\t * Load the Image update class (called many times)\n\t */\n\tjNativesCls = (*env)->FindClass(env, CB_CLASS);\n\n\tif ( jNativesCls == 0 ) {\n\t\tjni_printf(\"Unable to find class: %s\", CB_CLASS);\n\t    return -1;\n\t}\n\n\t// Load doom.util.Natives.OnImageUpdate(char[])\n\tjSendImageMethod = (*env)->GetStaticMethodID(env, jNativesCls\n\t\t\t, CB_CLASS_IU_CB\n\t\t\t, CB_CLASS_IU_SIG);\n\n\tif ( jSendImageMethod == 0 ) {\n\t\tjni_printf(\"Unable to find method OnImageUpdate(char[]): %s\", CB_CLASS);\n\t    return -1;\n\t}\n\n\t// Load OnStartSound(String name, int vol)\n\tjStartSoundMethod = (*env)->GetStaticMethodID(env, jNativesCls\n\t\t\t, CB_CLASS_SS_CB\n\t\t\t, CB_CLASS_SS_SIG);\n\n\tif ( jStartSoundMethod == 0 ) {\n\t\tjni_printf(\"Unable to find method OnStartSound sig: %s \", CB_CLASS_SS_SIG);\n\t    return -1;\n\t}\n\n\t// Load OnInfoMessage(String name, boolean longDisplay)\n\tjSendInfoMessage = (*env)->GetStaticMethodID(env, jNativesCls\n\t\t\t, CB_CLASS_INFMSG_CB\n\t\t\t, CB_CLASS_INFMSG_SIG);\n\n\tif ( jSendInfoMessage == 0 ) {\n\t\tjni_printf(\"Unable to find method OnInfoMessage sig: %s \", CB_CLASS_INFMSG_SIG);\n\t    return -1;\n\t}\n\n\t// Invoke Doom's main sub. This will loop forever\n\t// Program args come from Java\n\tdoom_main (clen, args);\n\n\treturn 0;\n}",
+      "call_stacks_count": 76,
+      "call_stacks": [
+        {
+          "stack_id": 73,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: fputc(int, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fputc",
+              "params": "int, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 74,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: fclose(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fclose",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 75,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: memset(int, unknown, Object, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "memset",
+              "params": "int, unknown, Object, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 76,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: snprintf(Object, unknown, int, unknown, String, unknown, String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "snprintf",
+              "params": "Object, unknown, int, unknown, String, unknown, String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 77,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: vsprintf(Object, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "vsprintf",
+              "params": "Object, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 78,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: __android_log_write(int, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "__android_log_write",
+              "params": "int, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 79,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: isspace(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "isspace",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 80,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: strncasecmp(String, unknown, String, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "strncasecmp",
+              "params": "String, unknown, String, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 81,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: bind(String, unknown, Object, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "bind",
+              "params": "String, unknown, Object, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 82,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] String NativeSummaryFuncs :: vsprintf(String, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "String",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "vsprintf",
+              "params": "String, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 83,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] String NativeSummaryFuncs :: toupper(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "String",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "toupper",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 84,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: close(String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "close",
+              "params": "String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 85,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: fopen(Object, unknown, String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fopen",
+              "params": "Object, unknown, String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 86,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: access(String, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "access",
+              "params": "String, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 87,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: malloc(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "malloc",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 88,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryAux :: opaqueInt() (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryAux;",
+              "class_short_name": "NativeSummaryAux",
+              "method_name": "opaqueInt",
+              "params": "",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 89,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: vsprintf(String, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "vsprintf",
+              "params": "String, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 90,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: fread(int, unknown, int, unknown, String, unknown, String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fread",
+              "params": "int, unknown, int, unknown, String, unknown, String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 91,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: fseek(int, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fseek",
+              "params": "int, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 92,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: select(Object, unknown, Object, unknown, Object, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "select",
+              "params": "Object, unknown, Object, unknown, Object, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 93,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: fopen(String, unknown, String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fopen",
+              "params": "String, unknown, String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 94,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: memset(Object, unknown, Object, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "memset",
+              "params": "Object, unknown, Object, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 95,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: inet_addr(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "inet_addr",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 96,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: recvfrom(String, unknown, String, unknown, Object, unknown, Object, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "recvfrom",
+              "params": "String, unknown, String, unknown, Object, unknown, Object, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 97,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: free(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "free",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 98,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: setsockopt(String, unknown, int, unknown, int, unknown, Object, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "setsockopt",
+              "params": "String, unknown, int, unknown, int, unknown, Object, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 99,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: exit(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "exit",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 100,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: strchr(Object, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "strchr",
+              "params": "Object, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 101,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] String NativeSummaryFuncs :: GetArrayLength(Object, unknown, String[]) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "String",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "GetArrayLength",
+              "params": "Object, unknown, String[]",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 102,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: fseek(String, unknown, Object, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fseek",
+              "params": "String, unknown, Object, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 103,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: printf(String, unknown, String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "printf",
+              "params": "String, unknown, String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 104,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: fread(Object, unknown, int, unknown, int, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fread",
+              "params": "Object, unknown, int, unknown, int, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 105,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: strncasecmp(Object, unknown, String, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "strncasecmp",
+              "params": "Object, unknown, String, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 106,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: fprintf(Object, unknown, String, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fprintf",
+              "params": "Object, unknown, String, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 107,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: puts(String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "puts",
+              "params": "String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 108,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: free(String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "free",
+              "params": "String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 109,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] String NativeSummaryFuncs :: fputc(int, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "String",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fputc",
+              "params": "int, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 110,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: bsd_signal(int, unknown, String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "bsd_signal",
+              "params": "int, unknown, String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 111,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: sprintf(String, unknown, String, unknown, String, unknown, String, unknown, Object, unknown, String, unknown, String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "sprintf",
+              "params": "String, unknown, String, unknown, String, unknown, String, unknown, Object, unknown, String, unknown, String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 112,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: fprintf(Object, unknown, String, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fprintf",
+              "params": "Object, unknown, String, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 113,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] String NativeSummaryFuncs :: printf(String, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "String",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "printf",
+              "params": "String, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 114,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: printf(String, unknown, String, unknown, String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "printf",
+              "params": "String, unknown, String, unknown, String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 115,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: access(String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "access",
+              "params": "String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 116,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: sendto(String, unknown, String, unknown, Object, unknown, Object, unknown, Object, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "sendto",
+              "params": "String, unknown, String, unknown, Object, unknown, Object, unknown, Object, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 117,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: printf(String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "printf",
+              "params": "String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 118,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: atexit(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "atexit",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 119,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: bsd_signal(int, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "bsd_signal",
+              "params": "int, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 120,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: socket(int, unknown, int, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "socket",
+              "params": "int, unknown, int, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 121,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: toupper(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "toupper",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 122,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: fclose(String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fclose",
+              "params": "String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 123,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: free(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "free",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 124,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: fread(int, unknown, int, unknown, Object, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fread",
+              "params": "int, unknown, int, unknown, Object, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 125,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: pthread_self() (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "pthread_self",
+              "params": "",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 126,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: fprintf(Object, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fprintf",
+              "params": "Object, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 127,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: raise(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "raise",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 128,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: select(String, unknown, Object, unknown, Object, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "select",
+              "params": "String, unknown, Object, unknown, Object, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 129,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: malloc(String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "malloc",
+              "params": "String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 130,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: pthread_mutex_unlock(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "pthread_mutex_unlock",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 131,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: sscanf(Object, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "sscanf",
+              "params": "Object, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 132,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: snprintf(String, unknown, String, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "snprintf",
+              "params": "String, unknown, String, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 133,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: isalnum(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "isalnum",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 134,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: access(Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "access",
+              "params": "Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 135,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] String NativeSummaryFuncs :: malloc(String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "String",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "malloc",
+              "params": "String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 136,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] String NativeSummaryFuncs :: fwrite(Object, unknown, int, unknown, int, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "String",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fwrite",
+              "params": "Object, unknown, int, unknown, int, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 137,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: gettimeofday(Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "gettimeofday",
+              "params": "Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 138,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: vsnprintf(Object, unknown, int, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "vsnprintf",
+              "params": "Object, unknown, int, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 139,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: fclose(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fclose",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 140,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: gethostbyname(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "gethostbyname",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 141,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: isatty(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "isatty",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 142,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: fscanf(int, unknown, String, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fscanf",
+              "params": "int, unknown, String, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 143,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: strncasecmp(Object, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "strncasecmp",
+              "params": "Object, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 144,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: AttachCurrentThread(Object, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "AttachCurrentThread",
+              "params": "Object, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 145,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: printf(String, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "printf",
+              "params": "String, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 146,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: exit(long) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "exit",
+              "params": "long",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 147,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: fseek(String, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fseek",
+              "params": "String, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 148,
+          "source_so": "libprboom_jni.so",
+          "call_chain_text": "[Intent Domain] void PrBoomActivity$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] int Natives :: DoomMain(String[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: strchr(String, unknown, String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Landroid/game/prboom/PrBoomActivity$1;",
+              "class_short_name": "PrBoomActivity$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Ldoom/util/Natives;",
+              "class_short_name": "Natives",
+              "method_name": "DoomMain",
+              "params": "String[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "strchr",
+              "params": "String, unknown, String",
+              "weight": 0.5
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

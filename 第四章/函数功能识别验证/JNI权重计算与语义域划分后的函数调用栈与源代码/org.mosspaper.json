@@ -1,0 +1,261 @@
+{
+  "app": "org.mosspaper",
+  "commented_jni_total": 1,
+  "with_code_count": 1,
+  "with_stacks_count": 1,
+  "total_stacks_collected": 7,
+  "functions": [
+    {
+      "function_name": "Java_org_mosspaper_objects_PortMonProvider_monpeek",
+      "class_name": "Lorg/mosspaper/objects/PortMonProvider;",
+      "method_name": "monpeek",
+      "descriptor": "(I I I I)Ljava/lang/String;",
+      "source_so": "libmoss.so",
+      "file_path": "H:\\260311\\org.mosspaper\\moss-master\\moss\\src\\main\\jni\\portmon.c",
+      "comment_before": null,
+      "comment_inside": "/* limited to PEEK_BUF...lame. */",
+      "code": "jstring\nJava_org_mosspaper_objects_PortMonProvider_monpeek(JNIEnv* env,\n                                           jobject obj,\n                                           jint startPort,\n                                           jint endPort,\n                                           jint item,\n                                           jint index) {\n\n    tcp_port_monitor_t *p_mon;\n    /* limited to PEEK_BUF...lame. */\n    char buf[PEEK_BUF];\n    memset(buf, 0, PEEK_BUF);\n\n    p_mon = find_tcp_port_monitor(p_coll, startPort, endPort);\n    if (NULL != p_mon) {\n        peek_tcp_port_monitor(p_mon, item, index, buf, PEEK_BUF);\n        return (*env)->NewStringUTF(env, buf);\n    }\n    return (*env)->NewStringUTF(env, buf);\n}",
+      "call_stacks_count": 7,
+      "call_stacks": [
+        {
+          "stack_id": 31,
+          "source_so": "libmoss.so",
+          "call_chain_text": "[Intent Domain] String PortMon :: toString() (W=0.50)\n    -> [Target JNI Anchor] String PortMonProvider :: monpeek(int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: memset(Object, unknown, int, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lorg/mosspaper/objects/PortMon;",
+              "class_short_name": "PortMon",
+              "method_name": "toString",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lorg/mosspaper/objects/PortMonProvider;",
+              "class_short_name": "PortMonProvider",
+              "method_name": "monpeek",
+              "params": "int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "memset",
+              "params": "Object, unknown, int, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 32,
+          "source_so": "libmoss.so",
+          "call_chain_text": "[Intent Domain] String PortMon :: toString() (W=0.50)\n    -> [Target JNI Anchor] String PortMonProvider :: monpeek(int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryAux :: opaqueInt() (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lorg/mosspaper/objects/PortMon;",
+              "class_short_name": "PortMon",
+              "method_name": "toString",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lorg/mosspaper/objects/PortMonProvider;",
+              "class_short_name": "PortMonProvider",
+              "method_name": "monpeek",
+              "params": "int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryAux;",
+              "class_short_name": "NativeSummaryAux",
+              "method_name": "opaqueInt",
+              "params": "",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 33,
+          "source_so": "libmoss.so",
+          "call_chain_text": "[Intent Domain] String PortMon :: toString() (W=0.50)\n    -> [Target JNI Anchor] String PortMonProvider :: monpeek(int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: getnameinfo(Object, unknown, int, unknown, Object, unknown, Object, unknown, Object, unknown, int, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lorg/mosspaper/objects/PortMon;",
+              "class_short_name": "PortMon",
+              "method_name": "toString",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lorg/mosspaper/objects/PortMonProvider;",
+              "class_short_name": "PortMonProvider",
+              "method_name": "monpeek",
+              "params": "int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "getnameinfo",
+              "params": "Object, unknown, int, unknown, Object, unknown, Object, unknown, Object, unknown, int, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 34,
+          "source_so": "libmoss.so",
+          "call_chain_text": "[Intent Domain] String PortMon :: toString() (W=0.50)\n    -> [Target JNI Anchor] String PortMonProvider :: monpeek(int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: getnameinfo(Object, unknown, int, unknown, Object, unknown, int, unknown, Object, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lorg/mosspaper/objects/PortMon;",
+              "class_short_name": "PortMon",
+              "method_name": "toString",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lorg/mosspaper/objects/PortMonProvider;",
+              "class_short_name": "PortMonProvider",
+              "method_name": "monpeek",
+              "params": "int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "getnameinfo",
+              "params": "Object, unknown, int, unknown, Object, unknown, int, unknown, Object, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 35,
+          "source_so": "libmoss.so",
+          "call_chain_text": "[Intent Domain] String PortMon :: toString() (W=0.50)\n    -> [Target JNI Anchor] String PortMonProvider :: monpeek(int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: sprintf(Object, unknown, String, unknown, int, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lorg/mosspaper/objects/PortMon;",
+              "class_short_name": "PortMon",
+              "method_name": "toString",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lorg/mosspaper/objects/PortMonProvider;",
+              "class_short_name": "PortMonProvider",
+              "method_name": "monpeek",
+              "params": "int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "sprintf",
+              "params": "Object, unknown, String, unknown, int, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 36,
+          "source_so": "libmoss.so",
+          "call_chain_text": "[Intent Domain] String PortMon :: toString() (W=0.50)\n    -> [Target JNI Anchor] String PortMonProvider :: monpeek(int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: snprintf(Object, unknown, int, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lorg/mosspaper/objects/PortMon;",
+              "class_short_name": "PortMon",
+              "method_name": "toString",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lorg/mosspaper/objects/PortMonProvider;",
+              "class_short_name": "PortMonProvider",
+              "method_name": "monpeek",
+              "params": "int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "snprintf",
+              "params": "Object, unknown, int, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 37,
+          "source_so": "libmoss.so",
+          "call_chain_text": "[Intent Domain] String PortMon :: toString() (W=0.50)\n    -> [Target JNI Anchor] String PortMonProvider :: monpeek(int, unknown, int, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: memcmp(Object, unknown, Object, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lorg/mosspaper/objects/PortMon;",
+              "class_short_name": "PortMon",
+              "method_name": "toString",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lorg/mosspaper/objects/PortMonProvider;",
+              "class_short_name": "PortMonProvider",
+              "method_name": "monpeek",
+              "params": "int, unknown, int, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "memcmp",
+              "params": "Object, unknown, Object, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

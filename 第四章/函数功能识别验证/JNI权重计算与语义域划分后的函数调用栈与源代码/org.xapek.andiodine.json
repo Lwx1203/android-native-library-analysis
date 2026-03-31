@@ -1,0 +1,1222 @@
+{
+  "app": "org.xapek.andiodine",
+  "commented_jni_total": 1,
+  "with_code_count": 1,
+  "with_stacks_count": 1,
+  "total_stacks_collected": 35,
+  "functions": [
+    {
+      "function_name": "Java_org_xapek_andiodine_IodineClient_connect",
+      "class_name": "Lorg/xapek/andiodine/IodineClient;",
+      "method_name": "connect",
+      "descriptor": "(Ljava/lang/String; Ljava/lang/String; Z Z Ljava/lang/String; I I Ljava/lang/String;)I",
+      "source_so": "libiodine-client.so",
+      "file_path": "H:\\fdroid\\source_code\\org.xapek.andiodine\\jni\\iodine-client.c",
+      "comment_before": null,
+      "comment_inside": "// XXX strdup leaks\n// extract password parameter\n// extract request type parameter\n// original: 4\n// get request type used",
+      "code": "JNICALL Java_org_xapek_andiodine_IodineClient_connect(\n\t\tJNIEnv *env, jclass klass, jstring j_nameserv_addr, jstring j_topdomain, jboolean j_raw_mode, jboolean j_lazy_mode,\n\t\tjstring j_password, jint j_request_hostname_size, jint j_response_fragment_size,\n\t\tjstring j_request_type) {\n\n\t// XXX strdup leaks\n\tconst char *__p_nameserv_addr = (*env)->GetStringUTFChars(env,\n\t\t\tj_nameserv_addr, NULL);\n\tchar *p_nameserv_addr = strdup(__p_nameserv_addr);\n\tstruct sockaddr_storage p_nameserv;\n\tint p_nameserv_len = get_addr(p_nameserv_addr, 53, AF_INET, 0, &p_nameserv);\n\t(*env)->ReleaseStringUTFChars(env, j_nameserv_addr, __p_nameserv_addr);\n\n\tconst char *__p_topdomain = (*env)->GetStringUTFChars(env, j_topdomain,\n\t\t\tNULL);\n\tconst char *p_topdomain = strdup(__p_topdomain);\n\t__android_log_print(ANDROID_LOG_ERROR, \"iodine\", \"Topdomain from vm: %s\", p_topdomain);\n\n\t(*env)->ReleaseStringUTFChars(env, j_topdomain, __p_topdomain);\n\t__android_log_print(ANDROID_LOG_ERROR, \"iodine\", \"Topdomain from vm: %s\", p_topdomain);\n\n\t// extract password parameter\n\tconst char *p_password = (*env)->GetStringUTFChars(env, j_password, NULL);\n\tchar passwordField[33];\n\tmemset(passwordField, 0, 33);\n\tstrncpy(passwordField, p_password, 32);\n\t(*env)->ReleaseStringUTFChars(env, j_password, p_password);\n\n\t// extract request type parameter\n\tconst char *p_requestType = (*env)->GetStringUTFChars(env, j_request_type, NULL);\n\tchar requestTypeField[8];\n\tmemset(requestTypeField, 0, 8);\n\tstrncpy(requestTypeField, p_requestType, 7);\n\t(*env)->ReleaseStringUTFChars(env, j_request_type, p_requestType);\n\t__android_log_print(ANDROID_LOG_ERROR, \"iodine\", \"Request Type from vm: %s\", requestTypeField);\n\n\n\ttun_config_android.request_disconnect = 0;\n\n\tint selecttimeout = 2; // original: 4\n\tint lazy_mode;\n\tint hostname_maxlen = j_request_hostname_size;\n\tint raw_mode;\n\tint autodetect_frag_size = j_response_fragment_size == 0 ? 1 : 0;\n\tint max_downstream_frag_size = j_response_fragment_size;\n\n\tif (j_raw_mode) {\n\t\traw_mode = 1;\n\t} else {\n\t\traw_mode = 0;\n\t}\n\n\tif (j_lazy_mode) {\n\t\tlazy_mode = 1;\n\t} else {\n\t\tlazy_mode = 0;\n\t}\n\n\tsrand((unsigned) time(NULL));\n\tclient_init();\n\tclient_set_nameserver(&p_nameserv, p_nameserv_len);\n\tclient_set_selecttimeout(selecttimeout);\n\tclient_set_lazymode(lazy_mode);\n\tclient_set_topdomain(p_topdomain);\n\tclient_set_hostname_maxlen(hostname_maxlen);\n\tclient_set_password(passwordField);\n\tclient_set_qtype(requestTypeField);\n\n\tif ((dns_fd = open_dns_from_host(NULL, 0, AF_INET, AI_PASSIVE)) == -1) {\n\t\tprintf(\"Could not open dns socket: %s\", strerror(errno));\n\t\treturn 1;\n\t}\n\n\tif (client_handshake(dns_fd, raw_mode, autodetect_frag_size,\n\t\t\tmax_downstream_frag_size)) {\n\t\tprintf(\"Handshake unsuccessful: %s\", strerror(errno));\n\t\tclose(dns_fd);\n\t\treturn 2;\n\t}\n\n\tif (client_get_conn() == CONN_RAW_UDP) {\n\t\tprintf(\"Sending raw traffic directly to %s\\n\", client_get_raw_addr());\n\t}\n\n    // get request type used\n    char actualRequestType[12];\n    memset(actualRequestType, 0, 12);\n    strncpy(actualRequestType, client_get_qtype(), 11);\n    printf(\"Selected request type: %s\\n\", actualRequestType);\n\n\tprintf(\"Handshake successful, leave native code\");\n\treturn 0;\n}",
+      "call_stacks_count": 35,
+      "call_stacks": [
+        {
+          "stack_id": 27,
+          "source_so": "libiodine-client.so",
+          "call_chain_text": "[Intent Domain] void IodineVpnService :: run() (W=0.50)\n    -> [Target JNI Anchor] int IodineClient :: connect(String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String) (W=1.00)\n    -> [Core Execution Domain] String NativeSummaryFuncs :: strdup(String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/xapek/andiodine/IodineVpnService;",
+              "class_short_name": "IodineVpnService",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lorg/xapek/andiodine/IodineClient;",
+              "class_short_name": "IodineClient",
+              "method_name": "connect",
+              "params": "String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "String",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "strdup",
+              "params": "String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 28,
+          "source_so": "libiodine-client.so",
+          "call_chain_text": "[Intent Domain] void IodineVpnService :: run() (W=0.50)\n    -> [Target JNI Anchor] int IodineClient :: connect(String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: getaddrinfo(String, unknown, Object, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/xapek/andiodine/IodineVpnService;",
+              "class_short_name": "IodineVpnService",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lorg/xapek/andiodine/IodineClient;",
+              "class_short_name": "IodineClient",
+              "method_name": "connect",
+              "params": "String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "getaddrinfo",
+              "params": "String, unknown, Object, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 29,
+          "source_so": "libiodine-client.so",
+          "call_chain_text": "[Intent Domain] void IodineVpnService :: run() (W=0.50)\n    -> [Target JNI Anchor] int IodineClient :: connect(String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: free(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/xapek/andiodine/IodineVpnService;",
+              "class_short_name": "IodineVpnService",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lorg/xapek/andiodine/IodineClient;",
+              "class_short_name": "IodineClient",
+              "method_name": "connect",
+              "params": "String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "free",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 30,
+          "source_so": "libiodine-client.so",
+          "call_chain_text": "[Intent Domain] void IodineVpnService :: run() (W=0.50)\n    -> [Target JNI Anchor] int IodineClient :: connect(String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: socket(Object, unknown, int, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/xapek/andiodine/IodineVpnService;",
+              "class_short_name": "IodineVpnService",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lorg/xapek/andiodine/IodineClient;",
+              "class_short_name": "IodineClient",
+              "method_name": "connect",
+              "params": "String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "socket",
+              "params": "Object, unknown, int, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 31,
+          "source_so": "libiodine-client.so",
+          "call_chain_text": "[Intent Domain] void IodineVpnService :: run() (W=0.50)\n    -> [Target JNI Anchor] int IodineClient :: connect(String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: bind(String, unknown, Object, unknown, String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/xapek/andiodine/IodineVpnService;",
+              "class_short_name": "IodineVpnService",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lorg/xapek/andiodine/IodineClient;",
+              "class_short_name": "IodineClient",
+              "method_name": "connect",
+              "params": "String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "bind",
+              "params": "String, unknown, Object, unknown, String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 32,
+          "source_so": "libiodine-client.so",
+          "call_chain_text": "[Intent Domain] void IodineVpnService :: run() (W=0.50)\n    -> [Target JNI Anchor] int IodineClient :: connect(String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: time(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/xapek/andiodine/IodineVpnService;",
+              "class_short_name": "IodineVpnService",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lorg/xapek/andiodine/IodineClient;",
+              "class_short_name": "IodineClient",
+              "method_name": "connect",
+              "params": "String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "time",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 33,
+          "source_so": "libiodine-client.so",
+          "call_chain_text": "[Intent Domain] void IodineVpnService :: run() (W=0.50)\n    -> [Target JNI Anchor] int IodineClient :: connect(String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: strtok(Object, unknown, String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/xapek/andiodine/IodineVpnService;",
+              "class_short_name": "IodineVpnService",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lorg/xapek/andiodine/IodineClient;",
+              "class_short_name": "IodineClient",
+              "method_name": "connect",
+              "params": "String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "strtok",
+              "params": "Object, unknown, String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 34,
+          "source_so": "libiodine-client.so",
+          "call_chain_text": "[Intent Domain] void IodineVpnService :: run() (W=0.50)\n    -> [Target JNI Anchor] int IodineClient :: connect(String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: strdup(String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/xapek/andiodine/IodineVpnService;",
+              "class_short_name": "IodineVpnService",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lorg/xapek/andiodine/IodineClient;",
+              "class_short_name": "IodineClient",
+              "method_name": "connect",
+              "params": "String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "strdup",
+              "params": "String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 35,
+          "source_so": "libiodine-client.so",
+          "call_chain_text": "[Intent Domain] void IodineVpnService :: run() (W=0.50)\n    -> [Target JNI Anchor] int IodineClient :: connect(String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: select(String, unknown, Object, unknown, Object, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/xapek/andiodine/IodineVpnService;",
+              "class_short_name": "IodineVpnService",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lorg/xapek/andiodine/IodineClient;",
+              "class_short_name": "IodineClient",
+              "method_name": "connect",
+              "params": "String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "select",
+              "params": "String, unknown, Object, unknown, Object, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 36,
+          "source_so": "libiodine-client.so",
+          "call_chain_text": "[Intent Domain] void IodineVpnService :: run() (W=0.50)\n    -> [Target JNI Anchor] int IodineClient :: connect(String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: sleep(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/xapek/andiodine/IodineVpnService;",
+              "class_short_name": "IodineVpnService",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lorg/xapek/andiodine/IodineClient;",
+              "class_short_name": "IodineClient",
+              "method_name": "connect",
+              "params": "String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "sleep",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 37,
+          "source_so": "libiodine-client.so",
+          "call_chain_text": "[Intent Domain] void IodineVpnService :: run() (W=0.50)\n    -> [Target JNI Anchor] int IodineClient :: connect(String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: close(String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/xapek/andiodine/IodineVpnService;",
+              "class_short_name": "IodineVpnService",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lorg/xapek/andiodine/IodineClient;",
+              "class_short_name": "IodineClient",
+              "method_name": "connect",
+              "params": "String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "close",
+              "params": "String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 38,
+          "source_so": "libiodine-client.so",
+          "call_chain_text": "[Intent Domain] void IodineVpnService :: run() (W=0.50)\n    -> [Target JNI Anchor] int IodineClient :: connect(String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: fflush(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/xapek/andiodine/IodineVpnService;",
+              "class_short_name": "IodineVpnService",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lorg/xapek/andiodine/IodineClient;",
+              "class_short_name": "IodineClient",
+              "method_name": "connect",
+              "params": "String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fflush",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 39,
+          "source_so": "libiodine-client.so",
+          "call_chain_text": "[Intent Domain] void IodineVpnService :: run() (W=0.50)\n    -> [Target JNI Anchor] int IodineClient :: connect(String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: freeaddrinfo(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/xapek/andiodine/IodineVpnService;",
+              "class_short_name": "IodineVpnService",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lorg/xapek/andiodine/IodineClient;",
+              "class_short_name": "IodineClient",
+              "method_name": "connect",
+              "params": "String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "freeaddrinfo",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 40,
+          "source_so": "libiodine-client.so",
+          "call_chain_text": "[Intent Domain] void IodineVpnService :: run() (W=0.50)\n    -> [Target JNI Anchor] int IodineClient :: connect(String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryAux :: opaqueInt() (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/xapek/andiodine/IodineVpnService;",
+              "class_short_name": "IodineVpnService",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lorg/xapek/andiodine/IodineClient;",
+              "class_short_name": "IodineClient",
+              "method_name": "connect",
+              "params": "String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryAux;",
+              "class_short_name": "NativeSummaryAux",
+              "method_name": "opaqueInt",
+              "params": "",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 41,
+          "source_so": "libiodine-client.so",
+          "call_chain_text": "[Intent Domain] void IodineVpnService :: run() (W=0.50)\n    -> [Target JNI Anchor] int IodineClient :: connect(String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: strtok(int, unknown, String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/xapek/andiodine/IodineVpnService;",
+              "class_short_name": "IodineVpnService",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lorg/xapek/andiodine/IodineClient;",
+              "class_short_name": "IodineClient",
+              "method_name": "connect",
+              "params": "String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "strtok",
+              "params": "int, unknown, String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 42,
+          "source_so": "libiodine-client.so",
+          "call_chain_text": "[Intent Domain] void IodineVpnService :: run() (W=0.50)\n    -> [Target JNI Anchor] int IodineClient :: connect(String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: vsnprintf(String, unknown, int, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/xapek/andiodine/IodineVpnService;",
+              "class_short_name": "IodineVpnService",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lorg/xapek/andiodine/IodineClient;",
+              "class_short_name": "IodineClient",
+              "method_name": "connect",
+              "params": "String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "vsnprintf",
+              "params": "String, unknown, int, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 43,
+          "source_so": "libiodine-client.so",
+          "call_chain_text": "[Intent Domain] void IodineVpnService :: run() (W=0.50)\n    -> [Target JNI Anchor] int IodineClient :: connect(String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: memset(Object, unknown, Object, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/xapek/andiodine/IodineVpnService;",
+              "class_short_name": "IodineVpnService",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lorg/xapek/andiodine/IodineClient;",
+              "class_short_name": "IodineClient",
+              "method_name": "connect",
+              "params": "String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "memset",
+              "params": "Object, unknown, Object, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 44,
+          "source_so": "libiodine-client.so",
+          "call_chain_text": "[Intent Domain] void IodineVpnService :: run() (W=0.50)\n    -> [Target JNI Anchor] int IodineClient :: connect(String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: vsnprintf(Object, unknown, int, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/xapek/andiodine/IodineVpnService;",
+              "class_short_name": "IodineVpnService",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lorg/xapek/andiodine/IodineClient;",
+              "class_short_name": "IodineClient",
+              "method_name": "connect",
+              "params": "String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "vsnprintf",
+              "params": "Object, unknown, int, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 45,
+          "source_so": "libiodine-client.so",
+          "call_chain_text": "[Intent Domain] void IodineVpnService :: run() (W=0.50)\n    -> [Target JNI Anchor] int IodineClient :: connect(String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: getnameinfo(Object, unknown, String, unknown, String, unknown, int, unknown, Object, unknown, Object, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/xapek/andiodine/IodineVpnService;",
+              "class_short_name": "IodineVpnService",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lorg/xapek/andiodine/IodineClient;",
+              "class_short_name": "IodineClient",
+              "method_name": "connect",
+              "params": "String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "getnameinfo",
+              "params": "Object, unknown, String, unknown, String, unknown, int, unknown, Object, unknown, Object, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 46,
+          "source_so": "libiodine-client.so",
+          "call_chain_text": "[Intent Domain] void IodineVpnService :: run() (W=0.50)\n    -> [Target JNI Anchor] int IodineClient :: connect(String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: setsockopt(String, unknown, int, unknown, int, unknown, Object, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/xapek/andiodine/IodineVpnService;",
+              "class_short_name": "IodineVpnService",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lorg/xapek/andiodine/IodineClient;",
+              "class_short_name": "IodineClient",
+              "method_name": "connect",
+              "params": "String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "setsockopt",
+              "params": "String, unknown, int, unknown, int, unknown, Object, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 47,
+          "source_so": "libiodine-client.so",
+          "call_chain_text": "[Intent Domain] void IodineVpnService :: run() (W=0.50)\n    -> [Target JNI Anchor] int IodineClient :: connect(String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: getaddrinfo(Object, unknown, Object, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/xapek/andiodine/IodineVpnService;",
+              "class_short_name": "IodineVpnService",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lorg/xapek/andiodine/IodineClient;",
+              "class_short_name": "IodineClient",
+              "method_name": "connect",
+              "params": "String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "getaddrinfo",
+              "params": "Object, unknown, Object, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 48,
+          "source_so": "libiodine-client.so",
+          "call_chain_text": "[Intent Domain] void IodineVpnService :: run() (W=0.50)\n    -> [Target JNI Anchor] int IodineClient :: connect(String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: getnameinfo(Object, unknown, Object, unknown, String, unknown, int, unknown, Object, unknown, Object, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/xapek/andiodine/IodineVpnService;",
+              "class_short_name": "IodineVpnService",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lorg/xapek/andiodine/IodineClient;",
+              "class_short_name": "IodineClient",
+              "method_name": "connect",
+              "params": "String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "getnameinfo",
+              "params": "Object, unknown, Object, unknown, String, unknown, int, unknown, Object, unknown, Object, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 49,
+          "source_so": "libiodine-client.so",
+          "call_chain_text": "[Intent Domain] void IodineVpnService :: run() (W=0.50)\n    -> [Target JNI Anchor] int IodineClient :: connect(String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: setsockopt(String, unknown, Object, unknown, int, unknown, Object, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/xapek/andiodine/IodineVpnService;",
+              "class_short_name": "IodineVpnService",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lorg/xapek/andiodine/IodineClient;",
+              "class_short_name": "IodineClient",
+              "method_name": "connect",
+              "params": "String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "setsockopt",
+              "params": "String, unknown, Object, unknown, int, unknown, Object, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 50,
+          "source_so": "libiodine-client.so",
+          "call_chain_text": "[Intent Domain] void IodineVpnService :: run() (W=0.50)\n    -> [Target JNI Anchor] int IodineClient :: connect(String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String) (W=1.00)\n    -> [Interaction Domain] void IodineClient :: log_callback(String) (W=0.50)\n    -> [Interaction Domain] void IodineVpnService :: sendBroadcast(Intent) (W=0.33)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/xapek/andiodine/IodineVpnService;",
+              "class_short_name": "IodineVpnService",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lorg/xapek/andiodine/IodineClient;",
+              "class_short_name": "IodineClient",
+              "method_name": "connect",
+              "params": "String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String",
+              "weight": 1.0
+            },
+            {
+              "label": "Interaction Domain",
+              "return_type": "void",
+              "class_name": "Lorg/xapek/andiodine/IodineClient;",
+              "class_short_name": "IodineClient",
+              "method_name": "log_callback",
+              "params": "String",
+              "weight": 0.5
+            },
+            {
+              "label": "Interaction Domain",
+              "return_type": "void",
+              "class_name": "Lorg/xapek/andiodine/IodineVpnService;",
+              "class_short_name": "IodineVpnService",
+              "method_name": "sendBroadcast",
+              "params": "Intent",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "stack_id": 51,
+          "source_so": "libiodine-client.so",
+          "call_chain_text": "[Intent Domain] void IodineVpnService :: run() (W=0.50)\n    -> [Target JNI Anchor] int IodineClient :: connect(String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: srand(String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/xapek/andiodine/IodineVpnService;",
+              "class_short_name": "IodineVpnService",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lorg/xapek/andiodine/IodineClient;",
+              "class_short_name": "IodineClient",
+              "method_name": "connect",
+              "params": "String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "srand",
+              "params": "String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 52,
+          "source_so": "libiodine-client.so",
+          "call_chain_text": "[Intent Domain] void IodineVpnService :: run() (W=0.50)\n    -> [Target JNI Anchor] int IodineClient :: connect(String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: fcntl(String, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/xapek/andiodine/IodineVpnService;",
+              "class_short_name": "IodineVpnService",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lorg/xapek/andiodine/IodineClient;",
+              "class_short_name": "IodineClient",
+              "method_name": "connect",
+              "params": "String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fcntl",
+              "params": "String, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 53,
+          "source_so": "libiodine-client.so",
+          "call_chain_text": "[Intent Domain] void IodineVpnService :: run() (W=0.50)\n    -> [Target JNI Anchor] int IodineClient :: connect(String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: inet_ntoa(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/xapek/andiodine/IodineVpnService;",
+              "class_short_name": "IodineVpnService",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lorg/xapek/andiodine/IodineClient;",
+              "class_short_name": "IodineClient",
+              "method_name": "connect",
+              "params": "String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "inet_ntoa",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 54,
+          "source_so": "libiodine-client.so",
+          "call_chain_text": "[Intent Domain] void IodineVpnService :: run() (W=0.50)\n    -> [Target JNI Anchor] int IodineClient :: connect(String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: AttachCurrentThread(Object, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/xapek/andiodine/IodineVpnService;",
+              "class_short_name": "IodineVpnService",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lorg/xapek/andiodine/IodineClient;",
+              "class_short_name": "IodineClient",
+              "method_name": "connect",
+              "params": "String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "AttachCurrentThread",
+              "params": "Object, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 55,
+          "source_so": "libiodine-client.so",
+          "call_chain_text": "[Intent Domain] void IodineVpnService :: run() (W=0.50)\n    -> [Target JNI Anchor] int IodineClient :: connect(String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: free(String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/xapek/andiodine/IodineVpnService;",
+              "class_short_name": "IodineVpnService",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lorg/xapek/andiodine/IodineClient;",
+              "class_short_name": "IodineClient",
+              "method_name": "connect",
+              "params": "String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "free",
+              "params": "String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 56,
+          "source_so": "libiodine-client.so",
+          "call_chain_text": "[Intent Domain] void IodineVpnService :: run() (W=0.50)\n    -> [Target JNI Anchor] int IodineClient :: connect(String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: __android_log_vprint(int, unknown, String, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/xapek/andiodine/IodineVpnService;",
+              "class_short_name": "IodineVpnService",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lorg/xapek/andiodine/IodineClient;",
+              "class_short_name": "IodineClient",
+              "method_name": "connect",
+              "params": "String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "__android_log_vprint",
+              "params": "int, unknown, String, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 57,
+          "source_so": "libiodine-client.so",
+          "call_chain_text": "[Intent Domain] void IodineVpnService :: run() (W=0.50)\n    -> [Target JNI Anchor] int IodineClient :: connect(String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: strerror(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/xapek/andiodine/IodineVpnService;",
+              "class_short_name": "IodineVpnService",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lorg/xapek/andiodine/IodineClient;",
+              "class_short_name": "IodineClient",
+              "method_name": "connect",
+              "params": "String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "strerror",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 58,
+          "source_so": "libiodine-client.so",
+          "call_chain_text": "[Intent Domain] void IodineVpnService :: run() (W=0.50)\n    -> [Target JNI Anchor] int IodineClient :: connect(String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: fcntl(String, unknown, int, unknown, String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/xapek/andiodine/IodineVpnService;",
+              "class_short_name": "IodineVpnService",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lorg/xapek/andiodine/IodineClient;",
+              "class_short_name": "IodineClient",
+              "method_name": "connect",
+              "params": "String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fcntl",
+              "params": "String, unknown, int, unknown, String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 59,
+          "source_so": "libiodine-client.so",
+          "call_chain_text": "[Intent Domain] void IodineVpnService :: run() (W=0.50)\n    -> [Target JNI Anchor] int IodineClient :: connect(String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: vfprintf(Object, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/xapek/andiodine/IodineVpnService;",
+              "class_short_name": "IodineVpnService",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lorg/xapek/andiodine/IodineClient;",
+              "class_short_name": "IodineClient",
+              "method_name": "connect",
+              "params": "String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "vfprintf",
+              "params": "Object, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 60,
+          "source_so": "libiodine-client.so",
+          "call_chain_text": "[Intent Domain] void IodineVpnService :: run() (W=0.50)\n    -> [Target JNI Anchor] int IodineClient :: connect(String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: strdup(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/xapek/andiodine/IodineVpnService;",
+              "class_short_name": "IodineVpnService",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lorg/xapek/andiodine/IodineClient;",
+              "class_short_name": "IodineClient",
+              "method_name": "connect",
+              "params": "String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "strdup",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 61,
+          "source_so": "libiodine-client.so",
+          "call_chain_text": "[Intent Domain] void IodineVpnService :: run() (W=0.50)\n    -> [Target JNI Anchor] int IodineClient :: connect(String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: recvfrom(String, unknown, Object, unknown, int, unknown, Object, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/xapek/andiodine/IodineVpnService;",
+              "class_short_name": "IodineVpnService",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lorg/xapek/andiodine/IodineClient;",
+              "class_short_name": "IodineClient",
+              "method_name": "connect",
+              "params": "String, unknown, String, unknown, boolean, unknown, boolean, unknown, String, unknown, int, unknown, int, unknown, String",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "recvfrom",
+              "params": "String, unknown, Object, unknown, int, unknown, Object, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

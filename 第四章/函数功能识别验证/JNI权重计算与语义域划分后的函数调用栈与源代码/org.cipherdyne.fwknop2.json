@@ -1,0 +1,1657 @@
+{
+  "app": "org.cipherdyne.fwknop2",
+  "commented_jni_total": 1,
+  "with_code_count": 1,
+  "with_stacks_count": 1,
+  "total_stacks_collected": 38,
+  "functions": [
+    {
+      "function_name": "Java_biz_incomsystems_fwknop2_SendSPA_sendSPAPacket",
+      "class_name": "Lbiz/incomsystems/fwknop2/SendSPA;",
+      "method_name": "sendSPAPacket",
+      "descriptor": "()Ljava/lang/String;",
+      "source_so": "libfwknop.so",
+      "file_path": "H:\\fdroid\\source_code\\org.cipherdyne.fwknop2\\app\\src\\main\\jni\\fwknop_client.c",
+      "comment_before": "/* JNI interface: constructs arguments and calls main function\n*/",
+      "comment_inside": "/* Read the member values from the Java Object that called sendSPAPacket() method\n    */\n/* Sanity checks\n    */\n/* Using an HMAC is optional in the pre-rfc mode.\n    */\n/* Intialize the context\n    */\n/* Set server command\n        */\n/* Set client timeout\n        */\n/* Set the spa message string\n        */\n/* Set the HMAC mode if necessary\n    */\n/* Set Nat\n    */\n// if nat_access_str is not blank, push it into fko context\n/* Finalize the context data (Encrypt and encode).\n    */\n// eventually add error handling\n/* Generate the spa data packet\n    */\n/* Release the resources used by the fko context.\n    */\n/* Release mem\n    */",
+      "code": "jstring Java_biz_incomsystems_fwknop2_SendSPA_sendSPAPacket(JNIEnv* env,\n        jobject thiz)\n{\n    fko_ctx_t ctx;\n    fwknop_options_t opts;\n\n    int res, hmac_str_len = 0;\n    short message_type;\n    short digest_type = FKO_DIGEST_SHA256;\n    short hmac_type = FKO_HMAC_SHA256;\n    int key_len, hmac_key_len;\n    char res_msg[MSG_BUFSIZE+1] = {0};\n    char spa_msg[MSG_BUFSIZE+1] = {0};\n    char nat_msg[MSG_BUFSIZE+1] = {0};\n    jstring ourSpa;\n    char *key_tmp[MAX_KEY_LEN+1] = {0}, *hmac_key_tmp[MAX_KEY_LEN+1] = {0};\n    char * spa_buf_ptr;\n    char * spa_digest_ptr;\n    char spa_buf[4096] = {0};\n    char crypt_buf[4096] = {0};\n    char * hmac_buf;\n\n\n    LOGV(\"**** Init fwknop ****\");\n\n    memset(&opts, 0, sizeof(fwknop_options_t));\n\n    /* Read the member values from the Java Object that called sendSPAPacket() method\n    */\n    jclass c = (*env)->GetObjectClass(env,thiz);\n    jfieldID fid = (*env)->GetFieldID(env, c, \"access_str\", \"Ljava/lang/String;\");\n    jstring jaccess = (*env)->GetObjectField(env, thiz, fid);\n    const char *access_str = (*env)->GetStringUTFChars(env, jaccess, 0);\n\n    fid = (*env)->GetFieldID(env, c, \"allowip_str\", \"Ljava/lang/String;\");\n    jstring jallowip = (*env)->GetObjectField(env, thiz, fid);\n    const char *allowip_str = (*env)->GetStringUTFChars(env, jallowip, 0);\n\n    fid = (*env)->GetFieldID(env, c, \"passwd_str\", \"Ljava/lang/String;\");\n    jstring jpasswd = (*env)->GetObjectField(env, thiz, fid);\n    char *passwd_str = (*env)->GetStringUTFChars(env, jpasswd, 0);\n\n    fid = (*env)->GetFieldID(env, c, \"passwd_b64\", \"Ljava/lang/String;\");\n    jstring jpasswd_b64 = (*env)->GetObjectField(env, thiz, fid);\n    const char *passwd_b64 = (*env)->GetStringUTFChars(env, jpasswd_b64, 0);\n\n    fid = (*env)->GetFieldID(env, c, \"digest_type\", \"Ljava/lang/String;\");\n    jstring jdigest_type = (*env)->GetObjectField(env, thiz, fid);\n    char *set_digest_type = (*env)->GetStringUTFChars(env, jdigest_type, 0);\n\n    fid = (*env)->GetFieldID(env, c, \"hmac_str\", \"Ljava/lang/String;\");\n    jstring jhmac = (*env)->GetObjectField(env, thiz, fid);\n    char *hmac_str = (*env)->GetStringUTFChars(env, jhmac, 0);\n\n    fid = (*env)->GetFieldID(env, c, \"hmac_b64\", \"Ljava/lang/String;\");\n    jstring jhmac_b64 = (*env)->GetObjectField(env, thiz, fid);\n    const char *hmac_b64 = (*env)->GetStringUTFChars(env, jhmac_b64, 0);\n\n    fid = (*env)->GetFieldID(env, c, \"hmac_type\", \"Ljava/lang/String;\");\n    jstring jhmac_type = (*env)->GetObjectField(env, thiz, fid);\n    char *set_hmac_type = (*env)->GetStringUTFChars(env, jhmac_type, 0);\n\n    fid = (*env)->GetFieldID(env, c, \"fw_timeout_str\", \"Ljava/lang/String;\");\n    jstring jfwtimeout = (*env)->GetObjectField(env, thiz, fid);\n    const char *fw_timeout_str = (*env)->GetStringUTFChars(env, jfwtimeout, 0);\n\n    fid = (*env)->GetFieldID(env, c, \"nat_access_str\", \"Ljava/lang/String;\");\n    jstring jnat_access_str = (*env)->GetObjectField(env, thiz, fid);\n    const char *nat_access_str = (*env)->GetStringUTFChars(env, jnat_access_str, 0);\n\n    fid = (*env)->GetFieldID(env, c, \"nat_local\", \"Ljava/lang/String;\");\n    jstring jnat_local = (*env)->GetObjectField(env, thiz, fid);\n    const char *nat_local = (*env)->GetStringUTFChars(env, jnat_local, 0);\n\n    fid = (*env)->GetFieldID(env, c, \"server_cmd_str\", \"Ljava/lang/String;\");\n    jstring jserver_cmd = (*env)->GetObjectField(env, thiz, fid);\n    const char *server_cmd_str = (*env)->GetStringUTFChars(env, jserver_cmd, 0);\n\n    fid = (*env)->GetFieldID(env, c, \"legacy\", \"Ljava/lang/String;\");\n    jstring jlegacy = (*env)->GetObjectField(env, thiz, fid);\n    const char *legacy = (*env)->GetStringUTFChars(env, jlegacy, 0);\n\n    jfieldID gpg_fid = (*env)->GetFieldID(env, c, \"gpg_string\", \"Ljava/lang/String;\");\n    jstring jgpg_string = (*env)->GetObjectField(env, thiz, gpg_fid);\n    const char *gpg_string = (*env)->GetStringUTFChars(env, jgpg_string, 0);\n\n    /* Sanity checks\n    */\n    if(access_str == NULL) {\n        sprintf(res_msg, \"Error: Invalid or missing access string\");\n        goto cleanup2;\n    }\n    if(allowip_str == NULL) {\n        sprintf(res_msg, \"Error: Invalid or missing allow IP\");\n        goto cleanup2;\n    }\n    if(passwd_str == NULL) {\n        sprintf(res_msg, \"Error: Invalid or missing password\");\n        goto cleanup2;\n    }\n    if(fw_timeout_str == NULL) {\n        sprintf(res_msg, \"Error: Invalid or missing firewall timeout value\");\n        goto cleanup2;\n    }\n\n    if(hmac_str != NULL) {\n        hmac_str_len = (int)strlen(hmac_str);\n    }\n    key_len = (int)strlen(passwd_str);\n    if(legacy == NULL) {\n    sprintf(legacy, \"false\");\n    }\n\n\n    if(strcmp(hmac_b64, \"true\") == 0) {\n        hmac_str_len = fko_base64_decode( hmac_str,\n                                (unsigned char *)hmac_key_tmp);\n        if(hmac_str_len > MAX_KEY_LEN || hmac_str_len < 0)\n        {\n            LOGV(\"[*] Invalid key length: '%d', must be in [1,%d]\",\n                    hmac_str_len, MAX_KEY_LEN);\n            goto cleanup2;\n        }\n        else\n        {\n            memcpy(hmac_str, hmac_key_tmp, hmac_str_len);\n        }\n    }\n\n    if(strcmp(passwd_b64, \"true\") == 0) {\n        LOGV(\"Detected key b64\");\n        key_len = fko_base64_decode(passwd_str,\n                        (unsigned char *)key_tmp);\n        if(key_len > MAX_KEY_LEN || key_len < 0)\n        {\n            LOGV( \"[*] Invalid key length: '%d', must be in [1,%d]\",\n                    key_len, MAX_KEY_LEN);\n            goto cleanup2;\n        }\n        else\n        {\n            memcpy(passwd_str, key_tmp, key_len);\n        }\n    }\n    /* Using an HMAC is optional in the pre-rfc mode.\n    */\n\n    if (server_cmd_str[0] != 0x0) {\n        message_type = FKO_COMMAND_MSG;\n    } else {\n        message_type = FKO_CLIENT_TIMEOUT_NAT_ACCESS_MSG;\n    }\n\n    /* Intialize the context\n    */\n    res = fko_new(&ctx);\n    if (res != FKO_SUCCESS) {\n        strcpy(res_msg, fko_errmsg(\"Unable to create FKO context\", res));\n        goto cleanup2;\n    }\n\n    /* Set server command\n        */\n\n    if (server_cmd_str[0] != 0x0) {\n        message_type = FKO_COMMAND_MSG;\n        fko_set_spa_message_type(ctx, message_type);\n        res = fko_set_spa_message(ctx, server_cmd_str);\n            if (res != FKO_SUCCESS) {\n                strcpy(res_msg, fko_errmsg(\"Error setting SPA request message\", res));\n                goto cleanup;\n            }\n    } else {\n\n        /* Set client timeout\n        */\n        res = fko_set_spa_client_timeout(ctx, atoi(fw_timeout_str));\n        if (res != FKO_SUCCESS) {\n            strcpy(res_msg, fko_errmsg(\"Error setting FW timeout\", res));\n            goto cleanup;\n        }\n\n        /* Set the spa message string\n        */\n        snprintf(spa_msg, MSG_BUFSIZE, \"%s,%s\", allowip_str, access_str);\n\n        res = fko_set_spa_message(ctx, spa_msg);\n        if (res != FKO_SUCCESS) {\n            strcpy(res_msg, fko_errmsg(\"Error setting SPA request message\", res));\n            goto cleanup;\n        }\n    }\n\n    /* Set the HMAC mode if necessary\n    */\n    if (strcmp(legacy, \"true\") == 0) {\n        res = fko_set_spa_encryption_mode(ctx, FKO_ENC_MODE_CBC_LEGACY_IV);\n        if (key_len > 16) {\n            key_len = 16;\n        }\n    }\n\n\n    if (hmac_str_len > 0) {\n        if (strcmp(set_hmac_type, \"MD5\") == 0) {\n            hmac_type = FKO_HMAC_MD5;\n        } else if (strcmp(set_hmac_type, \"SHA1\") == 0) {\n            hmac_type = FKO_HMAC_SHA1;\n        } else if (strcmp(set_hmac_type, \"SHA256\") == 0) {\n            hmac_type = FKO_HMAC_SHA256;\n        } else if (strcmp(set_hmac_type, \"SHA384\") == 0) {\n            hmac_type = FKO_HMAC_SHA384;\n        } else if (strcmp(set_hmac_type, \"SHA512\") == 0) {\n            hmac_type = FKO_HMAC_SHA512;\n        }\n\n        res = fko_set_spa_hmac_type(ctx, hmac_type);\n        if (res != FKO_SUCCESS) {\n            strcpy(res_msg, fko_errmsg(\"Error setting SPA HMAC type\", res));\n            goto cleanup;\n        }\n    }\n\n\n\n    /* Set Nat\n    */\n    if (nat_access_str[0] != 0x0){\n        // if nat_access_str is not blank, push it into fko context\n        if (strncmp(nat_local, \"true\", 4) == 0) {\n            message_type = FKO_CLIENT_TIMEOUT_LOCAL_NAT_ACCESS_MSG;\n            fko_set_spa_message_type(ctx, message_type);\n            LOGV(\"Finished setting local-nat.\");\n        }\n        res = fko_set_spa_nat_access(ctx, nat_access_str);\n        if (res != FKO_SUCCESS) {\n                    strcpy(res_msg, fko_errmsg(\"Error setting NAT string\", res));\n                    goto cleanup;\n                }\n    }\n    LOGV(\"Setting digest type to %s.\", set_digest_type);\n    if (strcmp(set_digest_type, \"MD5\") == 0) {\n        digest_type = FKO_HMAC_MD5;\n    } else if (strcmp(set_digest_type, \"SHA1\") == 0) {\n        digest_type = FKO_HMAC_SHA1;\n    } else if (strcmp(set_digest_type, \"SHA256\") == 0) {\n        digest_type = FKO_HMAC_SHA256;\n    } else if (strcmp(set_digest_type, \"SHA384\") == 0) {\n        digest_type = FKO_HMAC_SHA384;\n    } else if (strcmp(set_digest_type, \"SHA512\") == 0) {\n        digest_type = FKO_HMAC_SHA512;\n    }\n    res = fko_set_spa_digest_type(ctx, digest_type);\n    if (res != FKO_SUCCESS) {\n        strcpy(res_msg, fko_errmsg(\"Error setting SPA digest type\", res));\n        goto cleanup;\n    }\n    LOGV(\"Finished setting digest type.\");\n\n\n    /* Finalize the context data (Encrypt and encode).\n    */\n    res = fko_spa_data_final(ctx, (char*)passwd_str,\n            key_len, (char *)hmac_str, hmac_str_len);\n    if (res != FKO_SUCCESS) {\n        strcpy(res_msg, fko_errmsg(\"Error generating SPA data\", res));\n        goto cleanup;\n    }\n    LOGV(\"Finished finalize.\");\n\n    fko_get_encoded_data(ctx, &spa_buf_ptr);\n    fko_get_spa_digest(ctx, &spa_digest_ptr);\n    sprintf(spa_buf, \"%s:%s\", spa_buf_ptr, spa_digest_ptr);\n\n    res = fko_get_spa_data(ctx, &opts.spa_data);\n    if (res != FKO_SUCCESS) {\n        strcpy(res_msg, fko_errmsg(\"Error getting SPA data\", res));\n        goto cleanup;\n    }\n    if (strcmp(gpg_string, \"\") == 0) {\n        jgpg_string = (*env)->NewStringUTF(env, spa_buf);\n        (*env)->SetObjectField(env, thiz, gpg_fid, jgpg_string);\n        ourSpa = (*env)->NewStringUTF(env, opts.spa_data);\n    } else {\n    strcpy(crypt_buf, gpg_string);\n    res = fko_set_spa_data(ctx, gpg_string); // eventually add error handling\n    res = fko_set_spa_hmac(ctx, hmac_str, hmac_str_len);\n    res = fko_get_spa_hmac(ctx, &hmac_buf);\n        if (hmac_buf != NULL)\n    strcat(crypt_buf, hmac_buf);\n    ourSpa = (*env)->NewStringUTF(env, crypt_buf + 2);\n}\n    /* Generate the spa data packet\n    */\n\n\ncleanup:\n    /* Release the resources used by the fko context.\n    */\n    fko_destroy(ctx);\n\ncleanup2:\n    /* Release mem\n    */\n    (*env)->ReleaseStringUTFChars(env, jaccess, access_str);\n    (*env)->ReleaseStringUTFChars(env, jallowip, allowip_str);\n    (*env)->ReleaseStringUTFChars(env, jpasswd, passwd_str);\n    (*env)->ReleaseStringUTFChars(env, jpasswd_b64, passwd_b64);\n    (*env)->ReleaseStringUTFChars(env, jdigest_type, set_digest_type);\n    (*env)->ReleaseStringUTFChars(env, jhmac, hmac_str);\n    (*env)->ReleaseStringUTFChars(env, jhmac_b64, hmac_b64);\n    (*env)->ReleaseStringUTFChars(env, jhmac_type, set_hmac_type);\n    (*env)->ReleaseStringUTFChars(env, jfwtimeout, fw_timeout_str);\n    (*env)->ReleaseStringUTFChars(env, jnat_access_str, nat_access_str);\n    (*env)->ReleaseStringUTFChars(env, jnat_local, nat_local);\n    return ourSpa;\n}",
+      "call_stacks_count": 38,
+      "call_stacks": [
+        {
+          "stack_id": 1,
+          "source_so": "libfwknop.so",
+          "call_chain_text": "[Intent Domain] Object SendSPA$getExternalIP :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] String SendSPA$getExternalIP :: doInBackground(Void[]) (W=0.50)\n    -> [Target JNI Anchor] String SendSPA :: sendSPAPacket() (W=1.00)\n    -> [Core Execution Domain] String NativeSummaryFuncs :: strdup(String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Void[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA;",
+              "class_short_name": "SendSPA",
+              "method_name": "sendSPAPacket",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "String",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "strdup",
+              "params": "String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 2,
+          "source_so": "libfwknop.so",
+          "call_chain_text": "[Intent Domain] Object SendSPA$getExternalIP :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] String SendSPA$getExternalIP :: doInBackground(Void[]) (W=0.50)\n    -> [Target JNI Anchor] String SendSPA :: sendSPAPacket() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: calloc(int, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Void[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA;",
+              "class_short_name": "SendSPA",
+              "method_name": "sendSPAPacket",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "calloc",
+              "params": "int, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 3,
+          "source_so": "libfwknop.so",
+          "call_chain_text": "[Intent Domain] Object SendSPA$getExternalIP :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] String SendSPA$getExternalIP :: doInBackground(Void[]) (W=0.50)\n    -> [Target JNI Anchor] String SendSPA :: sendSPAPacket() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: lrand48() (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Void[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA;",
+              "class_short_name": "SendSPA",
+              "method_name": "sendSPAPacket",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "lrand48",
+              "params": "",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 4,
+          "source_so": "libfwknop.so",
+          "call_chain_text": "[Intent Domain] Object SendSPA$getExternalIP :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] String SendSPA$getExternalIP :: doInBackground(Void[]) (W=0.50)\n    -> [Target JNI Anchor] String SendSPA :: sendSPAPacket() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: strchr(int, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Void[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA;",
+              "class_short_name": "SendSPA",
+              "method_name": "sendSPAPacket",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "strchr",
+              "params": "int, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 5,
+          "source_so": "libfwknop.so",
+          "call_chain_text": "[Intent Domain] Object SendSPA$getExternalIP :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] String SendSPA$getExternalIP :: doInBackground(Void[]) (W=0.50)\n    -> [Target JNI Anchor] String SendSPA :: sendSPAPacket() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: memset(int, unknown, Object, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Void[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA;",
+              "class_short_name": "SendSPA",
+              "method_name": "sendSPAPacket",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "memset",
+              "params": "int, unknown, Object, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 6,
+          "source_so": "libfwknop.so",
+          "call_chain_text": "[Intent Domain] Object SendSPA$getExternalIP :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] String SendSPA$getExternalIP :: doInBackground(Void[]) (W=0.50)\n    -> [Target JNI Anchor] String SendSPA :: sendSPAPacket() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: free(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Void[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA;",
+              "class_short_name": "SendSPA",
+              "method_name": "sendSPAPacket",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "free",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 7,
+          "source_so": "libfwknop.so",
+          "call_chain_text": "[Intent Domain] Object SendSPA$getExternalIP :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] String SendSPA$getExternalIP :: doInBackground(Void[]) (W=0.50)\n    -> [Target JNI Anchor] String SendSPA :: sendSPAPacket() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: snprintf(String, unknown, int, unknown, String, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Void[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA;",
+              "class_short_name": "SendSPA",
+              "method_name": "sendSPAPacket",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "snprintf",
+              "params": "String, unknown, int, unknown, String, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 8,
+          "source_so": "libfwknop.so",
+          "call_chain_text": "[Intent Domain] Object SendSPA$getExternalIP :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] String SendSPA$getExternalIP :: doInBackground(Void[]) (W=0.50)\n    -> [Target JNI Anchor] String SendSPA :: sendSPAPacket() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: fprintf(Object, unknown, String, unknown, int, unknown, int, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Void[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA;",
+              "class_short_name": "SendSPA",
+              "method_name": "sendSPAPacket",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fprintf",
+              "params": "Object, unknown, String, unknown, int, unknown, int, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 9,
+          "source_so": "libfwknop.so",
+          "call_chain_text": "[Intent Domain] Object SendSPA$getExternalIP :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] String SendSPA$getExternalIP :: doInBackground(Void[]) (W=0.50)\n    -> [Target JNI Anchor] String SendSPA :: sendSPAPacket() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: snprintf(int, unknown, int, unknown, String, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Void[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA;",
+              "class_short_name": "SendSPA",
+              "method_name": "sendSPAPacket",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "snprintf",
+              "params": "int, unknown, int, unknown, String, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 10,
+          "source_so": "libfwknop.so",
+          "call_chain_text": "[Intent Domain] Object SendSPA$getExternalIP :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] String SendSPA$getExternalIP :: doInBackground(Void[]) (W=0.50)\n    -> [Target JNI Anchor] String SendSPA :: sendSPAPacket() (W=1.00)\n    -> [Core Execution Domain] String NativeSummaryFuncs :: snprintf(String, unknown, int, unknown, String, unknown, String, unknown, Object, unknown, String, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Void[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA;",
+              "class_short_name": "SendSPA",
+              "method_name": "sendSPAPacket",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "String",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "snprintf",
+              "params": "String, unknown, int, unknown, String, unknown, String, unknown, Object, unknown, String, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 11,
+          "source_so": "libfwknop.so",
+          "call_chain_text": "[Intent Domain] Object SendSPA$getExternalIP :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] String SendSPA$getExternalIP :: doInBackground(Void[]) (W=0.50)\n    -> [Target JNI Anchor] String SendSPA :: sendSPAPacket() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: raise(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Void[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA;",
+              "class_short_name": "SendSPA",
+              "method_name": "sendSPAPacket",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "raise",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 12,
+          "source_so": "libfwknop.so",
+          "call_chain_text": "[Intent Domain] Object SendSPA$getExternalIP :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] String SendSPA$getExternalIP :: doInBackground(Void[]) (W=0.50)\n    -> [Target JNI Anchor] String SendSPA :: sendSPAPacket() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: strdup(String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Void[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA;",
+              "class_short_name": "SendSPA",
+              "method_name": "sendSPAPacket",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "strdup",
+              "params": "String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 13,
+          "source_so": "libfwknop.so",
+          "call_chain_text": "[Intent Domain] Object SendSPA$getExternalIP :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] String SendSPA$getExternalIP :: doInBackground(Void[]) (W=0.50)\n    -> [Target JNI Anchor] String SendSPA :: sendSPAPacket() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: perror(String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Void[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA;",
+              "class_short_name": "SendSPA",
+              "method_name": "sendSPAPacket",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "perror",
+              "params": "String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 14,
+          "source_so": "libfwknop.so",
+          "call_chain_text": "[Intent Domain] Object SendSPA$getExternalIP :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] String SendSPA$getExternalIP :: doInBackground(Void[]) (W=0.50)\n    -> [Target JNI Anchor] String SendSPA :: sendSPAPacket() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: strchr(String, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Void[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA;",
+              "class_short_name": "SendSPA",
+              "method_name": "sendSPAPacket",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "strchr",
+              "params": "String, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 15,
+          "source_so": "libfwknop.so",
+          "call_chain_text": "[Intent Domain] Object SendSPA$getExternalIP :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] String SendSPA$getExternalIP :: doInBackground(Void[]) (W=0.50)\n    -> [Target JNI Anchor] String SendSPA :: sendSPAPacket() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: calloc(int, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Void[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA;",
+              "class_short_name": "SendSPA",
+              "method_name": "sendSPAPacket",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "calloc",
+              "params": "int, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 16,
+          "source_so": "libfwknop.so",
+          "call_chain_text": "[Intent Domain] Object SendSPA$getExternalIP :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] String SendSPA$getExternalIP :: doInBackground(Void[]) (W=0.50)\n    -> [Target JNI Anchor] String SendSPA :: sendSPAPacket() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: snprintf(Object, unknown, int, unknown, String, unknown, String, unknown, String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Void[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA;",
+              "class_short_name": "SendSPA",
+              "method_name": "sendSPAPacket",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "snprintf",
+              "params": "Object, unknown, int, unknown, String, unknown, String, unknown, String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 17,
+          "source_so": "libfwknop.so",
+          "call_chain_text": "[Intent Domain] Object SendSPA$getExternalIP :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] String SendSPA$getExternalIP :: doInBackground(Void[]) (W=0.50)\n    -> [Target JNI Anchor] String SendSPA :: sendSPAPacket() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryAux :: opaqueInt() (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Void[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA;",
+              "class_short_name": "SendSPA",
+              "method_name": "sendSPAPacket",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryAux;",
+              "class_short_name": "NativeSummaryAux",
+              "method_name": "opaqueInt",
+              "params": "",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 18,
+          "source_so": "libfwknop.so",
+          "call_chain_text": "[Intent Domain] Object SendSPA$getExternalIP :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] String SendSPA$getExternalIP :: doInBackground(Void[]) (W=0.50)\n    -> [Target JNI Anchor] String SendSPA :: sendSPAPacket() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: snprintf(String, unknown, int, unknown, String, unknown, String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Void[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA;",
+              "class_short_name": "SendSPA",
+              "method_name": "sendSPAPacket",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "snprintf",
+              "params": "String, unknown, int, unknown, String, unknown, String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 19,
+          "source_so": "libfwknop.so",
+          "call_chain_text": "[Intent Domain] Object SendSPA$getExternalIP :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] String SendSPA$getExternalIP :: doInBackground(Void[]) (W=0.50)\n    -> [Target JNI Anchor] String SendSPA :: sendSPAPacket() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: fopen(String, unknown, String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Void[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA;",
+              "class_short_name": "SendSPA",
+              "method_name": "sendSPAPacket",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fopen",
+              "params": "String, unknown, String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 20,
+          "source_so": "libfwknop.so",
+          "call_chain_text": "[Intent Domain] Object SendSPA$getExternalIP :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] String SendSPA$getExternalIP :: doInBackground(Void[]) (W=0.50)\n    -> [Target JNI Anchor] String SendSPA :: sendSPAPacket() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: memset(Object, unknown, Object, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Void[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA;",
+              "class_short_name": "SendSPA",
+              "method_name": "sendSPAPacket",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "memset",
+              "params": "Object, unknown, Object, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 21,
+          "source_so": "libfwknop.so",
+          "call_chain_text": "[Intent Domain] Object SendSPA$getExternalIP :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] String SendSPA$getExternalIP :: doInBackground(Void[]) (W=0.50)\n    -> [Target JNI Anchor] String SendSPA :: sendSPAPacket() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: strcspn(String, unknown, String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Void[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA;",
+              "class_short_name": "SendSPA",
+              "method_name": "sendSPAPacket",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "strcspn",
+              "params": "String, unknown, String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 22,
+          "source_so": "libfwknop.so",
+          "call_chain_text": "[Intent Domain] Object SendSPA$getExternalIP :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] String SendSPA$getExternalIP :: doInBackground(Void[]) (W=0.50)\n    -> [Target JNI Anchor] String SendSPA :: sendSPAPacket() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: srand48(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Void[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA;",
+              "class_short_name": "SendSPA",
+              "method_name": "sendSPAPacket",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "srand48",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 23,
+          "source_so": "libfwknop.so",
+          "call_chain_text": "[Intent Domain] Object SendSPA$getExternalIP :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] String SendSPA$getExternalIP :: doInBackground(Void[]) (W=0.50)\n    -> [Target JNI Anchor] String SendSPA :: sendSPAPacket() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: gettimeofday(Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Void[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA;",
+              "class_short_name": "SendSPA",
+              "method_name": "sendSPAPacket",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "gettimeofday",
+              "params": "Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 24,
+          "source_so": "libfwknop.so",
+          "call_chain_text": "[Intent Domain] Object SendSPA$getExternalIP :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] String SendSPA$getExternalIP :: doInBackground(Void[]) (W=0.50)\n    -> [Target JNI Anchor] String SendSPA :: sendSPAPacket() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: memset(Object, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Void[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA;",
+              "class_short_name": "SendSPA",
+              "method_name": "sendSPAPacket",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "memset",
+              "params": "Object, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 25,
+          "source_so": "libfwknop.so",
+          "call_chain_text": "[Intent Domain] Object SendSPA$getExternalIP :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] String SendSPA$getExternalIP :: doInBackground(Void[]) (W=0.50)\n    -> [Target JNI Anchor] String SendSPA :: sendSPAPacket() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: fclose(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Void[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA;",
+              "class_short_name": "SendSPA",
+              "method_name": "sendSPAPacket",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fclose",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 26,
+          "source_so": "libfwknop.so",
+          "call_chain_text": "[Intent Domain] Object SendSPA$getExternalIP :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] String SendSPA$getExternalIP :: doInBackground(Void[]) (W=0.50)\n    -> [Target JNI Anchor] String SendSPA :: sendSPAPacket() (W=1.00)\n    -> [Core Execution Domain] String NativeSummaryFuncs :: strdup(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Void[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA;",
+              "class_short_name": "SendSPA",
+              "method_name": "sendSPAPacket",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "String",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "strdup",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 27,
+          "source_so": "libfwknop.so",
+          "call_chain_text": "[Intent Domain] Object SendSPA$getExternalIP :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] String SendSPA$getExternalIP :: doInBackground(Void[]) (W=0.50)\n    -> [Target JNI Anchor] String SendSPA :: sendSPAPacket() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: free(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Void[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA;",
+              "class_short_name": "SendSPA",
+              "method_name": "sendSPAPacket",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "free",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 28,
+          "source_so": "libfwknop.so",
+          "call_chain_text": "[Intent Domain] Object SendSPA$getExternalIP :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] String SendSPA$getExternalIP :: doInBackground(Void[]) (W=0.50)\n    -> [Target JNI Anchor] String SendSPA :: sendSPAPacket() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: exit(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Void[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA;",
+              "class_short_name": "SendSPA",
+              "method_name": "sendSPAPacket",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "exit",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 29,
+          "source_so": "libfwknop.so",
+          "call_chain_text": "[Intent Domain] Object SendSPA$getExternalIP :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] String SendSPA$getExternalIP :: doInBackground(Void[]) (W=0.50)\n    -> [Target JNI Anchor] String SendSPA :: sendSPAPacket() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: memset(Object, unknown, int, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Void[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA;",
+              "class_short_name": "SendSPA",
+              "method_name": "sendSPAPacket",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "memset",
+              "params": "Object, unknown, int, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 30,
+          "source_so": "libfwknop.so",
+          "call_chain_text": "[Intent Domain] Object SendSPA$getExternalIP :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] String SendSPA$getExternalIP :: doInBackground(Void[]) (W=0.50)\n    -> [Target JNI Anchor] String SendSPA :: sendSPAPacket() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: snprintf(String, unknown, int, unknown, String, unknown, Object, unknown, Object, unknown, String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Void[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA;",
+              "class_short_name": "SendSPA",
+              "method_name": "sendSPAPacket",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "snprintf",
+              "params": "String, unknown, int, unknown, String, unknown, Object, unknown, Object, unknown, String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 31,
+          "source_so": "libfwknop.so",
+          "call_chain_text": "[Intent Domain] Object SendSPA$getExternalIP :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] String SendSPA$getExternalIP :: doInBackground(Void[]) (W=0.50)\n    -> [Target JNI Anchor] String SendSPA :: sendSPAPacket() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: fread(Object, unknown, int, unknown, int, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Void[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA;",
+              "class_short_name": "SendSPA",
+              "method_name": "sendSPAPacket",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fread",
+              "params": "Object, unknown, int, unknown, int, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 32,
+          "source_so": "libfwknop.so",
+          "call_chain_text": "[Intent Domain] Object SendSPA$getExternalIP :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] String SendSPA$getExternalIP :: doInBackground(Void[]) (W=0.50)\n    -> [Target JNI Anchor] String SendSPA :: sendSPAPacket() (W=1.00)\n    -> [Core Execution Domain] String NativeSummaryFuncs :: time(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Void[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA;",
+              "class_short_name": "SendSPA",
+              "method_name": "sendSPAPacket",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "String",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "time",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 33,
+          "source_so": "libfwknop.so",
+          "call_chain_text": "[Intent Domain] Object SendSPA$getExternalIP :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] String SendSPA$getExternalIP :: doInBackground(Void[]) (W=0.50)\n    -> [Target JNI Anchor] String SendSPA :: sendSPAPacket() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: free(String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Void[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA;",
+              "class_short_name": "SendSPA",
+              "method_name": "sendSPAPacket",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "free",
+              "params": "String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 34,
+          "source_so": "libfwknop.so",
+          "call_chain_text": "[Intent Domain] Object SendSPA$getExternalIP :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] String SendSPA$getExternalIP :: doInBackground(Void[]) (W=0.50)\n    -> [Target JNI Anchor] String SendSPA :: sendSPAPacket() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: inet_aton(Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Void[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA;",
+              "class_short_name": "SendSPA",
+              "method_name": "sendSPAPacket",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "inet_aton",
+              "params": "Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 35,
+          "source_so": "libfwknop.so",
+          "call_chain_text": "[Intent Domain] Object SendSPA$getExternalIP :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] String SendSPA$getExternalIP :: doInBackground(Void[]) (W=0.50)\n    -> [Target JNI Anchor] String SendSPA :: sendSPAPacket() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: gettimeofday(Object, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Void[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA;",
+              "class_short_name": "SendSPA",
+              "method_name": "sendSPAPacket",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "gettimeofday",
+              "params": "Object, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 36,
+          "source_so": "libfwknop.so",
+          "call_chain_text": "[Intent Domain] Object SendSPA$getExternalIP :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] String SendSPA$getExternalIP :: doInBackground(Void[]) (W=0.50)\n    -> [Target JNI Anchor] String SendSPA :: sendSPAPacket() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: strtol(Object, unknown, Object, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Void[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA;",
+              "class_short_name": "SendSPA",
+              "method_name": "sendSPAPacket",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "strtol",
+              "params": "Object, unknown, Object, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 37,
+          "source_so": "libfwknop.so",
+          "call_chain_text": "[Intent Domain] Object SendSPA$getExternalIP :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] String SendSPA$getExternalIP :: doInBackground(Void[]) (W=0.50)\n    -> [Target JNI Anchor] String SendSPA :: sendSPAPacket() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: getlogin() (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Void[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA;",
+              "class_short_name": "SendSPA",
+              "method_name": "sendSPAPacket",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "getlogin",
+              "params": "",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 38,
+          "source_so": "libfwknop.so",
+          "call_chain_text": "[Intent Domain] Object SendSPA$getExternalIP :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] String SendSPA$getExternalIP :: doInBackground(Void[]) (W=0.50)\n    -> [Target JNI Anchor] String SendSPA :: sendSPAPacket() (W=1.00)\n    -> [Core Execution Domain] String NativeSummaryFuncs :: calloc(int, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA$getExternalIP;",
+              "class_short_name": "SendSPA$getExternalIP",
+              "method_name": "doInBackground",
+              "params": "Void[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Lbiz/incomsystems/fwknop2/SendSPA;",
+              "class_short_name": "SendSPA",
+              "method_name": "sendSPAPacket",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "String",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "calloc",
+              "params": "int, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

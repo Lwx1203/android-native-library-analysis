@@ -1,0 +1,367 @@
+{
+  "app": "net.alexbarry.alexgames",
+  "commented_jni_total": 5,
+  "with_code_count": 5,
+  "with_stacks_count": 5,
+  "total_stacks_collected": 9,
+  "functions": [
+    {
+      "function_name": "Java_net_alexbarry_alexgames_AlexGamesJni_jniDrawBoard",
+      "class_name": "Lnet/alexbarry/alexgames/AlexGamesJni;",
+      "method_name": "jniDrawBoard",
+      "descriptor": "(I)V",
+      "source_so": "libalex_games_android_jni.so",
+      "file_path": "H:\\fdroid\\source_code\\net.alexbarry.alexgames\\src\\android\\app\\src\\main\\cpp\\alex_games_android_jni.cpp",
+      "comment_before": null,
+      "comment_inside": "//g_cls = env->FindClass(\"net/alexbarry/alexgames/AlexGamesJni\");",
+      "code": "JNIEXPORT void JNICALL\nJava_net_alexbarry_alexgames_AlexGamesJni_jniDrawBoard(JNIEnv* env, jobject thiz, jint dt_ms) {\n\tg_env = env;\n\tg_thiz = thiz;\n\t//g_cls = env->FindClass(\"net/alexbarry/alexgames/AlexGamesJni\");\n\tgame_api->update(L, dt_ms);\n}",
+      "call_stacks_count": 1,
+      "call_stacks": [
+        {
+          "stack_id": 32,
+          "source_so": "libalex_games_android_jni.so",
+          "call_chain_text": "[Intent Domain] void AlexGamesJni$3 :: run() (W=0.50)\n    -> [Target JNI Anchor] void AlexGamesJni :: jniDrawBoard(int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lnet/alexbarry/alexgames/AlexGamesJni$3;",
+              "class_short_name": "AlexGamesJni$3",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lnet/alexbarry/alexgames/AlexGamesJni;",
+              "class_short_name": "AlexGamesJni",
+              "method_name": "jniDrawBoard",
+              "params": "int",
+              "weight": 1.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function_name": "Java_net_alexbarry_alexgames_AlexGamesJni_jniHandlePopupBtnClicked",
+      "class_name": "Lnet/alexbarry/alexgames/AlexGamesJni;",
+      "method_name": "jniHandlePopupBtnClicked",
+      "descriptor": "(Ljava/lang/String; I)V",
+      "source_so": "libalex_games_android_jni.so",
+      "file_path": "H:\\fdroid\\source_code\\net.alexbarry.alexgames\\src\\android\\app\\src\\main\\cpp\\alex_games_android_jni.cpp",
+      "comment_before": null,
+      "comment_inside": "// TODO add popup state here",
+      "code": "JNIEXPORT void JNICALL\nJava_net_alexbarry_alexgames_AlexGamesJni_jniHandlePopupBtnClicked(JNIEnv* env, jobject thiz,\n                                                                   jstring popup_id_jstr, jint btn_id) {\n\n\tg_env = env;\n\tg_thiz = thiz;\n\tconst char *popup_id_cstr = env->GetStringUTFChars(popup_id_jstr, NULL);\n\tgame_api->handle_popup_btn_clicked(L, popup_id_cstr, btn_id, NULL); // TODO add popup state here\n}",
+      "call_stacks_count": 1,
+      "call_stacks": [
+        {
+          "stack_id": 31,
+          "source_so": "libalex_games_android_jni.so",
+          "call_chain_text": "[Intent Domain] void AlexGamesJni$1$1 :: run() (W=0.50)\n    -> [Target JNI Anchor] void AlexGamesJni :: jniHandlePopupBtnClicked(String, unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lnet/alexbarry/alexgames/AlexGamesJni$1$1;",
+              "class_short_name": "AlexGamesJni$1$1",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lnet/alexbarry/alexgames/AlexGamesJni;",
+              "class_short_name": "AlexGamesJni",
+              "method_name": "jniHandlePopupBtnClicked",
+              "params": "String, unknown, int",
+              "weight": 1.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function_name": "Java_net_alexbarry_alexgames_AlexGamesJni_jniHandleTouchEvt",
+      "class_name": "Lnet/alexbarry/alexgames/AlexGamesJni;",
+      "method_name": "jniHandleTouchEvt",
+      "descriptor": "(Ljava/lang/String; J I I)V",
+      "source_so": "libalex_games_android_jni.so",
+      "file_path": "H:\\fdroid\\source_code\\net.alexbarry.alexgames\\src\\android\\app\\src\\main\\cpp\\alex_games_android_jni.cpp",
+      "comment_before": "// jniHandleTouchEvent(evt_id_str, touch_id, touch_x, touch_y);",
+      "comment_inside": "//g_cls = env->FindClass(\"net/alexbarry/alexgames/AlexGamesJni\");\n//uint8_t *changed_touches = (uint8_t*)malloc(changed_touches_len*(sizeof(long) + 2*sizeof(double)));\n/*\n\tlong *touch_id_ptr  = (long*)  (changed_touches);\n\tdouble *touch_y_ptr = (double*)(changed_touches +   sizeof(long));\n\tdouble *touch_x_ptr = (double*)(changed_touches + sizeof(long) + sizeof(double));\n\t*/",
+      "code": "JNIEXPORT void JNICALL\nJava_net_alexbarry_alexgames_AlexGamesJni_jniHandleTouchEvt(JNIEnv* env, jobject thiz,\n                                                            jstring evt_id_jstr, jlong touch_id,\n                                                            jint pos_y, jint pos_x) {\n\n\tif (env->ExceptionCheck() == JNI_TRUE) {\n\t\treturn;\n\t}\n\tg_env = env;\n\tg_thiz = thiz;\n\t//g_cls = env->FindClass(\"net/alexbarry/alexgames/AlexGamesJni\");\n\tconst char *touch_evt_id_str = env->GetStringUTFChars(evt_id_jstr, NULL);\n\tsize_t touch_evt_id_str_len  = env->GetStringLength(evt_id_jstr);\n\tint changed_touches_len = 1;\n\tuint8_t *changed_touches = (uint8_t*)malloc(changed_touches_len*8*3);\n\t//uint8_t *changed_touches = (uint8_t*)malloc(changed_touches_len*(sizeof(long) + 2*sizeof(double)));\n\t/*\n\tlong *touch_id_ptr  = (long*)  (changed_touches);\n\tdouble *touch_y_ptr = (double*)(changed_touches +   sizeof(long));\n\tdouble *touch_x_ptr = (double*)(changed_touches + sizeof(long) + sizeof(double));\n\t*/\n\tlong   *touch_id_ptr =   (long*)(changed_touches);\n\tdouble *touch_y_ptr  = (double*)(changed_touches +   8);\n\tdouble *touch_x_ptr  = (double*)(changed_touches + 2*8);\n\t*touch_id_ptr = touch_id;\n\t*touch_y_ptr  = 1.0*pos_y;\n\t*touch_x_ptr  = 1.0*pos_x;\n\n\tif (L == NULL) {\n\t\tlog_jni(\"handle_touch_evt, L = null\");\n\t\treturn;\n\t}\n\t\n\tgame_api->handle_touch_evt(L, touch_evt_id_str, touch_evt_id_str_len, \n\t                           changed_touches, changed_touches_len);\n\tfree(changed_touches);\n\tenv->ReleaseStringUTFChars(evt_id_jstr, touch_evt_id_str);\n}",
+      "call_stacks_count": 5,
+      "call_stacks": [
+        {
+          "stack_id": 1,
+          "source_so": "libalex_games_android_jni.so",
+          "call_chain_text": "[Intent Domain] void AlexGamesJni$4 :: run() (W=0.50)\n    -> [Target JNI Anchor] void AlexGamesJni :: jniHandleTouchEvt(String, unknown, long, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: free(long) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lnet/alexbarry/alexgames/AlexGamesJni$4;",
+              "class_short_name": "AlexGamesJni$4",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lnet/alexbarry/alexgames/AlexGamesJni;",
+              "class_short_name": "AlexGamesJni",
+              "method_name": "jniHandleTouchEvt",
+              "params": "String, unknown, long, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "free",
+              "params": "long",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 2,
+          "source_so": "libalex_games_android_jni.so",
+          "call_chain_text": "[Intent Domain] void AlexGamesJni$4 :: run() (W=0.50)\n    -> [Target JNI Anchor] void AlexGamesJni :: jniHandleTouchEvt(String, unknown, long, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryAux :: opaqueInt() (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lnet/alexbarry/alexgames/AlexGamesJni$4;",
+              "class_short_name": "AlexGamesJni$4",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lnet/alexbarry/alexgames/AlexGamesJni;",
+              "class_short_name": "AlexGamesJni",
+              "method_name": "jniHandleTouchEvt",
+              "params": "String, unknown, long, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryAux;",
+              "class_short_name": "NativeSummaryAux",
+              "method_name": "opaqueInt",
+              "params": "",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 3,
+          "source_so": "libalex_games_android_jni.so",
+          "call_chain_text": "[Intent Domain] void AlexGamesJni$4 :: run() (W=0.50)\n    -> [Target JNI Anchor] void AlexGamesJni :: jniHandleTouchEvt(String, unknown, long, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: ExceptionCheck(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lnet/alexbarry/alexgames/AlexGamesJni$4;",
+              "class_short_name": "AlexGamesJni$4",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lnet/alexbarry/alexgames/AlexGamesJni;",
+              "class_short_name": "AlexGamesJni",
+              "method_name": "jniHandleTouchEvt",
+              "params": "String, unknown, long, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "ExceptionCheck",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 4,
+          "source_so": "libalex_games_android_jni.so",
+          "call_chain_text": "[Intent Domain] void AlexGamesJni$4 :: run() (W=0.50)\n    -> [Target JNI Anchor] void AlexGamesJni :: jniHandleTouchEvt(String, unknown, long, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] long NativeSummaryFuncs :: malloc(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lnet/alexbarry/alexgames/AlexGamesJni$4;",
+              "class_short_name": "AlexGamesJni$4",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lnet/alexbarry/alexgames/AlexGamesJni;",
+              "class_short_name": "AlexGamesJni",
+              "method_name": "jniHandleTouchEvt",
+              "params": "String, unknown, long, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "long",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "malloc",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 5,
+          "source_so": "libalex_games_android_jni.so",
+          "call_chain_text": "[Intent Domain] void AlexGamesJni$4 :: run() (W=0.50)\n    -> [Target JNI Anchor] void AlexGamesJni :: jniHandleTouchEvt(String, unknown, long, unknown, int, unknown, int) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: __android_log_write(int, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lnet/alexbarry/alexgames/AlexGamesJni$4;",
+              "class_short_name": "AlexGamesJni$4",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lnet/alexbarry/alexgames/AlexGamesJni;",
+              "class_short_name": "AlexGamesJni",
+              "method_name": "jniHandleTouchEvt",
+              "params": "String, unknown, long, unknown, int, unknown, int",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "__android_log_write",
+              "params": "int, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function_name": "Java_net_alexbarry_alexgames_AlexGamesJni_jniHandleUserClicked",
+      "class_name": "Lnet/alexbarry/alexgames/AlexGamesJni;",
+      "method_name": "jniHandleUserClicked",
+      "descriptor": "(I I)V",
+      "source_so": "libalex_games_android_jni.so",
+      "file_path": "H:\\fdroid\\source_code\\net.alexbarry.alexgames\\src\\android\\app\\src\\main\\cpp\\alex_games_android_jni.cpp",
+      "comment_before": null,
+      "comment_inside": "//g_cls = env->FindClass(\"net/alexbarry/alexgames/AlexGamesJni\");",
+      "code": "JNIEXPORT void JNICALL\nJava_net_alexbarry_alexgames_AlexGamesJni_jniHandleUserClicked(JNIEnv* env, jobject thiz,\n                                                               jint pos_y, jint pos_x) {\n\tg_env = env;\n\tg_thiz = thiz;\n\t//g_cls = env->FindClass(\"net/alexbarry/alexgames/AlexGamesJni\");\n\tgame_api->handle_user_clicked(L, pos_y, pos_x);\n}",
+      "call_stacks_count": 1,
+      "call_stacks": [
+        {
+          "stack_id": 6,
+          "source_so": "libalex_games_android_jni.so",
+          "call_chain_text": "[Intent Domain] boolean LocalClient$1 :: onTouch(View, unknown, MotionEvent) (W=0.33)\n    -> [Intent Domain] void AlexGamesJni :: onClick(float, unknown, float, unknown, float) (W=0.50)\n    -> [Target JNI Anchor] void AlexGamesJni :: jniHandleUserClicked(int, unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lnet/alexbarry/alexgames/local_client/LocalClient$1;",
+              "class_short_name": "LocalClient$1",
+              "method_name": "onTouch",
+              "params": "View, unknown, MotionEvent",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lnet/alexbarry/alexgames/AlexGamesJni;",
+              "class_short_name": "AlexGamesJni",
+              "method_name": "onClick",
+              "params": "float, unknown, float, unknown, float",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lnet/alexbarry/alexgames/AlexGamesJni;",
+              "class_short_name": "AlexGamesJni",
+              "method_name": "jniHandleUserClicked",
+              "params": "int, unknown, int",
+              "weight": 1.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function_name": "Java_net_alexbarry_alexgames_AlexGamesJni_jniStartGame",
+      "class_name": "Lnet/alexbarry/alexgames/AlexGamesJni;",
+      "method_name": "jniStartGame",
+      "descriptor": "(I [B)V",
+      "source_so": "libalex_games_android_jni.so",
+      "file_path": "H:\\fdroid\\source_code\\net.alexbarry.alexgames\\src\\android\\app\\src\\main\\cpp\\alex_games_android_jni.cpp",
+      "comment_before": null,
+      "comment_inside": "// TODO pass session_id and serialized_state",
+      "code": "JNIEXPORT void JNICALL\nJava_net_alexbarry_alexgames_AlexGamesJni_jniStartGame(JNIEnv* env, jobject thiz,\n                                                                   jint session_id,\n                                                                   jbyteArray serialized_state) {\n\tg_env  = env;\n\tg_thiz = thiz;\n\n    alex_log(\"Calling game_api->start_game, game_api=%p\\n\", game_api);\n\t// TODO pass session_id and serialized_state\n\tgame_api->start_game(L, 0, NULL, 0);\n}",
+      "call_stacks_count": 1,
+      "call_stacks": [
+        {
+          "stack_id": 30,
+          "source_so": "libalex_games_android_jni.so",
+          "call_chain_text": "[Intent Domain] void AlexGamesJni$2 :: run() (W=0.50)\n    -> [Target JNI Anchor] void AlexGamesJni :: jniStartGame(int, unknown, byte[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: vprintf(String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lnet/alexbarry/alexgames/AlexGamesJni$2;",
+              "class_short_name": "AlexGamesJni$2",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lnet/alexbarry/alexgames/AlexGamesJni;",
+              "class_short_name": "AlexGamesJni",
+              "method_name": "jniStartGame",
+              "params": "int, unknown, byte[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "vprintf",
+              "params": "String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,406 @@
+{
+  "app": "com.paddlesandbugs.dahdidahdit",
+  "commented_jni_total": 3,
+  "with_code_count": 3,
+  "with_stacks_count": 3,
+  "total_stacks_collected": 7,
+  "functions": [
+    {
+      "function_name": "Java_com_paddlesandbugs_dahdidahdit_brasspound_AudioHelper_createBufferQueueAudioPlayer",
+      "class_name": "Lcom/paddlesandbugs/dahdidahdit/brasspound/AudioHelper;",
+      "method_name": "createBufferQueueAudioPlayer",
+      "descriptor": "(I I)V",
+      "source_so": "libnative-audio-jni.so",
+      "file_path": "H:\\fdroid\\source_code\\com.paddlesandbugs.dahdidahdit\\app\\src\\main\\cpp\\native-audio-jni.c",
+      "comment_before": null,
+      "comment_inside": "/*\n         * device native buffer size is another factor to minimize audio latency, not used in this\n         * sample: we only play one giant buffer here\n         */\n// configure audio source\n/*\n     * Enable Fast Audio when possible:  once we set the same rate to be the native, fast audio path\n     * will be triggered\n     */\n//sample rate in mili second\n// configure audio sink\n/*\n     * create audio player:\n     *     fast audio does not support when SL_IID_EFFECTSEND is required, skip it\n     *     for fast audio case\n     */\n/*SL_IID_MUTESOLO,*/\n/*SL_BOOLEAN_TRUE,*/\n// realize the player\n// get the play interface\n// get the buffer queue interface\n// register callback on the buffer queue\n// get the effect send interface\n// mute/solo is not supported for sources that are known to be mono, as this is\n// get the mute/solo interface\n// get the volume interface\n// set the player's state to playing",
+      "code": "JNICALL\nJava_com_paddlesandbugs_dahdidahdit_brasspound_AudioHelper_createBufferQueueAudioPlayer(JNIEnv *env,\n                                                                             jclass clazz,\n                                                                             jint sampleRate,\n                                                                             jint bufSize) {\n    SLresult result;\n    if (sampleRate >= 0 && bufSize >= 0) {\n        bqPlayerSampleRate = sampleRate * 1000;\n        /*\n         * device native buffer size is another factor to minimize audio latency, not used in this\n         * sample: we only play one giant buffer here\n         */\n    }\n\n    // configure audio source\n    SLDataLocator_AndroidSimpleBufferQueue loc_bufq = {SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE, 2};\n    SLDataFormat_PCM format_pcm = {SL_DATAFORMAT_PCM, 1, SL_SAMPLINGRATE_8,\n                                   SL_PCMSAMPLEFORMAT_FIXED_16, SL_PCMSAMPLEFORMAT_FIXED_16,\n                                   SL_SPEAKER_FRONT_CENTER, SL_BYTEORDER_LITTLEENDIAN};\n    /*\n     * Enable Fast Audio when possible:  once we set the same rate to be the native, fast audio path\n     * will be triggered\n     */\n    if (bqPlayerSampleRate) {\n        format_pcm.samplesPerSec = bqPlayerSampleRate;       //sample rate in mili second\n    }\n    SLDataSource audioSrc = {&loc_bufq, &format_pcm};\n\n    // configure audio sink\n    SLDataLocator_OutputMix loc_outmix = {SL_DATALOCATOR_OUTPUTMIX, outputMixObject};\n    SLDataSink audioSnk = {&loc_outmix, NULL};\n\n    /*\n     * create audio player:\n     *     fast audio does not support when SL_IID_EFFECTSEND is required, skip it\n     *     for fast audio case\n     */\n    const SLInterfaceID ids[3] = {SL_IID_BUFFERQUEUE, SL_IID_VOLUME, SL_IID_EFFECTSEND,\n            /*SL_IID_MUTESOLO,*/};\n    const SLboolean req[3] = {SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE,\n            /*SL_BOOLEAN_TRUE,*/ };\n\n    result = (*engineEngine)->CreateAudioPlayer(engineEngine, &bqPlayerObject, &audioSrc, &audioSnk,\n                                                bqPlayerSampleRate ? 2 : 3, ids, req);\n    assert(SL_RESULT_SUCCESS == result);\n    (void) result;\n\n    // realize the player\n    result = (*bqPlayerObject)->Realize(bqPlayerObject, SL_BOOLEAN_FALSE);\n    assert(SL_RESULT_SUCCESS == result);\n    (void) result;\n\n    // get the play interface\n    result = (*bqPlayerObject)->GetInterface(bqPlayerObject, SL_IID_PLAY, &bqPlayerPlay);\n    assert(SL_RESULT_SUCCESS == result);\n    (void) result;\n\n    // get the buffer queue interface\n    result = (*bqPlayerObject)->GetInterface(bqPlayerObject, SL_IID_BUFFERQUEUE,\n                                             &bqPlayerBufferQueue);\n    assert(SL_RESULT_SUCCESS == result);\n    (void) result;\n\n    // register callback on the buffer queue\n    result = (*bqPlayerBufferQueue)->RegisterCallback(bqPlayerBufferQueue, bqPlayerCallback, NULL);\n    assert(SL_RESULT_SUCCESS == result);\n    (void) result;\n\n    // get the effect send interface\n    bqPlayerEffectSend = NULL;\n    if (0 == bqPlayerSampleRate) {\n        result = (*bqPlayerObject)->GetInterface(bqPlayerObject, SL_IID_EFFECTSEND,\n                                                 &bqPlayerEffectSend);\n        assert(SL_RESULT_SUCCESS == result);\n        (void) result;\n    }\n\n#if 0   // mute/solo is not supported for sources that are known to be mono, as this is\n    // get the mute/solo interface\n    result = (*bqPlayerObject)->GetInterface(bqPlayerObject, SL_IID_MUTESOLO, &bqPlayerMuteSolo);\n    assert(SL_RESULT_SUCCESS == result);\n    (void)result;\n#endif\n\n    // get the volume interface\n    result = (*bqPlayerObject)->GetInterface(bqPlayerObject, SL_IID_VOLUME, &bqPlayerVolume);\n    assert(SL_RESULT_SUCCESS == result);\n    (void) result;\n\n    // set the player's state to playing\n    result = (*bqPlayerPlay)->SetPlayState(bqPlayerPlay, SL_PLAYSTATE_PLAYING);\n    assert(SL_RESULT_SUCCESS == result);\n    (void) result;\n}",
+      "call_stacks_count": 3,
+      "call_stacks": [
+        {
+          "stack_id": 7,
+          "source_so": "libnative-audio-jni.so",
+          "call_chain_text": "[Intent Domain] void SendingTrainerActivity :: onResume() (W=0.20)\n    -> [Intent Domain] void c :: onResume() (W=0.25)\n    -> [Intent Domain] void c :: z0(a) (W=0.33)\n    -> [Intent Domain] void AudioHelper :: a(Context, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void AudioHelper :: createBufferQueueAudioPlayer(int, unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/paddlesandbugs/dahdidahdit/brasspound/SendingTrainerActivity;",
+              "class_short_name": "SendingTrainerActivity",
+              "method_name": "onResume",
+              "params": "",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/paddlesandbugs/dahdidahdit/brasspound/c;",
+              "class_short_name": "c",
+              "method_name": "onResume",
+              "params": "",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/paddlesandbugs/dahdidahdit/brasspound/c;",
+              "class_short_name": "c",
+              "method_name": "z0",
+              "params": "a",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/paddlesandbugs/dahdidahdit/brasspound/AudioHelper;",
+              "class_short_name": "AudioHelper",
+              "method_name": "a",
+              "params": "Context, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lcom/paddlesandbugs/dahdidahdit/brasspound/AudioHelper;",
+              "class_short_name": "AudioHelper",
+              "method_name": "createBufferQueueAudioPlayer",
+              "params": "int, unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 18,
+          "source_so": "libnative-audio-jni.so",
+          "call_chain_text": "[Intent Domain] void MOPPClientActivity :: onResume() (W=0.20)\n    -> [Intent Domain] void c :: onResume() (W=0.25)\n    -> [Intent Domain] void c :: z0(a) (W=0.33)\n    -> [Intent Domain] void AudioHelper :: a(Context, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void AudioHelper :: createBufferQueueAudioPlayer(int, unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/paddlesandbugs/dahdidahdit/network/MOPPClientActivity;",
+              "class_short_name": "MOPPClientActivity",
+              "method_name": "onResume",
+              "params": "",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/paddlesandbugs/dahdidahdit/brasspound/c;",
+              "class_short_name": "c",
+              "method_name": "onResume",
+              "params": "",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/paddlesandbugs/dahdidahdit/brasspound/c;",
+              "class_short_name": "c",
+              "method_name": "z0",
+              "params": "a",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/paddlesandbugs/dahdidahdit/brasspound/AudioHelper;",
+              "class_short_name": "AudioHelper",
+              "method_name": "a",
+              "params": "Context, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lcom/paddlesandbugs/dahdidahdit/brasspound/AudioHelper;",
+              "class_short_name": "AudioHelper",
+              "method_name": "createBufferQueueAudioPlayer",
+              "params": "int, unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 25,
+          "source_so": "libnative-audio-jni.so",
+          "call_chain_text": "[Intent Domain] void BrassPoundActivity :: onResume() (W=0.20)\n    -> [Intent Domain] void c :: onResume() (W=0.25)\n    -> [Intent Domain] void c :: z0(a) (W=0.33)\n    -> [Intent Domain] void AudioHelper :: a(Context, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void AudioHelper :: createBufferQueueAudioPlayer(int, unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/paddlesandbugs/dahdidahdit/brasspound/BrassPoundActivity;",
+              "class_short_name": "BrassPoundActivity",
+              "method_name": "onResume",
+              "params": "",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/paddlesandbugs/dahdidahdit/brasspound/c;",
+              "class_short_name": "c",
+              "method_name": "onResume",
+              "params": "",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/paddlesandbugs/dahdidahdit/brasspound/c;",
+              "class_short_name": "c",
+              "method_name": "z0",
+              "params": "a",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/paddlesandbugs/dahdidahdit/brasspound/AudioHelper;",
+              "class_short_name": "AudioHelper",
+              "method_name": "a",
+              "params": "Context, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lcom/paddlesandbugs/dahdidahdit/brasspound/AudioHelper;",
+              "class_short_name": "AudioHelper",
+              "method_name": "createBufferQueueAudioPlayer",
+              "params": "int, unknown, int",
+              "weight": 1.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function_name": "Java_com_paddlesandbugs_dahdidahdit_brasspound_AudioHelper_createEngine",
+      "class_name": "Lcom/paddlesandbugs/dahdidahdit/brasspound/AudioHelper;",
+      "method_name": "createEngine",
+      "descriptor": "()V",
+      "source_so": "libnative-audio-jni.so",
+      "file_path": "H:\\fdroid\\source_code\\com.paddlesandbugs.dahdidahdit\\app\\src\\main\\cpp\\native-audio-jni.c",
+      "comment_before": null,
+      "comment_inside": "// create engine\n// realize the engine\n// get the engine interface, which is needed in order to create other objects\n// create output mix, with environmental reverb specified as a non-required interface\n// realize the output mix\n// get the environmental reverb interface\n// this could fail if the environmental reverb effect is not available,\n// either because the feature is not present, excessive CPU load, or\n// the required MODIFY_AUDIO_SETTINGS permission was not requested and granted\n// ignore unsuccessful result codes for environmental reverb, as it is optional for this example",
+      "code": "JNICALL\nJava_com_paddlesandbugs_dahdidahdit_brasspound_AudioHelper_createEngine(JNIEnv *env, jclass clazz) {\n    SLresult result;\n\n    // create engine\n    result = slCreateEngine(&engineObject, 0, NULL, 0, NULL, NULL);\n    assert(SL_RESULT_SUCCESS == result);\n    (void) result;\n\n    // realize the engine\n    result = (*engineObject)->Realize(engineObject, SL_BOOLEAN_FALSE);\n    assert(SL_RESULT_SUCCESS == result);\n    (void) result;\n\n    // get the engine interface, which is needed in order to create other objects\n    result = (*engineObject)->GetInterface(engineObject, SL_IID_ENGINE, &engineEngine);\n    assert(SL_RESULT_SUCCESS == result);\n    (void) result;\n\n    // create output mix, with environmental reverb specified as a non-required interface\n    const SLInterfaceID ids[1] = {SL_IID_ENVIRONMENTALREVERB};\n    const SLboolean req[1] = {SL_BOOLEAN_FALSE};\n    result = (*engineEngine)->CreateOutputMix(engineEngine, &outputMixObject, 1, ids, req);\n    assert(SL_RESULT_SUCCESS == result);\n    (void) result;\n\n    // realize the output mix\n    result = (*outputMixObject)->Realize(outputMixObject, SL_BOOLEAN_FALSE);\n    assert(SL_RESULT_SUCCESS == result);\n    (void) result;\n\n    // get the environmental reverb interface\n    // this could fail if the environmental reverb effect is not available,\n    // either because the feature is not present, excessive CPU load, or\n    // the required MODIFY_AUDIO_SETTINGS permission was not requested and granted\n    result = (*outputMixObject)->GetInterface(outputMixObject, SL_IID_ENVIRONMENTALREVERB,\n                                              &outputMixEnvironmentalReverb);\n    if (SL_RESULT_SUCCESS == result) {\n        result = (*outputMixEnvironmentalReverb)->SetEnvironmentalReverbProperties(\n                outputMixEnvironmentalReverb, &reverbSettings);\n        (void) result;\n    }\n    // ignore unsuccessful result codes for environmental reverb, as it is optional for this example\n\n}",
+      "call_stacks_count": 3,
+      "call_stacks": [
+        {
+          "stack_id": 2,
+          "source_so": "libnative-audio-jni.so",
+          "call_chain_text": "[Intent Domain] void SendingTrainerActivity :: onResume() (W=0.20)\n    -> [Intent Domain] void c :: onResume() (W=0.25)\n    -> [Intent Domain] void c :: z0(a) (W=0.33)\n    -> [Intent Domain] void AudioHelper :: a(Context, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void AudioHelper :: createEngine() (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/paddlesandbugs/dahdidahdit/brasspound/SendingTrainerActivity;",
+              "class_short_name": "SendingTrainerActivity",
+              "method_name": "onResume",
+              "params": "",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/paddlesandbugs/dahdidahdit/brasspound/c;",
+              "class_short_name": "c",
+              "method_name": "onResume",
+              "params": "",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/paddlesandbugs/dahdidahdit/brasspound/c;",
+              "class_short_name": "c",
+              "method_name": "z0",
+              "params": "a",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/paddlesandbugs/dahdidahdit/brasspound/AudioHelper;",
+              "class_short_name": "AudioHelper",
+              "method_name": "a",
+              "params": "Context, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lcom/paddlesandbugs/dahdidahdit/brasspound/AudioHelper;",
+              "class_short_name": "AudioHelper",
+              "method_name": "createEngine",
+              "params": "",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 13,
+          "source_so": "libnative-audio-jni.so",
+          "call_chain_text": "[Intent Domain] void MOPPClientActivity :: onResume() (W=0.20)\n    -> [Intent Domain] void c :: onResume() (W=0.25)\n    -> [Intent Domain] void c :: z0(a) (W=0.33)\n    -> [Intent Domain] void AudioHelper :: a(Context, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void AudioHelper :: createEngine() (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/paddlesandbugs/dahdidahdit/network/MOPPClientActivity;",
+              "class_short_name": "MOPPClientActivity",
+              "method_name": "onResume",
+              "params": "",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/paddlesandbugs/dahdidahdit/brasspound/c;",
+              "class_short_name": "c",
+              "method_name": "onResume",
+              "params": "",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/paddlesandbugs/dahdidahdit/brasspound/c;",
+              "class_short_name": "c",
+              "method_name": "z0",
+              "params": "a",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/paddlesandbugs/dahdidahdit/brasspound/AudioHelper;",
+              "class_short_name": "AudioHelper",
+              "method_name": "a",
+              "params": "Context, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lcom/paddlesandbugs/dahdidahdit/brasspound/AudioHelper;",
+              "class_short_name": "AudioHelper",
+              "method_name": "createEngine",
+              "params": "",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 20,
+          "source_so": "libnative-audio-jni.so",
+          "call_chain_text": "[Intent Domain] void BrassPoundActivity :: onResume() (W=0.20)\n    -> [Intent Domain] void c :: onResume() (W=0.25)\n    -> [Intent Domain] void c :: z0(a) (W=0.33)\n    -> [Intent Domain] void AudioHelper :: a(Context, unknown, int) (W=0.50)\n    -> [Target JNI Anchor] void AudioHelper :: createEngine() (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/paddlesandbugs/dahdidahdit/brasspound/BrassPoundActivity;",
+              "class_short_name": "BrassPoundActivity",
+              "method_name": "onResume",
+              "params": "",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/paddlesandbugs/dahdidahdit/brasspound/c;",
+              "class_short_name": "c",
+              "method_name": "onResume",
+              "params": "",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/paddlesandbugs/dahdidahdit/brasspound/c;",
+              "class_short_name": "c",
+              "method_name": "z0",
+              "params": "a",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/paddlesandbugs/dahdidahdit/brasspound/AudioHelper;",
+              "class_short_name": "AudioHelper",
+              "method_name": "a",
+              "params": "Context, unknown, int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lcom/paddlesandbugs/dahdidahdit/brasspound/AudioHelper;",
+              "class_short_name": "AudioHelper",
+              "method_name": "createEngine",
+              "params": "",
+              "weight": 1.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function_name": "Java_com_paddlesandbugs_dahdidahdit_brasspound_AudioHelper_shutdown",
+      "class_name": "Lcom/paddlesandbugs/dahdidahdit/brasspound/AudioHelper;",
+      "method_name": "shutdown",
+      "descriptor": "()V",
+      "source_so": "libnative-audio-jni.so",
+      "file_path": "H:\\fdroid\\source_code\\com.paddlesandbugs.dahdidahdit\\app\\src\\main\\cpp\\native-audio-jni.c",
+      "comment_before": null,
+      "comment_inside": "// destroy buffer queue audio player object, and invalidate all associated interfaces\n// destroy output mix object, and invalidate all associated interfaces\n// destroy engine object, and invalidate all associated interfaces",
+      "code": "JNICALL\nJava_com_paddlesandbugs_dahdidahdit_brasspound_AudioHelper_shutdown(JNIEnv *env, jclass clazz) {\n\n    isPlaying = IS_NOT_PLAYING_AT_ALL;\n\n    // destroy buffer queue audio player object, and invalidate all associated interfaces\n    if (bqPlayerObject != NULL) {\n        (*bqPlayerObject)->Destroy(bqPlayerObject);\n        bqPlayerObject = NULL;\n        bqPlayerPlay = NULL;\n        bqPlayerBufferQueue = NULL;\n        bqPlayerEffectSend = NULL;\n        bqPlayerMuteSolo = NULL;\n        bqPlayerVolume = NULL;\n    }\n\n    // destroy output mix object, and invalidate all associated interfaces\n    if (outputMixObject != NULL) {\n        (*outputMixObject)->Destroy(outputMixObject);\n        outputMixObject = NULL;\n        outputMixEnvironmentalReverb = NULL;\n    }\n\n    // destroy engine object, and invalidate all associated interfaces\n    if (engineObject != NULL) {\n        (*engineObject)->Destroy(engineObject);\n        engineObject = NULL;\n        engineEngine = NULL;\n    }\n\n    releaseResampleBuf();\n}",
+      "call_stacks_count": 1,
+      "call_stacks": [
+        {
+          "stack_id": 10,
+          "source_so": "libnative-audio-jni.so",
+          "call_chain_text": "[Intent Domain] void MOPPClientActivity :: onPause() (W=0.33)\n    -> [Intent Domain] void c :: onPause() (W=0.50)\n    -> [Target JNI Anchor] void AudioHelper :: shutdown() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: free(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/paddlesandbugs/dahdidahdit/network/MOPPClientActivity;",
+              "class_short_name": "MOPPClientActivity",
+              "method_name": "onPause",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/paddlesandbugs/dahdidahdit/brasspound/c;",
+              "class_short_name": "c",
+              "method_name": "onPause",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lcom/paddlesandbugs/dahdidahdit/brasspound/AudioHelper;",
+              "class_short_name": "AudioHelper",
+              "method_name": "shutdown",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "free",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

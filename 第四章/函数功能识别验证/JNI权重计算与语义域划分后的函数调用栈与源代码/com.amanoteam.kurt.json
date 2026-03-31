@@ -1,0 +1,797 @@
+{
+  "app": "com.amanoteam.kurt",
+  "commented_jni_total": 1,
+  "with_code_count": 1,
+  "with_stacks_count": 1,
+  "total_stacks_collected": 18,
+  "functions": [
+    {
+      "function_name": "Java_com_amanoteam_kurt_libkurt_LibKurt_we_1search",
+      "class_name": "Lcom/amanoteam/kurt/libkurt/LibKurt;",
+      "method_name": "we_search",
+      "descriptor": "(Ljava/lang/String; Lcom/amanoteam/kurt/libkurt/WebsiteEntryPaging;)Lcom/amanoteam/kurt/libkurt/WebsiteEntryResults;",
+      "source_so": "libkurt.so",
+      "file_path": "H:\\fdroid\\source_code\\com.amanoteam.kurt\\app\\jni\\src\\kurt_jni.c",
+      "comment_before": null,
+      "comment_inside": "/* id */\n/* name */\n/* url */\n/* email */\n/* difficulty */",
+      "code": "jobject Java_com_amanoteam_kurt_libkurt_LibKurt_we_1search(\n\tJNIEnv* env,\n\tjobject obj,\n\tjstring kquery,\n\tjobject kpaging\n) {\n\t\n\tsize_t index = 0;\n\tssize_t offset = 0;\n\t\n\tjclass class = NULL;\n\t\n\tjclass cast_error = NULL;\n\tjclass oom_error = NULL;\n\t\n\tjclass we_class = NULL;\n\tjclass we_results_class = NULL;\n\t\n\tjobject kobject = NULL;\n\t\n\tjint kmaximum = 0;\n\tjint kposition = 0;\n\tjobject kresults = NULL;\n\tjstring kvalue = NULL;\n\t\n\tconst we_t* entry = NULL;\n\t\n\twe_paging_t paging = {0};\n\twe_results_t results = {0};\n\t\n\tconst char* query = NULL;\n\t\n\tif (kquery != NULL) {\n\t\tquery = (*env)->GetStringUTFChars(env, kquery, NULL);\n\t\t\n\t\tif (query == NULL) {\n\t\t\tgoto end;\n\t\t}\n\t}\n\t\n\toom_error = (*env)->FindClass(env, \"java/lang/OutOfMemoryError\");\n\t\n\tif (oom_error == NULL) {\n\t\tgoto end;\n\t}\n\t\n\twe_results_class = (*env)->FindClass(env, \"com/amanoteam/kurt/libkurt/WebsiteEntryResults\");\n\t\n\tif (we_results_class == NULL) {\n\t\tgoto end;\n\t}\n\t\n\twe_class = (*env)->FindClass(env, \"com/amanoteam/kurt/libkurt/WebsiteEntry\");\n\t\n\tif (we_class == NULL) {\n\t\tgoto end;\n\t}\n\t\n\tcast_error = (*env)->FindClass(env, \"java/lang/ClassCastException\");\n\t\n\tif (cast_error == NULL) {\n\t\tgoto end;\n\t}\n\t\n\tclass = (*env)->FindClass(env, \"com/amanoteam/kurt/libkurt/WebsiteEntryPaging\");\n\t\n\tif (class == NULL) {\n\t\tgoto end;\n\t}\n\t\n\tkmaximum = (*env)->CallIntMethod(\n\t\tenv,\n\t\tkpaging,\n\t\t(*env)->GetMethodID(env, class, \"getMaximum\", \"()I\")\n\t);\n\t\n\tkposition = (*env)->CallIntMethod(\n\t\tenv,\n\t\tkpaging,\n\t\t(*env)->GetMethodID(env, class, \"getPosition\", \"()I\")\n\t);\n\t\n\tif (!(kmaximum >= 0 && kposition >= 0)) {\n\t\t(*env)->ThrowNew(env, cast_error, NULL);\n\t\tgoto end;\n\t}\n\t\n\tpaging.maximum = (size_t) kmaximum;\n\tpaging.position = (size_t) kposition;\n\t\n\t__android_log_print(\n\t\tANDROID_LOG_DEBUG,\n\t\t\"kurt_jni\",\n\t\t\"websiteEntrySearch(query = '%s', paging = WebsiteEntryPaging(maximum = %zu, position = %zu))\",\n\t\tquery,\n\t\tpaging.maximum,\n\t\tpaging.position\n\t);\n\t\n\toffset = we_search(query, paging, NULL);\n\t\n\t__android_log_print(\n\t\tANDROID_LOG_DEBUG,\n\t\t\"kurt_jni\",\n\t\t\"websiteEntrySearch: %zd\",\n\t\toffset\n\t);\n\t\n\tif (offset == -1) {\n\t\t(*env)->ThrowNew(env, oom_error, NULL);\n\t\tgoto end;\n\t}\n\t\n\tif (offset == 0) {\n\t\tgoto end;\n\t}\n\t\n\tif (we_results_init(&results, (size_t) offset) == -1) {\n\t\t(*env)->ThrowNew(env, oom_error, NULL);\n\t\tgoto end;\n\t}\n\t\n\toffset = we_search(query, paging, &results);\n\t\n\t__android_log_print(\n\t\tANDROID_LOG_DEBUG,\n\t\t\"kurt_jni\",\n\t\t\"websiteEntrySearch: %zd\",\n\t\toffset\n\t);\n\t\n\tkresults = (*env)->AllocObject(env, we_results_class);\n\t\n\tif (kresults == NULL) {\n\t\tgoto end;\n\t}\n\t\n\tfor (index = 0; index < results.offset; index++) {\n\t\tentry = results.items[index];\n\t\t\n\t\tkobject = (*env)->AllocObject(env, we_class);\n\t\t\n\t\tif (kobject == NULL) {\n\t\t\tgoto end;\n\t\t}\n\t\t\n\t\t/* id */\n\t\t(*env)->CallVoidMethod(\n\t\t\tenv,\n\t\t\tkobject,\n\t\t\t(*env)->GetMethodID(env, we_class, \"setId\", \"(I)V\"),\n\t\t\tentry->id\n\t\t);\n\t\t\n\t\t/* name */\n\t\tkvalue = (*env)->NewStringUTF(env, entry->name);\n\t\t\n\t\tif (kvalue == NULL) {\n\t\t\tgoto end;\n\t\t}\n\t\t\n\t\t(*env)->CallVoidMethod(\n\t\t\tenv,\n\t\t\tkobject,\n\t\t\t(*env)->GetMethodID(env, we_class, \"setName\", \"(Ljava/lang/String;)V\"),\n\t\t\tkvalue\n\t\t);\n\t\t\n\t\t/* url */\n\t\tkvalue = (*env)->NewStringUTF(env, entry->url);\n\t\t\n\t\tif (kvalue == NULL) {\n\t\t\tgoto end;\n\t\t}\n\t\t\n\t\t(*env)->CallVoidMethod(\n\t\t\tenv,\n\t\t\tkobject,\n\t\t\t(*env)->GetMethodID(env, we_class, \"setUrl\", \"(Ljava/lang/String;)V\"),\n\t\t\tkvalue\n\t\t);\n\t\t\n\t\tkvalue = NULL;\n\t\t\n\t\t/* email */\n\t\tif (entry->email != NULL) {\n\t\t\tkvalue = (*env)->NewStringUTF(env, entry->email);\n\t\t\t\n\t\t\tif (kvalue == NULL) {\n\t\t\t\tgoto end;\n\t\t\t}\n\t\t}\n\t\t\n\t\t(*env)->CallVoidMethod(\n\t\t\tenv,\n\t\t\tkobject,\n\t\t\t(*env)->GetMethodID(env, we_class, \"setEmail\", \"(Ljava/lang/String;)V\"),\n\t\t\tkvalue\n\t\t);\n\t\t\n\t\t/* difficulty */\n\t\t(*env)->CallVoidMethod(\n\t\t\tenv,\n\t\t\tkobject,\n\t\t\t(*env)->GetMethodID(env, we_class, \"setDifficulty\", \"(I)V\"),\n\t\t\tentry->difficulty\n\t\t);\n\t\t\n\t\tkvalue = NULL;\n\t\t\n\t\t(*env)->CallVoidMethod(\n\t\t\tenv,\n\t\t\tkresults,\n\t\t\t(*env)->GetMethodID(env, we_results_class, \"append\", \"(Lcom/amanoteam/kurt/libkurt/WebsiteEntry;)V\"),\n\t\t\tkobject\n\t\t);\n\t\t\n\t}\n\t\n\tend:;\n\t\n\twe_results_free(&results);\n\t\n\treturn kresults;\n\t\n}",
+      "call_stacks_count": 18,
+      "call_stacks": [
+        {
+          "stack_id": 1,
+          "source_so": "libkurt.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] WebsiteEntryResults LibKurt :: websiteEntrySearch(String, unknown, WebsiteEntryPaging) (W=0.50)\n    -> [Target JNI Anchor] WebsiteEntryResults LibKurt :: we_search(String, unknown, WebsiteEntryPaging) (W=1.00)\n    -> [Interaction Domain] void WebsiteEntry :: setUrl(String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "LE0/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "WebsiteEntryResults",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/LibKurt;",
+              "class_short_name": "LibKurt",
+              "method_name": "websiteEntrySearch",
+              "params": "String, unknown, WebsiteEntryPaging",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "WebsiteEntryResults",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/LibKurt;",
+              "class_short_name": "LibKurt",
+              "method_name": "we_search",
+              "params": "String, unknown, WebsiteEntryPaging",
+              "weight": 1.0
+            },
+            {
+              "label": "Interaction Domain",
+              "return_type": "void",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/WebsiteEntry;",
+              "class_short_name": "WebsiteEntry",
+              "method_name": "setUrl",
+              "params": "String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 2,
+          "source_so": "libkurt.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] WebsiteEntryResults LibKurt :: websiteEntrySearch(String, unknown, WebsiteEntryPaging) (W=0.50)\n    -> [Target JNI Anchor] WebsiteEntryResults LibKurt :: we_search(String, unknown, WebsiteEntryPaging) (W=1.00)\n    -> [Interaction Domain] int WebsiteEntryPaging :: getPosition() (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "LE0/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "WebsiteEntryResults",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/LibKurt;",
+              "class_short_name": "LibKurt",
+              "method_name": "websiteEntrySearch",
+              "params": "String, unknown, WebsiteEntryPaging",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "WebsiteEntryResults",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/LibKurt;",
+              "class_short_name": "LibKurt",
+              "method_name": "we_search",
+              "params": "String, unknown, WebsiteEntryPaging",
+              "weight": 1.0
+            },
+            {
+              "label": "Interaction Domain",
+              "return_type": "int",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/WebsiteEntryPaging;",
+              "class_short_name": "WebsiteEntryPaging",
+              "method_name": "getPosition",
+              "params": "",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 3,
+          "source_so": "libkurt.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] WebsiteEntryResults LibKurt :: websiteEntrySearch(String, unknown, WebsiteEntryPaging) (W=0.50)\n    -> [Target JNI Anchor] WebsiteEntryResults LibKurt :: we_search(String, unknown, WebsiteEntryPaging) (W=1.00)\n    -> [Interaction Domain] void WebsiteEntry :: setName(String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "LE0/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "WebsiteEntryResults",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/LibKurt;",
+              "class_short_name": "LibKurt",
+              "method_name": "websiteEntrySearch",
+              "params": "String, unknown, WebsiteEntryPaging",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "WebsiteEntryResults",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/LibKurt;",
+              "class_short_name": "LibKurt",
+              "method_name": "we_search",
+              "params": "String, unknown, WebsiteEntryPaging",
+              "weight": 1.0
+            },
+            {
+              "label": "Interaction Domain",
+              "return_type": "void",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/WebsiteEntry;",
+              "class_short_name": "WebsiteEntry",
+              "method_name": "setName",
+              "params": "String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 4,
+          "source_so": "libkurt.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] WebsiteEntryResults LibKurt :: websiteEntrySearch(String, unknown, WebsiteEntryPaging) (W=0.50)\n    -> [Target JNI Anchor] WebsiteEntryResults LibKurt :: we_search(String, unknown, WebsiteEntryPaging) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: strstr(Object, unknown, String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "LE0/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "WebsiteEntryResults",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/LibKurt;",
+              "class_short_name": "LibKurt",
+              "method_name": "websiteEntrySearch",
+              "params": "String, unknown, WebsiteEntryPaging",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "WebsiteEntryResults",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/LibKurt;",
+              "class_short_name": "LibKurt",
+              "method_name": "we_search",
+              "params": "String, unknown, WebsiteEntryPaging",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "strstr",
+              "params": "Object, unknown, String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 5,
+          "source_so": "libkurt.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] WebsiteEntryResults LibKurt :: websiteEntrySearch(String, unknown, WebsiteEntryPaging) (W=0.50)\n    -> [Target JNI Anchor] WebsiteEntryResults LibKurt :: we_search(String, unknown, WebsiteEntryPaging) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: memmove(Object, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "LE0/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "WebsiteEntryResults",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/LibKurt;",
+              "class_short_name": "LibKurt",
+              "method_name": "websiteEntrySearch",
+              "params": "String, unknown, WebsiteEntryPaging",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "WebsiteEntryResults",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/LibKurt;",
+              "class_short_name": "LibKurt",
+              "method_name": "we_search",
+              "params": "String, unknown, WebsiteEntryPaging",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "memmove",
+              "params": "Object, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 6,
+          "source_so": "libkurt.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] WebsiteEntryResults LibKurt :: websiteEntrySearch(String, unknown, WebsiteEntryPaging) (W=0.50)\n    -> [Target JNI Anchor] WebsiteEntryResults LibKurt :: we_search(String, unknown, WebsiteEntryPaging) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: free(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "LE0/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "WebsiteEntryResults",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/LibKurt;",
+              "class_short_name": "LibKurt",
+              "method_name": "websiteEntrySearch",
+              "params": "String, unknown, WebsiteEntryPaging",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "WebsiteEntryResults",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/LibKurt;",
+              "class_short_name": "LibKurt",
+              "method_name": "we_search",
+              "params": "String, unknown, WebsiteEntryPaging",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "free",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 7,
+          "source_so": "libkurt.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] WebsiteEntryResults LibKurt :: websiteEntrySearch(String, unknown, WebsiteEntryPaging) (W=0.50)\n    -> [Target JNI Anchor] WebsiteEntryResults LibKurt :: we_search(String, unknown, WebsiteEntryPaging) (W=1.00)\n    -> [Interaction Domain] void WebsiteEntry :: setId(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "LE0/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "WebsiteEntryResults",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/LibKurt;",
+              "class_short_name": "LibKurt",
+              "method_name": "websiteEntrySearch",
+              "params": "String, unknown, WebsiteEntryPaging",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "WebsiteEntryResults",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/LibKurt;",
+              "class_short_name": "LibKurt",
+              "method_name": "we_search",
+              "params": "String, unknown, WebsiteEntryPaging",
+              "weight": 1.0
+            },
+            {
+              "label": "Interaction Domain",
+              "return_type": "void",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/WebsiteEntry;",
+              "class_short_name": "WebsiteEntry",
+              "method_name": "setId",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 8,
+          "source_so": "libkurt.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] WebsiteEntryResults LibKurt :: websiteEntrySearch(String, unknown, WebsiteEntryPaging) (W=0.50)\n    -> [Target JNI Anchor] WebsiteEntryResults LibKurt :: we_search(String, unknown, WebsiteEntryPaging) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: free(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "LE0/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "WebsiteEntryResults",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/LibKurt;",
+              "class_short_name": "LibKurt",
+              "method_name": "websiteEntrySearch",
+              "params": "String, unknown, WebsiteEntryPaging",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "WebsiteEntryResults",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/LibKurt;",
+              "class_short_name": "LibKurt",
+              "method_name": "we_search",
+              "params": "String, unknown, WebsiteEntryPaging",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "free",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 9,
+          "source_so": "libkurt.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] WebsiteEntryResults LibKurt :: websiteEntrySearch(String, unknown, WebsiteEntryPaging) (W=0.50)\n    -> [Target JNI Anchor] WebsiteEntryResults LibKurt :: we_search(String, unknown, WebsiteEntryPaging) (W=1.00)\n    -> [Interaction Domain] void WebsiteEntry :: setDifficulty(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "LE0/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "WebsiteEntryResults",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/LibKurt;",
+              "class_short_name": "LibKurt",
+              "method_name": "websiteEntrySearch",
+              "params": "String, unknown, WebsiteEntryPaging",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "WebsiteEntryResults",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/LibKurt;",
+              "class_short_name": "LibKurt",
+              "method_name": "we_search",
+              "params": "String, unknown, WebsiteEntryPaging",
+              "weight": 1.0
+            },
+            {
+              "label": "Interaction Domain",
+              "return_type": "void",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/WebsiteEntry;",
+              "class_short_name": "WebsiteEntry",
+              "method_name": "setDifficulty",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 10,
+          "source_so": "libkurt.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] WebsiteEntryResults LibKurt :: websiteEntrySearch(String, unknown, WebsiteEntryPaging) (W=0.50)\n    -> [Target JNI Anchor] WebsiteEntryResults LibKurt :: we_search(String, unknown, WebsiteEntryPaging) (W=1.00)\n    -> [Interaction Domain] void WebsiteEntryResults :: append(WebsiteEntry) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "LE0/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "WebsiteEntryResults",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/LibKurt;",
+              "class_short_name": "LibKurt",
+              "method_name": "websiteEntrySearch",
+              "params": "String, unknown, WebsiteEntryPaging",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "WebsiteEntryResults",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/LibKurt;",
+              "class_short_name": "LibKurt",
+              "method_name": "we_search",
+              "params": "String, unknown, WebsiteEntryPaging",
+              "weight": 1.0
+            },
+            {
+              "label": "Interaction Domain",
+              "return_type": "void",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/WebsiteEntryResults;",
+              "class_short_name": "WebsiteEntryResults",
+              "method_name": "append",
+              "params": "WebsiteEntry",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 11,
+          "source_so": "libkurt.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] WebsiteEntryResults LibKurt :: websiteEntrySearch(String, unknown, WebsiteEntryPaging) (W=0.50)\n    -> [Target JNI Anchor] WebsiteEntryResults LibKurt :: we_search(String, unknown, WebsiteEntryPaging) (W=1.00)\n    -> [Interaction Domain] int WebsiteEntryPaging :: getMaximum() (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "LE0/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "WebsiteEntryResults",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/LibKurt;",
+              "class_short_name": "LibKurt",
+              "method_name": "websiteEntrySearch",
+              "params": "String, unknown, WebsiteEntryPaging",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "WebsiteEntryResults",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/LibKurt;",
+              "class_short_name": "LibKurt",
+              "method_name": "we_search",
+              "params": "String, unknown, WebsiteEntryPaging",
+              "weight": 1.0
+            },
+            {
+              "label": "Interaction Domain",
+              "return_type": "int",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/WebsiteEntryPaging;",
+              "class_short_name": "WebsiteEntryPaging",
+              "method_name": "getMaximum",
+              "params": "",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 12,
+          "source_so": "libkurt.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] WebsiteEntryResults LibKurt :: websiteEntrySearch(String, unknown, WebsiteEntryPaging) (W=0.50)\n    -> [Target JNI Anchor] WebsiteEntryResults LibKurt :: we_search(String, unknown, WebsiteEntryPaging) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: malloc(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "LE0/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "WebsiteEntryResults",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/LibKurt;",
+              "class_short_name": "LibKurt",
+              "method_name": "websiteEntrySearch",
+              "params": "String, unknown, WebsiteEntryPaging",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "WebsiteEntryResults",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/LibKurt;",
+              "class_short_name": "LibKurt",
+              "method_name": "we_search",
+              "params": "String, unknown, WebsiteEntryPaging",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "malloc",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 13,
+          "source_so": "libkurt.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] WebsiteEntryResults LibKurt :: websiteEntrySearch(String, unknown, WebsiteEntryPaging) (W=0.50)\n    -> [Target JNI Anchor] WebsiteEntryResults LibKurt :: we_search(String, unknown, WebsiteEntryPaging) (W=1.00)\n    -> [Interaction Domain] void WebsiteEntry :: setEmail(String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "LE0/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "WebsiteEntryResults",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/LibKurt;",
+              "class_short_name": "LibKurt",
+              "method_name": "websiteEntrySearch",
+              "params": "String, unknown, WebsiteEntryPaging",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "WebsiteEntryResults",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/LibKurt;",
+              "class_short_name": "LibKurt",
+              "method_name": "we_search",
+              "params": "String, unknown, WebsiteEntryPaging",
+              "weight": 1.0
+            },
+            {
+              "label": "Interaction Domain",
+              "return_type": "void",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/WebsiteEntry;",
+              "class_short_name": "WebsiteEntry",
+              "method_name": "setEmail",
+              "params": "String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 14,
+          "source_so": "libkurt.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] WebsiteEntryResults LibKurt :: websiteEntrySearch(String, unknown, WebsiteEntryPaging) (W=0.50)\n    -> [Target JNI Anchor] WebsiteEntryResults LibKurt :: we_search(String, unknown, WebsiteEntryPaging) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: strstr(String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "LE0/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "WebsiteEntryResults",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/LibKurt;",
+              "class_short_name": "LibKurt",
+              "method_name": "websiteEntrySearch",
+              "params": "String, unknown, WebsiteEntryPaging",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "WebsiteEntryResults",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/LibKurt;",
+              "class_short_name": "LibKurt",
+              "method_name": "we_search",
+              "params": "String, unknown, WebsiteEntryPaging",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "strstr",
+              "params": "String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 15,
+          "source_so": "libkurt.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] WebsiteEntryResults LibKurt :: websiteEntrySearch(String, unknown, WebsiteEntryPaging) (W=0.50)\n    -> [Target JNI Anchor] WebsiteEntryResults LibKurt :: we_search(String, unknown, WebsiteEntryPaging) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: strstr(Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "LE0/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "WebsiteEntryResults",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/LibKurt;",
+              "class_short_name": "LibKurt",
+              "method_name": "websiteEntrySearch",
+              "params": "String, unknown, WebsiteEntryPaging",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "WebsiteEntryResults",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/LibKurt;",
+              "class_short_name": "LibKurt",
+              "method_name": "we_search",
+              "params": "String, unknown, WebsiteEntryPaging",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "strstr",
+              "params": "Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 16,
+          "source_so": "libkurt.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] WebsiteEntryResults LibKurt :: websiteEntrySearch(String, unknown, WebsiteEntryPaging) (W=0.50)\n    -> [Target JNI Anchor] WebsiteEntryResults LibKurt :: we_search(String, unknown, WebsiteEntryPaging) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: puts(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "LE0/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "WebsiteEntryResults",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/LibKurt;",
+              "class_short_name": "LibKurt",
+              "method_name": "websiteEntrySearch",
+              "params": "String, unknown, WebsiteEntryPaging",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "WebsiteEntryResults",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/LibKurt;",
+              "class_short_name": "LibKurt",
+              "method_name": "we_search",
+              "params": "String, unknown, WebsiteEntryPaging",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "puts",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 17,
+          "source_so": "libkurt.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] WebsiteEntryResults LibKurt :: websiteEntrySearch(String, unknown, WebsiteEntryPaging) (W=0.50)\n    -> [Target JNI Anchor] WebsiteEntryResults LibKurt :: we_search(String, unknown, WebsiteEntryPaging) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: malloc(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "LE0/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "WebsiteEntryResults",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/LibKurt;",
+              "class_short_name": "LibKurt",
+              "method_name": "websiteEntrySearch",
+              "params": "String, unknown, WebsiteEntryPaging",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "WebsiteEntryResults",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/LibKurt;",
+              "class_short_name": "LibKurt",
+              "method_name": "we_search",
+              "params": "String, unknown, WebsiteEntryPaging",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "malloc",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 18,
+          "source_so": "libkurt.so",
+          "call_chain_text": "[Intent Domain] void c :: run() (W=0.33)\n    -> [Intent Domain] WebsiteEntryResults LibKurt :: websiteEntrySearch(String, unknown, WebsiteEntryPaging) (W=0.50)\n    -> [Target JNI Anchor] WebsiteEntryResults LibKurt :: we_search(String, unknown, WebsiteEntryPaging) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryAux :: opaqueInt() (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "LE0/c;",
+              "class_short_name": "c",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "WebsiteEntryResults",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/LibKurt;",
+              "class_short_name": "LibKurt",
+              "method_name": "websiteEntrySearch",
+              "params": "String, unknown, WebsiteEntryPaging",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "WebsiteEntryResults",
+              "class_name": "Lcom/amanoteam/kurt/libkurt/LibKurt;",
+              "class_short_name": "LibKurt",
+              "method_name": "we_search",
+              "params": "String, unknown, WebsiteEntryPaging",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryAux;",
+              "class_short_name": "NativeSummaryAux",
+              "method_name": "opaqueInt",
+              "params": "",
+              "weight": 0.5
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

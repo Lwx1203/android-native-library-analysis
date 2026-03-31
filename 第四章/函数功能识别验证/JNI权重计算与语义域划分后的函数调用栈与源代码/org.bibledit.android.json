@@ -1,0 +1,48 @@
+{
+  "app": "org.bibledit.android",
+  "commented_jni_total": 1,
+  "with_code_count": 1,
+  "with_stacks_count": 1,
+  "total_stacks_collected": 1,
+  "functions": [
+    {
+      "function_name": "Java_org_bibledit_android_MainActivity_SetTouchEnabled",
+      "class_name": "Lorg/bibledit/android/MainActivity;",
+      "method_name": "SetTouchEnabled",
+      "descriptor": "(Z)V",
+      "source_so": "libbibledit.so",
+      "file_path": "H:\\fdroid\\source_code\\org.bibledit.android\\gradle\\app\\src\\main\\cpp\\bibleditjni.cpp",
+      "comment_before": null,
+      "comment_inside": "// This fails to work on Android 6.\n// Set it always to true.",
+      "code": "JNIEXPORT void JNICALL\nJava_org_bibledit_android_MainActivity_SetTouchEnabled (JNIEnv * env, jobject obj, jboolean enabled)\n{\n    // This fails to work on Android 6.\n    bibledit_set_touch_enabled ((enabled == JNI_TRUE));\n    // Set it always to true.\n    bibledit_set_touch_enabled (true);\n}",
+      "call_stacks_count": 1,
+      "call_stacks": [
+        {
+          "stack_id": 72,
+          "source_so": "libbibledit.so",
+          "call_chain_text": "[Intent Domain] void MainActivity :: onCreate(Bundle) (W=0.50)\n    -> [Target JNI Anchor] void MainActivity :: SetTouchEnabled(boolean) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/bibledit/android/MainActivity;",
+              "class_short_name": "MainActivity",
+              "method_name": "onCreate",
+              "params": "Bundle",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/bibledit/android/MainActivity;",
+              "class_short_name": "MainActivity",
+              "method_name": "SetTouchEnabled",
+              "params": "boolean",
+              "weight": 1.0
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

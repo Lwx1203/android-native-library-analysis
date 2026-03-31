@@ -1,0 +1,907 @@
+{
+  "app": "chat.jmp.simmanager",
+  "commented_jni_total": 1,
+  "with_code_count": 1,
+  "with_stacks_count": 1,
+  "total_stacks_collected": 26,
+  "functions": [
+    {
+      "function_name": "Java_net_typeblog_lpac_1jni_LpacJni_downloadProfile",
+      "class_name": "Lnet/typeblog/lpac_jni/LpacJni;",
+      "method_name": "downloadProfile",
+      "descriptor": "(J Ljava/lang/String; Ljava/lang/String; Ljava/lang/String; Ljava/lang/String; Lnet/typeblog/lpac_jni/ProfileDownloadCallback;)I",
+      "source_so": "liblpac-jni.so",
+      "file_path": "H:\\fdroid\\source_code\\chat.jmp.simmanager\\libs\\lpac-jni\\src\\main\\jni\\lpac-jni\\lpac-download.c",
+      "comment_before": null,
+      "comment_inside": "// We expect Java side to call cancelSessions after any error -- thus, `euicc_http_cleanup` is done there\n// This is so that Java side can access the last HTTP and/or APDU errors when we return.",
+      "code": "JNICALL\nJava_net_typeblog_lpac_1jni_LpacJni_downloadProfile(JNIEnv *env, jobject thiz, jlong handle,\n                                                    jstring smdp, jstring matching_id,\n                                                    jstring imei, jstring confirmation_code,\n                                                    jobject callback) {\n    struct euicc_ctx *ctx = (struct euicc_ctx *) handle;\n    struct es10b_load_bound_profile_package_result es10b_load_bound_profile_package_result;\n    const char *_confirmation_code = NULL;\n    const char *_matching_id = NULL;\n    const char *_smdp = NULL;\n    const char *_imei = NULL;\n    int ret;\n\n    if (confirmation_code != NULL)\n        _confirmation_code = (*env)->GetStringUTFChars(env, confirmation_code, NULL);\n    if (matching_id != NULL)\n        _matching_id = (*env)->GetStringUTFChars(env, matching_id, NULL);\n    _smdp = (*env)->GetStringUTFChars(env, smdp, NULL);\n    if (imei != NULL)\n        _imei = (*env)->GetStringUTFChars(env, imei, NULL);\n\n    ctx->http.server_address = _smdp;\n\n    (*env)->CallVoidMethod(env, callback, on_state_update, download_state_preparing);\n    ret = es10b_get_euicc_challenge_and_info(ctx);\n    syslog(LOG_INFO, \"es10b_get_euicc_challenge_and_info %d\", ret);\n    if (ret < 0) {\n        ret = -ES10B_ERROR_REASON_UNDEFINED;\n        goto out;\n    }\n\n    (*env)->CallVoidMethod(env, callback, on_state_update, download_state_connecting);\n    ret = es9p_initiate_authentication(ctx);\n    syslog(LOG_INFO, \"es9p_initiate_authentication %d\", ret);\n    if (ret < 0) {\n        ret = -ES10B_ERROR_REASON_UNDEFINED;\n        goto out;\n    }\n\n    (*env)->CallVoidMethod(env, callback, on_state_update, download_state_authenticating);\n    ret = es10b_authenticate_server(ctx, _matching_id, _imei);\n    syslog(LOG_INFO, \"es10b_authenticate_server %d\", ret);\n    if (ret < 0) {\n        ret = -ES10B_ERROR_REASON_UNDEFINED;\n        goto out;\n    }\n\n    ret = es9p_authenticate_client(ctx);\n    if (ret < 0) {\n        ret = -ES10B_ERROR_REASON_UNDEFINED;\n        goto out;\n    }\n\n    (*env)->CallVoidMethod(env, callback, on_state_update, download_state_downloading);\n    ret = es10b_prepare_download(ctx, _confirmation_code);\n    syslog(LOG_INFO, \"es10b_prepare_download %d\", ret);\n    if (ret < 0) {\n        ret = -ES10B_ERROR_REASON_UNDEFINED;\n        goto out;\n    }\n\n    ret = es9p_get_bound_profile_package(ctx);\n    if (ret < 0)\n        goto out;\n\n    (*env)->CallVoidMethod(env, callback, on_state_update, download_state_finalizing);\n    ret = es10b_load_bound_profile_package(ctx, &es10b_load_bound_profile_package_result);\n    syslog(LOG_INFO, \"es10b_load_bound_profile_package %d, reason %d\", ret, es10b_load_bound_profile_package_result.errorReason);\n    if (ret < 0) {\n        ret = - (int) es10b_load_bound_profile_package_result.errorReason;\n    }\n\n    out:\n    // We expect Java side to call cancelSessions after any error -- thus, `euicc_http_cleanup` is done there\n    // This is so that Java side can access the last HTTP and/or APDU errors when we return.\n    if (_confirmation_code != NULL)\n        (*env)->ReleaseStringUTFChars(env, confirmation_code, _confirmation_code);\n    if (_matching_id != NULL)\n        (*env)->ReleaseStringUTFChars(env, matching_id, _matching_id);\n    (*env)->ReleaseStringUTFChars(env, smdp, _smdp);\n    if (_imei != NULL)\n        (*env)->ReleaseStringUTFChars(env, imei, _imei);\n    return ret;\n}",
+      "call_stacks_count": 26,
+      "call_stacks": [
+        {
+          "stack_id": 72,
+          "source_so": "liblpac-jni.so",
+          "call_chain_text": "[Intent Domain] void LocalProfileAssistantImpl :: downloadProfile(String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=0.50)\n    -> [Target JNI Anchor] int LpacJni :: downloadProfile(long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: strtod(Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lnet/typeblog/lpac_jni/impl/LocalProfileAssistantImpl;",
+              "class_short_name": "LocalProfileAssistantImpl",
+              "method_name": "downloadProfile",
+              "params": "String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lnet/typeblog/lpac_jni/LpacJni;",
+              "class_short_name": "LpacJni",
+              "method_name": "downloadProfile",
+              "params": "long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "strtod",
+              "params": "Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 73,
+          "source_so": "liblpac-jni.so",
+          "call_chain_text": "[Intent Domain] void LocalProfileAssistantImpl :: downloadProfile(String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=0.50)\n    -> [Target JNI Anchor] int LpacJni :: downloadProfile(long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: memset(Object, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lnet/typeblog/lpac_jni/impl/LocalProfileAssistantImpl;",
+              "class_short_name": "LocalProfileAssistantImpl",
+              "method_name": "downloadProfile",
+              "params": "String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lnet/typeblog/lpac_jni/LpacJni;",
+              "class_short_name": "LpacJni",
+              "method_name": "downloadProfile",
+              "params": "long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "memset",
+              "params": "Object, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 74,
+          "source_so": "liblpac-jni.so",
+          "call_chain_text": "[Intent Domain] void LocalProfileAssistantImpl :: downloadProfile(String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=0.50)\n    -> [Target JNI Anchor] int LpacJni :: downloadProfile(long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: fputc(int, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lnet/typeblog/lpac_jni/impl/LocalProfileAssistantImpl;",
+              "class_short_name": "LocalProfileAssistantImpl",
+              "method_name": "downloadProfile",
+              "params": "String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lnet/typeblog/lpac_jni/LpacJni;",
+              "class_short_name": "LpacJni",
+              "method_name": "downloadProfile",
+              "params": "long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fputc",
+              "params": "int, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 75,
+          "source_so": "liblpac-jni.so",
+          "call_chain_text": "[Intent Domain] void LocalProfileAssistantImpl :: downloadProfile(String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=0.50)\n    -> [Target JNI Anchor] int LpacJni :: downloadProfile(long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: free(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lnet/typeblog/lpac_jni/impl/LocalProfileAssistantImpl;",
+              "class_short_name": "LocalProfileAssistantImpl",
+              "method_name": "downloadProfile",
+              "params": "String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lnet/typeblog/lpac_jni/LpacJni;",
+              "class_short_name": "LpacJni",
+              "method_name": "downloadProfile",
+              "params": "long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "free",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 76,
+          "source_so": "liblpac-jni.so",
+          "call_chain_text": "[Intent Domain] void LocalProfileAssistantImpl :: downloadProfile(String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=0.50)\n    -> [Target JNI Anchor] int LpacJni :: downloadProfile(long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: memmove(Object, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lnet/typeblog/lpac_jni/impl/LocalProfileAssistantImpl;",
+              "class_short_name": "LocalProfileAssistantImpl",
+              "method_name": "downloadProfile",
+              "params": "String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lnet/typeblog/lpac_jni/LpacJni;",
+              "class_short_name": "LpacJni",
+              "method_name": "downloadProfile",
+              "params": "long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "memmove",
+              "params": "Object, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 77,
+          "source_so": "liblpac-jni.so",
+          "call_chain_text": "[Intent Domain] void LocalProfileAssistantImpl :: downloadProfile(String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=0.50)\n    -> [Target JNI Anchor] int LpacJni :: downloadProfile(long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: syslog(int, unknown, String, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lnet/typeblog/lpac_jni/impl/LocalProfileAssistantImpl;",
+              "class_short_name": "LocalProfileAssistantImpl",
+              "method_name": "downloadProfile",
+              "params": "String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lnet/typeblog/lpac_jni/LpacJni;",
+              "class_short_name": "LpacJni",
+              "method_name": "downloadProfile",
+              "params": "long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "syslog",
+              "params": "int, unknown, String, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 78,
+          "source_so": "liblpac-jni.so",
+          "call_chain_text": "[Intent Domain] void LocalProfileAssistantImpl :: downloadProfile(String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=0.50)\n    -> [Target JNI Anchor] int LpacJni :: downloadProfile(long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: free(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lnet/typeblog/lpac_jni/impl/LocalProfileAssistantImpl;",
+              "class_short_name": "LocalProfileAssistantImpl",
+              "method_name": "downloadProfile",
+              "params": "String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lnet/typeblog/lpac_jni/LpacJni;",
+              "class_short_name": "LpacJni",
+              "method_name": "downloadProfile",
+              "params": "long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "free",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 79,
+          "source_so": "liblpac-jni.so",
+          "call_chain_text": "[Intent Domain] void LocalProfileAssistantImpl :: downloadProfile(String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=0.50)\n    -> [Target JNI Anchor] int LpacJni :: downloadProfile(long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: __vsprintf_chk(Object, unknown, Object, unknown, int, unknown, String, unknown, Object, unknown, Object, unknown, Object, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lnet/typeblog/lpac_jni/impl/LocalProfileAssistantImpl;",
+              "class_short_name": "LocalProfileAssistantImpl",
+              "method_name": "downloadProfile",
+              "params": "String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lnet/typeblog/lpac_jni/LpacJni;",
+              "class_short_name": "LpacJni",
+              "method_name": "downloadProfile",
+              "params": "long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "__vsprintf_chk",
+              "params": "Object, unknown, Object, unknown, int, unknown, String, unknown, Object, unknown, Object, unknown, Object, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 80,
+          "source_so": "liblpac-jni.so",
+          "call_chain_text": "[Intent Domain] void LocalProfileAssistantImpl :: downloadProfile(String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=0.50)\n    -> [Target JNI Anchor] int LpacJni :: downloadProfile(long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: malloc(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lnet/typeblog/lpac_jni/impl/LocalProfileAssistantImpl;",
+              "class_short_name": "LocalProfileAssistantImpl",
+              "method_name": "downloadProfile",
+              "params": "String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lnet/typeblog/lpac_jni/LpacJni;",
+              "class_short_name": "LpacJni",
+              "method_name": "downloadProfile",
+              "params": "long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "malloc",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 81,
+          "source_so": "liblpac-jni.so",
+          "call_chain_text": "[Intent Domain] void LocalProfileAssistantImpl :: downloadProfile(String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=0.50)\n    -> [Target JNI Anchor] int LpacJni :: downloadProfile(long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: fprintf(Object, unknown, String, unknown, Object, unknown, Object, unknown, Object, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lnet/typeblog/lpac_jni/impl/LocalProfileAssistantImpl;",
+              "class_short_name": "LocalProfileAssistantImpl",
+              "method_name": "downloadProfile",
+              "params": "String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lnet/typeblog/lpac_jni/LpacJni;",
+              "class_short_name": "LpacJni",
+              "method_name": "downloadProfile",
+              "params": "long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fprintf",
+              "params": "Object, unknown, String, unknown, Object, unknown, Object, unknown, Object, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 82,
+          "source_so": "liblpac-jni.so",
+          "call_chain_text": "[Intent Domain] void LocalProfileAssistantImpl :: downloadProfile(String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=0.50)\n    -> [Target JNI Anchor] int LpacJni :: downloadProfile(long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: memset(Object, unknown, int, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lnet/typeblog/lpac_jni/impl/LocalProfileAssistantImpl;",
+              "class_short_name": "LocalProfileAssistantImpl",
+              "method_name": "downloadProfile",
+              "params": "String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lnet/typeblog/lpac_jni/LpacJni;",
+              "class_short_name": "LpacJni",
+              "method_name": "downloadProfile",
+              "params": "long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "memset",
+              "params": "Object, unknown, int, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 83,
+          "source_so": "liblpac-jni.so",
+          "call_chain_text": "[Intent Domain] void LocalProfileAssistantImpl :: downloadProfile(String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=0.50)\n    -> [Target JNI Anchor] int LpacJni :: downloadProfile(long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: fprintf(Object, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lnet/typeblog/lpac_jni/impl/LocalProfileAssistantImpl;",
+              "class_short_name": "LocalProfileAssistantImpl",
+              "method_name": "downloadProfile",
+              "params": "String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lnet/typeblog/lpac_jni/LpacJni;",
+              "class_short_name": "LpacJni",
+              "method_name": "downloadProfile",
+              "params": "long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fprintf",
+              "params": "Object, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 84,
+          "source_so": "liblpac-jni.so",
+          "call_chain_text": "[Intent Domain] void LocalProfileAssistantImpl :: downloadProfile(String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=0.50)\n    -> [Target JNI Anchor] int LpacJni :: downloadProfile(long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: vsnprintf(long, unknown, int, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lnet/typeblog/lpac_jni/impl/LocalProfileAssistantImpl;",
+              "class_short_name": "LocalProfileAssistantImpl",
+              "method_name": "downloadProfile",
+              "params": "String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lnet/typeblog/lpac_jni/LpacJni;",
+              "class_short_name": "LpacJni",
+              "method_name": "downloadProfile",
+              "params": "long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "vsnprintf",
+              "params": "long, unknown, int, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 85,
+          "source_so": "liblpac-jni.so",
+          "call_chain_text": "[Intent Domain] void LocalProfileAssistantImpl :: downloadProfile(String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=0.50)\n    -> [Target JNI Anchor] int LpacJni :: downloadProfile(long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: malloc(String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lnet/typeblog/lpac_jni/impl/LocalProfileAssistantImpl;",
+              "class_short_name": "LocalProfileAssistantImpl",
+              "method_name": "downloadProfile",
+              "params": "String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lnet/typeblog/lpac_jni/LpacJni;",
+              "class_short_name": "LpacJni",
+              "method_name": "downloadProfile",
+              "params": "long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "malloc",
+              "params": "String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 86,
+          "source_so": "liblpac-jni.so",
+          "call_chain_text": "[Intent Domain] void LocalProfileAssistantImpl :: downloadProfile(String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=0.50)\n    -> [Target JNI Anchor] int LpacJni :: downloadProfile(long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: free(long) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lnet/typeblog/lpac_jni/impl/LocalProfileAssistantImpl;",
+              "class_short_name": "LocalProfileAssistantImpl",
+              "method_name": "downloadProfile",
+              "params": "String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lnet/typeblog/lpac_jni/LpacJni;",
+              "class_short_name": "LpacJni",
+              "method_name": "downloadProfile",
+              "params": "long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "free",
+              "params": "long",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 87,
+          "source_so": "liblpac-jni.so",
+          "call_chain_text": "[Intent Domain] void LocalProfileAssistantImpl :: downloadProfile(String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=0.50)\n    -> [Target JNI Anchor] int LpacJni :: downloadProfile(long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: sscanf(Object, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lnet/typeblog/lpac_jni/impl/LocalProfileAssistantImpl;",
+              "class_short_name": "LocalProfileAssistantImpl",
+              "method_name": "downloadProfile",
+              "params": "String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lnet/typeblog/lpac_jni/LpacJni;",
+              "class_short_name": "LpacJni",
+              "method_name": "downloadProfile",
+              "params": "long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "sscanf",
+              "params": "Object, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 88,
+          "source_so": "liblpac-jni.so",
+          "call_chain_text": "[Intent Domain] void LocalProfileAssistantImpl :: downloadProfile(String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=0.50)\n    -> [Target JNI Anchor] int LpacJni :: downloadProfile(long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: free(String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lnet/typeblog/lpac_jni/impl/LocalProfileAssistantImpl;",
+              "class_short_name": "LocalProfileAssistantImpl",
+              "method_name": "downloadProfile",
+              "params": "String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lnet/typeblog/lpac_jni/LpacJni;",
+              "class_short_name": "LpacJni",
+              "method_name": "downloadProfile",
+              "params": "long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "free",
+              "params": "String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 89,
+          "source_so": "liblpac-jni.so",
+          "call_chain_text": "[Intent Domain] void LocalProfileAssistantImpl :: downloadProfile(String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=0.50)\n    -> [Target JNI Anchor] int LpacJni :: downloadProfile(long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: syslog(int, unknown, String, unknown, int, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lnet/typeblog/lpac_jni/impl/LocalProfileAssistantImpl;",
+              "class_short_name": "LocalProfileAssistantImpl",
+              "method_name": "downloadProfile",
+              "params": "String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lnet/typeblog/lpac_jni/LpacJni;",
+              "class_short_name": "LpacJni",
+              "method_name": "downloadProfile",
+              "params": "long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "syslog",
+              "params": "int, unknown, String, unknown, int, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 90,
+          "source_so": "liblpac-jni.so",
+          "call_chain_text": "[Intent Domain] void LocalProfileAssistantImpl :: downloadProfile(String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=0.50)\n    -> [Target JNI Anchor] int LpacJni :: downloadProfile(long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: __vsprintf_chk(String, unknown, Object, unknown, int, unknown, String, unknown, Object, unknown, Object, unknown, Object, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lnet/typeblog/lpac_jni/impl/LocalProfileAssistantImpl;",
+              "class_short_name": "LocalProfileAssistantImpl",
+              "method_name": "downloadProfile",
+              "params": "String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lnet/typeblog/lpac_jni/LpacJni;",
+              "class_short_name": "LpacJni",
+              "method_name": "downloadProfile",
+              "params": "long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "__vsprintf_chk",
+              "params": "String, unknown, Object, unknown, int, unknown, String, unknown, Object, unknown, Object, unknown, Object, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 91,
+          "source_so": "liblpac-jni.so",
+          "call_chain_text": "[Intent Domain] void LocalProfileAssistantImpl :: downloadProfile(String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=0.50)\n    -> [Target JNI Anchor] int LpacJni :: downloadProfile(long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: fprintf(Object, unknown, String, unknown, int, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lnet/typeblog/lpac_jni/impl/LocalProfileAssistantImpl;",
+              "class_short_name": "LocalProfileAssistantImpl",
+              "method_name": "downloadProfile",
+              "params": "String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lnet/typeblog/lpac_jni/LpacJni;",
+              "class_short_name": "LpacJni",
+              "method_name": "downloadProfile",
+              "params": "long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fprintf",
+              "params": "Object, unknown, String, unknown, int, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 92,
+          "source_so": "liblpac-jni.so",
+          "call_chain_text": "[Intent Domain] void LocalProfileAssistantImpl :: downloadProfile(String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=0.50)\n    -> [Target JNI Anchor] int LpacJni :: downloadProfile(long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: fprintf(Object, unknown, String, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lnet/typeblog/lpac_jni/impl/LocalProfileAssistantImpl;",
+              "class_short_name": "LocalProfileAssistantImpl",
+              "method_name": "downloadProfile",
+              "params": "String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lnet/typeblog/lpac_jni/LpacJni;",
+              "class_short_name": "LpacJni",
+              "method_name": "downloadProfile",
+              "params": "long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fprintf",
+              "params": "Object, unknown, String, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 93,
+          "source_so": "liblpac-jni.so",
+          "call_chain_text": "[Intent Domain] void LocalProfileAssistantImpl :: downloadProfile(String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=0.50)\n    -> [Target JNI Anchor] int LpacJni :: downloadProfile(long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: malloc(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lnet/typeblog/lpac_jni/impl/LocalProfileAssistantImpl;",
+              "class_short_name": "LocalProfileAssistantImpl",
+              "method_name": "downloadProfile",
+              "params": "String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lnet/typeblog/lpac_jni/LpacJni;",
+              "class_short_name": "LpacJni",
+              "method_name": "downloadProfile",
+              "params": "long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "malloc",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 94,
+          "source_so": "liblpac-jni.so",
+          "call_chain_text": "[Intent Domain] void LocalProfileAssistantImpl :: downloadProfile(String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=0.50)\n    -> [Target JNI Anchor] int LpacJni :: downloadProfile(long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryAux :: opaqueInt() (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lnet/typeblog/lpac_jni/impl/LocalProfileAssistantImpl;",
+              "class_short_name": "LocalProfileAssistantImpl",
+              "method_name": "downloadProfile",
+              "params": "String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lnet/typeblog/lpac_jni/LpacJni;",
+              "class_short_name": "LpacJni",
+              "method_name": "downloadProfile",
+              "params": "long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryAux;",
+              "class_short_name": "NativeSummaryAux",
+              "method_name": "opaqueInt",
+              "params": "",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 95,
+          "source_so": "liblpac-jni.so",
+          "call_chain_text": "[Intent Domain] void LocalProfileAssistantImpl :: downloadProfile(String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=0.50)\n    -> [Target JNI Anchor] int LpacJni :: downloadProfile(long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: realloc(int, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lnet/typeblog/lpac_jni/impl/LocalProfileAssistantImpl;",
+              "class_short_name": "LocalProfileAssistantImpl",
+              "method_name": "downloadProfile",
+              "params": "String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lnet/typeblog/lpac_jni/LpacJni;",
+              "class_short_name": "LpacJni",
+              "method_name": "downloadProfile",
+              "params": "long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "realloc",
+              "params": "int, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 96,
+          "source_so": "liblpac-jni.so",
+          "call_chain_text": "[Intent Domain] void LocalProfileAssistantImpl :: downloadProfile(String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=0.50)\n    -> [Target JNI Anchor] int LpacJni :: downloadProfile(long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: strdup(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lnet/typeblog/lpac_jni/impl/LocalProfileAssistantImpl;",
+              "class_short_name": "LocalProfileAssistantImpl",
+              "method_name": "downloadProfile",
+              "params": "String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lnet/typeblog/lpac_jni/LpacJni;",
+              "class_short_name": "LpacJni",
+              "method_name": "downloadProfile",
+              "params": "long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "strdup",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 97,
+          "source_so": "liblpac-jni.so",
+          "call_chain_text": "[Intent Domain] void LocalProfileAssistantImpl :: downloadProfile(String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=0.50)\n    -> [Target JNI Anchor] int LpacJni :: downloadProfile(long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: realloc(Object, unknown, String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lnet/typeblog/lpac_jni/impl/LocalProfileAssistantImpl;",
+              "class_short_name": "LocalProfileAssistantImpl",
+              "method_name": "downloadProfile",
+              "params": "String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lnet/typeblog/lpac_jni/LpacJni;",
+              "class_short_name": "LpacJni",
+              "method_name": "downloadProfile",
+              "params": "long, unknown, String, unknown, String, unknown, String, unknown, String, unknown, ProfileDownloadCallback",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "realloc",
+              "params": "Object, unknown, String",
+              "weight": 0.5
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

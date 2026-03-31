@@ -1,0 +1,649 @@
+{
+  "app": "com.dewdrop623.androidcrypt",
+  "commented_jni_total": 2,
+  "with_code_count": 2,
+  "with_stacks_count": 2,
+  "total_stacks_collected": 18,
+  "functions": [
+    {
+      "function_name": "Java_com_dewdrop623_androidcrypt_JNIInterface_decrypt",
+      "class_name": "Lcom/dewdrop623/androidcrypt/JNIInterface;",
+      "method_name": "decrypt",
+      "descriptor": "(Ljava/lang/String; Ljava/io/InputStream; Ljava/io/OutputStream; Lcom/dewdrop623/androidcrypt/JNICallbackInterface; Ljava/io/OutputStream; J)Z",
+      "source_so": "libandroidcrypt.so",
+      "file_path": "H:\\fdroid\\source_code\\com.dewdrop623.androidcrypt\\app\\src\\main\\cpp\\androidcrypt.cpp",
+      "comment_before": null,
+      "comment_inside": "//keep a global reference to encryptor to call cancel function\n//use struct destructor to cleanup reference\n// *** IMPORTANT NOTE: FINAL FLUSH IS REQUIRED TO WRITE LAST DATA ***",
+      "code": "JNIEXPORT jboolean JNICALL\nJava_com_dewdrop623_androidcrypt_JNIInterface_decrypt(JNIEnv *env, jclass jclass1, jstring jpassword, jobject inputStream, jobject outputStream, jobject callbackInterface, jobject logStream, jlong progressFrequencyBytes) {\n    JNIOstream jniLogStream{env, logStream, 100};\n\n    jclass callbackInterfaceClass = env->GetObjectClass(callbackInterface);\n    jmethodID progressCallbackMethodId = env->GetMethodID(callbackInterfaceClass, \"progressCallback\", \"(J)V\");\n    jmethodID completedCallbackMethodId = env->GetMethodID(callbackInterfaceClass, \"completedCallback\", \"(I)V\");\n    auto aesCryptProgressCallback = [&](const std::string & instance, std::size_t bytesRead) {\n        env->CallVoidMethod(callbackInterface, progressCallbackMethodId, (jlong)bytesRead);\n    };\n\n    const char * passwordcstr = env->GetStringUTFChars(jpassword, NULL);\n    std::u8string password(reinterpret_cast<const char8_t *>(passwordcstr));\n\n    JNIIstream jniIstream{env, inputStream, INPUT_BUFFER_SIZE};\n    JNIOstream jniOstream{env, outputStream, OUTPUT_BUFFER_SIZE};\n\n    Terra::AESCrypt::Engine::DecryptResult decrypt_result{};\n\n    Terra::Logger::LoggerPointer logger = std::make_shared<Terra::Logger::Logger>(jniLogStream);\n\n    Terra::AESCrypt::Engine::Decryptor decryptor{logger};\n\n    //keep a global reference to encryptor to call cancel function\n    decryptorPtr = &decryptor;\n    //use struct destructor to cleanup reference\n    Deferer deferer([&]() -> void {\n        decryptorPtr = NULL;\n    });\n\n    std::vector<std::pair<std::string, std::string>> extensions = {};\n    decrypt_result = decryptor.Decrypt(password, jniIstream, jniOstream, aesCryptProgressCallback, progressFrequencyBytes);\n\n    // *** IMPORTANT NOTE: FINAL FLUSH IS REQUIRED TO WRITE LAST DATA ***\n    jniOstream.flush();\n\n    int completion_status = 0;\n    if (DECRYPT_RESULT_CODES.contains(decrypt_result)) {\n        completion_status = DECRYPT_RESULT_CODES.at(decrypt_result);\n    }\n    env->CallVoidMethod(callbackInterface, completedCallbackMethodId, (jint)completion_status);\n    return (jboolean)(decrypt_result==Terra::AESCrypt::Engine::DecryptResult::Success);\n}",
+      "call_stacks_count": 8,
+      "call_stacks": [
+        {
+          "stack_id": 2,
+          "source_so": "libandroidcrypt.so",
+          "call_chain_text": "[Intent Domain] void CryptoThread :: run() (W=0.50)\n    -> [Target JNI Anchor] boolean JNIInterface :: decrypt(String, unknown, InputStream, unknown, OutputStream, unknown, JNICallbackInterface, unknown, OutputStream, unknown, long) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: memset(Object, unknown, Object, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/dewdrop623/androidcrypt/CryptoThread;",
+              "class_short_name": "CryptoThread",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "boolean",
+              "class_name": "Lcom/dewdrop623/androidcrypt/JNIInterface;",
+              "class_short_name": "JNIInterface",
+              "method_name": "decrypt",
+              "params": "String, unknown, InputStream, unknown, OutputStream, unknown, JNICallbackInterface, unknown, OutputStream, unknown, long",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "memset",
+              "params": "Object, unknown, Object, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 3,
+          "source_so": "libandroidcrypt.so",
+          "call_chain_text": "[Intent Domain] void CryptoThread :: run() (W=0.50)\n    -> [Target JNI Anchor] boolean JNIInterface :: decrypt(String, unknown, InputStream, unknown, OutputStream, unknown, JNICallbackInterface, unknown, OutputStream, unknown, long) (W=1.00)\n    -> [Interaction Domain] void JNICallbackInterface :: progressCallback(long) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/dewdrop623/androidcrypt/CryptoThread;",
+              "class_short_name": "CryptoThread",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "boolean",
+              "class_name": "Lcom/dewdrop623/androidcrypt/JNIInterface;",
+              "class_short_name": "JNIInterface",
+              "method_name": "decrypt",
+              "params": "String, unknown, InputStream, unknown, OutputStream, unknown, JNICallbackInterface, unknown, OutputStream, unknown, long",
+              "weight": 1.0
+            },
+            {
+              "label": "Interaction Domain",
+              "return_type": "void",
+              "class_name": "Lcom/dewdrop623/androidcrypt/JNICallbackInterface;",
+              "class_short_name": "JNICallbackInterface",
+              "method_name": "progressCallback",
+              "params": "long",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 4,
+          "source_so": "libandroidcrypt.so",
+          "call_chain_text": "[Intent Domain] void CryptoThread :: run() (W=0.50)\n    -> [Target JNI Anchor] boolean JNIInterface :: decrypt(String, unknown, InputStream, unknown, OutputStream, unknown, JNICallbackInterface, unknown, OutputStream, unknown, long) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: syslog(int, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/dewdrop623/androidcrypt/CryptoThread;",
+              "class_short_name": "CryptoThread",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "boolean",
+              "class_name": "Lcom/dewdrop623/androidcrypt/JNIInterface;",
+              "class_short_name": "JNIInterface",
+              "method_name": "decrypt",
+              "params": "String, unknown, InputStream, unknown, OutputStream, unknown, JNICallbackInterface, unknown, OutputStream, unknown, long",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "syslog",
+              "params": "int, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 5,
+          "source_so": "libandroidcrypt.so",
+          "call_chain_text": "[Intent Domain] void CryptoThread :: run() (W=0.50)\n    -> [Target JNI Anchor] boolean JNIInterface :: decrypt(String, unknown, InputStream, unknown, OutputStream, unknown, JNICallbackInterface, unknown, OutputStream, unknown, long) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: memset(Object, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/dewdrop623/androidcrypt/CryptoThread;",
+              "class_short_name": "CryptoThread",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "boolean",
+              "class_name": "Lcom/dewdrop623/androidcrypt/JNIInterface;",
+              "class_short_name": "JNIInterface",
+              "method_name": "decrypt",
+              "params": "String, unknown, InputStream, unknown, OutputStream, unknown, JNICallbackInterface, unknown, OutputStream, unknown, long",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "memset",
+              "params": "Object, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 6,
+          "source_so": "libandroidcrypt.so",
+          "call_chain_text": "[Intent Domain] void CryptoThread :: run() (W=0.50)\n    -> [Target JNI Anchor] boolean JNIInterface :: decrypt(String, unknown, InputStream, unknown, OutputStream, unknown, JNICallbackInterface, unknown, OutputStream, unknown, long) (W=1.00)\n    -> [Interaction Domain] void JNICallbackInterface :: completedCallback(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/dewdrop623/androidcrypt/CryptoThread;",
+              "class_short_name": "CryptoThread",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "boolean",
+              "class_name": "Lcom/dewdrop623/androidcrypt/JNIInterface;",
+              "class_short_name": "JNIInterface",
+              "method_name": "decrypt",
+              "params": "String, unknown, InputStream, unknown, OutputStream, unknown, JNICallbackInterface, unknown, OutputStream, unknown, long",
+              "weight": 1.0
+            },
+            {
+              "label": "Interaction Domain",
+              "return_type": "void",
+              "class_name": "Lcom/dewdrop623/androidcrypt/JNICallbackInterface;",
+              "class_short_name": "JNICallbackInterface",
+              "method_name": "completedCallback",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 7,
+          "source_so": "libandroidcrypt.so",
+          "call_chain_text": "[Intent Domain] void CryptoThread :: run() (W=0.50)\n    -> [Target JNI Anchor] boolean JNIInterface :: decrypt(String, unknown, InputStream, unknown, OutputStream, unknown, JNICallbackInterface, unknown, OutputStream, unknown, long) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: isatty(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/dewdrop623/androidcrypt/CryptoThread;",
+              "class_short_name": "CryptoThread",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "boolean",
+              "class_name": "Lcom/dewdrop623/androidcrypt/JNIInterface;",
+              "class_short_name": "JNIInterface",
+              "method_name": "decrypt",
+              "params": "String, unknown, InputStream, unknown, OutputStream, unknown, JNICallbackInterface, unknown, OutputStream, unknown, long",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "isatty",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 8,
+          "source_so": "libandroidcrypt.so",
+          "call_chain_text": "[Intent Domain] void CryptoThread :: run() (W=0.50)\n    -> [Target JNI Anchor] boolean JNIInterface :: decrypt(String, unknown, InputStream, unknown, OutputStream, unknown, JNICallbackInterface, unknown, OutputStream, unknown, long) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryAux :: opaqueInt() (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/dewdrop623/androidcrypt/CryptoThread;",
+              "class_short_name": "CryptoThread",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "boolean",
+              "class_name": "Lcom/dewdrop623/androidcrypt/JNIInterface;",
+              "class_short_name": "JNIInterface",
+              "method_name": "decrypt",
+              "params": "String, unknown, InputStream, unknown, OutputStream, unknown, JNICallbackInterface, unknown, OutputStream, unknown, long",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryAux;",
+              "class_short_name": "NativeSummaryAux",
+              "method_name": "opaqueInt",
+              "params": "",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 9,
+          "source_so": "libandroidcrypt.so",
+          "call_chain_text": "[Intent Domain] void CryptoThread :: run() (W=0.50)\n    -> [Target JNI Anchor] boolean JNIInterface :: decrypt(String, unknown, InputStream, unknown, OutputStream, unknown, JNICallbackInterface, unknown, OutputStream, unknown, long) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: localtime_r(Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/dewdrop623/androidcrypt/CryptoThread;",
+              "class_short_name": "CryptoThread",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "boolean",
+              "class_name": "Lcom/dewdrop623/androidcrypt/JNIInterface;",
+              "class_short_name": "JNIInterface",
+              "method_name": "decrypt",
+              "params": "String, unknown, InputStream, unknown, OutputStream, unknown, JNICallbackInterface, unknown, OutputStream, unknown, long",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "localtime_r",
+              "params": "Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function_name": "Java_com_dewdrop623_androidcrypt_JNIInterface_encrypt",
+      "class_name": "Lcom/dewdrop623/androidcrypt/JNIInterface;",
+      "method_name": "encrypt",
+      "descriptor": "(Ljava/lang/String; Ljava/io/InputStream; Ljava/io/OutputStream; Lcom/dewdrop623/androidcrypt/JNICallbackInterface; Ljava/io/OutputStream; J)Z",
+      "source_so": "libandroidcrypt.so",
+      "file_path": "H:\\fdroid\\source_code\\com.dewdrop623.androidcrypt\\app\\src\\main\\cpp\\androidcrypt.cpp",
+      "comment_before": null,
+      "comment_inside": "//get progress aesCryptProgressCallback method\n//convert password to u8string\n//keep a global reference to encryptor to call cancel function\n//use struct destructor to cleanup reference\n// *** IMPORTANT NOTE: FINAL FLUSH IS REQUIRED TO WRITE LAST DATA ***",
+      "code": "JNIEXPORT jboolean JNICALL\nJava_com_dewdrop623_androidcrypt_JNIInterface_encrypt(JNIEnv *env, jclass jclass1, jstring jpassword, jobject inputStream, jobject outputStream, jobject callbackInterface, jobject logStream, jlong progressFrequencyBytes) {\n    JNIOstream jniLogStream{env, logStream, 100};\n\n    //get progress aesCryptProgressCallback method\n    jclass callbackInterfaceClass = env->GetObjectClass(callbackInterface);\n    jmethodID progressCallbackMethodId = env->GetMethodID(callbackInterfaceClass, \"progressCallback\", \"(J)V\");\n    jmethodID completedCallbackMethodId = env->GetMethodID(callbackInterfaceClass, \"completedCallback\", \"(I)V\");\n    auto aesCryptProgressCallback = [&](const std::string & instance, std::size_t totalBytes) {\n        env->CallVoidMethod(callbackInterface, progressCallbackMethodId, (jlong)totalBytes);\n    };\n\n    //convert password to u8string\n    const char * passwordcstr = env->GetStringUTFChars(jpassword, NULL);\n    std::u8string password(reinterpret_cast<const char8_t *>(passwordcstr));\n\n    JNIIstream jniIstream{env, inputStream, INPUT_BUFFER_SIZE};\n    JNIOstream jniOstream{env, outputStream, OUTPUT_BUFFER_SIZE};\n\n    Terra::AESCrypt::Engine::EncryptResult encrypt_result{};\n\n    Terra::Logger::LoggerPointer logger = std::make_shared<Terra::Logger::Logger>(jniLogStream);\n\n    Terra::AESCrypt::Engine::Encryptor encryptor{logger};\n\n    //keep a global reference to encryptor to call cancel function\n    encryptorPtr = &encryptor;\n    //use struct destructor to cleanup reference\n    Deferer deferer([&]() -> void {\n        encryptorPtr = NULL;\n    });\n\n    std::vector<std::pair<std::string, std::string>> extensions = {};\n    encrypt_result = encryptor.Encrypt(password, KEY_ITERATIONS, jniIstream, jniOstream, extensions, aesCryptProgressCallback, progressFrequencyBytes);\n\n    // *** IMPORTANT NOTE: FINAL FLUSH IS REQUIRED TO WRITE LAST DATA ***\n    jniOstream.flush();\n\n    int completion_status = 0;\n    if (ENCRYPT_RESULT_CODES.contains(encrypt_result)) {\n        completion_status = ENCRYPT_RESULT_CODES.at(encrypt_result);\n    }\n    env->CallVoidMethod(callbackInterface, completedCallbackMethodId, (jint)completion_status);\n    return (jboolean)(encrypt_result==Terra::AESCrypt::Engine::EncryptResult::Success);\n}",
+      "call_stacks_count": 10,
+      "call_stacks": [
+        {
+          "stack_id": 10,
+          "source_so": "libandroidcrypt.so",
+          "call_chain_text": "[Intent Domain] void CryptoThread :: run() (W=0.50)\n    -> [Target JNI Anchor] boolean JNIInterface :: encrypt(String, unknown, InputStream, unknown, OutputStream, unknown, JNICallbackInterface, unknown, OutputStream, unknown, long) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: memset(Object, unknown, Object, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/dewdrop623/androidcrypt/CryptoThread;",
+              "class_short_name": "CryptoThread",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "boolean",
+              "class_name": "Lcom/dewdrop623/androidcrypt/JNIInterface;",
+              "class_short_name": "JNIInterface",
+              "method_name": "encrypt",
+              "params": "String, unknown, InputStream, unknown, OutputStream, unknown, JNICallbackInterface, unknown, OutputStream, unknown, long",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "memset",
+              "params": "Object, unknown, Object, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 11,
+          "source_so": "libandroidcrypt.so",
+          "call_chain_text": "[Intent Domain] void CryptoThread :: run() (W=0.50)\n    -> [Target JNI Anchor] boolean JNIInterface :: encrypt(String, unknown, InputStream, unknown, OutputStream, unknown, JNICallbackInterface, unknown, OutputStream, unknown, long) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: close(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/dewdrop623/androidcrypt/CryptoThread;",
+              "class_short_name": "CryptoThread",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "boolean",
+              "class_name": "Lcom/dewdrop623/androidcrypt/JNIInterface;",
+              "class_short_name": "JNIInterface",
+              "method_name": "encrypt",
+              "params": "String, unknown, InputStream, unknown, OutputStream, unknown, JNICallbackInterface, unknown, OutputStream, unknown, long",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "close",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 12,
+          "source_so": "libandroidcrypt.so",
+          "call_chain_text": "[Intent Domain] void CryptoThread :: run() (W=0.50)\n    -> [Target JNI Anchor] boolean JNIInterface :: encrypt(String, unknown, InputStream, unknown, OutputStream, unknown, JNICallbackInterface, unknown, OutputStream, unknown, long) (W=1.00)\n    -> [Interaction Domain] void JNICallbackInterface :: progressCallback(long) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/dewdrop623/androidcrypt/CryptoThread;",
+              "class_short_name": "CryptoThread",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "boolean",
+              "class_name": "Lcom/dewdrop623/androidcrypt/JNIInterface;",
+              "class_short_name": "JNIInterface",
+              "method_name": "encrypt",
+              "params": "String, unknown, InputStream, unknown, OutputStream, unknown, JNICallbackInterface, unknown, OutputStream, unknown, long",
+              "weight": 1.0
+            },
+            {
+              "label": "Interaction Domain",
+              "return_type": "void",
+              "class_name": "Lcom/dewdrop623/androidcrypt/JNICallbackInterface;",
+              "class_short_name": "JNICallbackInterface",
+              "method_name": "progressCallback",
+              "params": "long",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 13,
+          "source_so": "libandroidcrypt.so",
+          "call_chain_text": "[Intent Domain] void CryptoThread :: run() (W=0.50)\n    -> [Target JNI Anchor] boolean JNIInterface :: encrypt(String, unknown, InputStream, unknown, OutputStream, unknown, JNICallbackInterface, unknown, OutputStream, unknown, long) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: syslog(int, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/dewdrop623/androidcrypt/CryptoThread;",
+              "class_short_name": "CryptoThread",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "boolean",
+              "class_name": "Lcom/dewdrop623/androidcrypt/JNIInterface;",
+              "class_short_name": "JNIInterface",
+              "method_name": "encrypt",
+              "params": "String, unknown, InputStream, unknown, OutputStream, unknown, JNICallbackInterface, unknown, OutputStream, unknown, long",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "syslog",
+              "params": "int, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 14,
+          "source_so": "libandroidcrypt.so",
+          "call_chain_text": "[Intent Domain] void CryptoThread :: run() (W=0.50)\n    -> [Target JNI Anchor] boolean JNIInterface :: encrypt(String, unknown, InputStream, unknown, OutputStream, unknown, JNICallbackInterface, unknown, OutputStream, unknown, long) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: memset(Object, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/dewdrop623/androidcrypt/CryptoThread;",
+              "class_short_name": "CryptoThread",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "boolean",
+              "class_name": "Lcom/dewdrop623/androidcrypt/JNIInterface;",
+              "class_short_name": "JNIInterface",
+              "method_name": "encrypt",
+              "params": "String, unknown, InputStream, unknown, OutputStream, unknown, JNICallbackInterface, unknown, OutputStream, unknown, long",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "memset",
+              "params": "Object, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 15,
+          "source_so": "libandroidcrypt.so",
+          "call_chain_text": "[Intent Domain] void CryptoThread :: run() (W=0.50)\n    -> [Target JNI Anchor] boolean JNIInterface :: encrypt(String, unknown, InputStream, unknown, OutputStream, unknown, JNICallbackInterface, unknown, OutputStream, unknown, long) (W=1.00)\n    -> [Interaction Domain] void JNICallbackInterface :: completedCallback(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/dewdrop623/androidcrypt/CryptoThread;",
+              "class_short_name": "CryptoThread",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "boolean",
+              "class_name": "Lcom/dewdrop623/androidcrypt/JNIInterface;",
+              "class_short_name": "JNIInterface",
+              "method_name": "encrypt",
+              "params": "String, unknown, InputStream, unknown, OutputStream, unknown, JNICallbackInterface, unknown, OutputStream, unknown, long",
+              "weight": 1.0
+            },
+            {
+              "label": "Interaction Domain",
+              "return_type": "void",
+              "class_name": "Lcom/dewdrop623/androidcrypt/JNICallbackInterface;",
+              "class_short_name": "JNICallbackInterface",
+              "method_name": "completedCallback",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 16,
+          "source_so": "libandroidcrypt.so",
+          "call_chain_text": "[Intent Domain] void CryptoThread :: run() (W=0.50)\n    -> [Target JNI Anchor] boolean JNIInterface :: encrypt(String, unknown, InputStream, unknown, OutputStream, unknown, JNICallbackInterface, unknown, OutputStream, unknown, long) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: isatty(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/dewdrop623/androidcrypt/CryptoThread;",
+              "class_short_name": "CryptoThread",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "boolean",
+              "class_name": "Lcom/dewdrop623/androidcrypt/JNIInterface;",
+              "class_short_name": "JNIInterface",
+              "method_name": "encrypt",
+              "params": "String, unknown, InputStream, unknown, OutputStream, unknown, JNICallbackInterface, unknown, OutputStream, unknown, long",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "isatty",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 17,
+          "source_so": "libandroidcrypt.so",
+          "call_chain_text": "[Intent Domain] void CryptoThread :: run() (W=0.50)\n    -> [Target JNI Anchor] boolean JNIInterface :: encrypt(String, unknown, InputStream, unknown, OutputStream, unknown, JNICallbackInterface, unknown, OutputStream, unknown, long) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: memset(Object, unknown, int, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/dewdrop623/androidcrypt/CryptoThread;",
+              "class_short_name": "CryptoThread",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "boolean",
+              "class_name": "Lcom/dewdrop623/androidcrypt/JNIInterface;",
+              "class_short_name": "JNIInterface",
+              "method_name": "encrypt",
+              "params": "String, unknown, InputStream, unknown, OutputStream, unknown, JNICallbackInterface, unknown, OutputStream, unknown, long",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "memset",
+              "params": "Object, unknown, int, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 18,
+          "source_so": "libandroidcrypt.so",
+          "call_chain_text": "[Intent Domain] void CryptoThread :: run() (W=0.50)\n    -> [Target JNI Anchor] boolean JNIInterface :: encrypt(String, unknown, InputStream, unknown, OutputStream, unknown, JNICallbackInterface, unknown, OutputStream, unknown, long) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryAux :: opaqueInt() (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/dewdrop623/androidcrypt/CryptoThread;",
+              "class_short_name": "CryptoThread",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "boolean",
+              "class_name": "Lcom/dewdrop623/androidcrypt/JNIInterface;",
+              "class_short_name": "JNIInterface",
+              "method_name": "encrypt",
+              "params": "String, unknown, InputStream, unknown, OutputStream, unknown, JNICallbackInterface, unknown, OutputStream, unknown, long",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryAux;",
+              "class_short_name": "NativeSummaryAux",
+              "method_name": "opaqueInt",
+              "params": "",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 19,
+          "source_so": "libandroidcrypt.so",
+          "call_chain_text": "[Intent Domain] void CryptoThread :: run() (W=0.50)\n    -> [Target JNI Anchor] boolean JNIInterface :: encrypt(String, unknown, InputStream, unknown, OutputStream, unknown, JNICallbackInterface, unknown, OutputStream, unknown, long) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: localtime_r(Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lcom/dewdrop623/androidcrypt/CryptoThread;",
+              "class_short_name": "CryptoThread",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "boolean",
+              "class_name": "Lcom/dewdrop623/androidcrypt/JNIInterface;",
+              "class_short_name": "JNIInterface",
+              "method_name": "encrypt",
+              "params": "String, unknown, InputStream, unknown, OutputStream, unknown, JNICallbackInterface, unknown, OutputStream, unknown, long",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "localtime_r",
+              "params": "Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

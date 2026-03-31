@@ -1,0 +1,8 @@
+{
+  "apps_processed": 34,
+  "apps_skipped": 26,
+  "total_commented_jni": 105,
+  "total_with_code": 105,
+  "total_with_stacks": 105,
+  "total_stacks_collected": 2768
+}

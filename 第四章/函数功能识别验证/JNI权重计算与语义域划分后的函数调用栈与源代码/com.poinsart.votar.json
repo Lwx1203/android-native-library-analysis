@@ -1,0 +1,229 @@
+{
+  "app": "com.poinsart.votar",
+  "commented_jni_total": 1,
+  "with_code_count": 1,
+  "with_stacks_count": 1,
+  "total_stacks_collected": 5,
+  "functions": [
+    {
+      "function_name": "Java_com_poinsart_votar_VotarMain_00024AnalyzeTask_nativeAnalyze",
+      "class_name": "Lcom/poinsart/votar/VotarMain$AnalyzeTask;",
+      "method_name": "nativeAnalyze",
+      "descriptor": "(Lcom/poinsart/votar/AnalyzeReturn;)Z",
+      "source_so": "libVotAR.so",
+      "file_path": "H:\\fdroid\\source_code\\com.poinsart.votar\\jni\\android.cpp",
+      "comment_before": "/*\r\n * jni bitmap handling was started from \"ivo\" very useful post helpful post :\r\n * http://stackoverflow.com/questions/2881939/android-read-png-image-without-alpha-and-decode-as-argb-8888\r\n */",
+      "comment_inside": "// get fields of the AnalyzeReturn class, into appropriate C types\r\n// photo\r\n// prcount[]\r\n// mark[]\r\n//globalBitmap=bitmap=(jobject)env->NewGlobalRef(bitmap);\r\n/////////////////////////////\r\n// initialize pixels array\r\n/////////////////////////////\r\n// return prcount[4] to java through jprcount array argument",
+      "code": "JNIEXPORT jboolean JNICALL Java_com_poinsart_votar_VotarMain_00024AnalyzeTask_nativeAnalyze(JNIEnv *env, jobject task, jobject ar)\r\n{\r\n\tAndroidBitmapInfo info;\r\n\tunsigned int *pixels;\r\n\tunsigned int width, height, pixelcount;\r\n\tint mark[MAX_MARK_COUNT][3];\r\n\tint markcount;\r\n\tjboolean isCopy=0;\r\n\r\n\tglobalenv=env;\r\n\tglobaltask=task;\r\n\r\n\tJava_com_poinsart_votar_VotarMain_00024AnalyzeTask_free(env);\r\n\r\n\tLog_i(\"Now in nativeAnalyze code\");\r\n\tbenchmarkStart();\r\n\r\n\tjclass taskClass = env->GetObjectClass(task);\r\n\tif(taskClass==NULL) {\r\n\t\tLog_e(\"Internal Error: failed to find class for object task\");\r\n\t\treturn false;\r\n\t}\r\n\tjclass arClass = env->GetObjectClass(ar);\r\n\tif(arClass==NULL) {\r\n\t\tLog_e(\"Internal Error: failed to find class for object ar\");\r\n\t\treturn false;\r\n\t}\r\n\r\n\r\n\tpublishMethod = env->GetMethodID(taskClass, \"publishProgress\", \"([Ljava/lang/Object;)V\");\r\n\tif(publishMethod==NULL) {\r\n\t\tLog_e(\"Internal Error: failed to find java method publishProgress ([Ljava/lang/Object;)V\");\r\n\t\treturn false;\r\n\t}\r\n\r\n\r\n\r\n\tjclass jobjectArrayClass = env->FindClass(\"[Ljava/lang/Object;\");\r\n\tif (jobjectArrayClass == NULL) {\r\n\t\tLog_e(\"Failed to find class for Object[]\");\r\n\t\treturn false;\r\n\t}\r\n\tjclass jIntegerClass = env->FindClass(\"java/lang/Integer\");\r\n\tif (jIntegerClass == NULL) {\r\n\t\tLog_e(\"Failed to find class for Integer\");\r\n\t\treturn false;\r\n\t}\r\n\r\n\tjclass jmarkClass=env->FindClass(\"com/poinsart/votar/Mark\");\r\n\tif (jmarkClass==NULL) {\r\n\t\tLog_e(\"Internal Error: failed to find java class com/poinsart/votar/Mark\");\r\n\t\treturn false;\r\n\t}\r\n\r\n\tprogressArray = env->NewObjectArray(1, jIntegerClass, NULL);\r\n\tif (progressArray == NULL) {\r\n\t\tLog_e(\"Failed to allocate object array for published progress.\");\r\n\t\treturn false;\r\n\t}\r\n\r\n\t// get fields of the AnalyzeReturn class, into appropriate C types\r\n\r\n\t// photo\r\n\tjfieldID photoField = env->GetFieldID(arClass, \"photo\", \"Landroid/graphics/Bitmap;\");\r\n\tif (photoField == NULL) {\r\n\t\tLog_e(\"Failed to find field photo.\");\r\n\t\treturn false;\r\n\t}\r\n\tjobject photo=env->GetObjectField(ar, photoField);\r\n\tif (photo == NULL) {\r\n\t\tLog_e(\"Failed to read field photo.\");\r\n\t\treturn false;\r\n\t}\r\n\r\n\t// prcount[]\r\n\tjfieldID prcountField = env->GetFieldID(arClass, \"prcount\", \"[I\");\r\n\tif (prcountField == NULL) {\r\n\t\tLog_e(\"Failed to find field prcount.\");\r\n\t\treturn false;\r\n\t}\r\n\tjintArray jprcount=(jintArray)env->GetObjectField(ar, prcountField);\r\n\tif (jprcount == NULL) {\r\n\t\tLog_e(\"Failed to read prcount photo.\");\r\n\t\treturn false;\r\n\t}\r\n\r\n\r\n\t// mark[]\r\n\tjfieldID markField = env->GetFieldID(arClass, \"mark\", \"[Lcom/poinsart/votar/Mark;\");\r\n\tif (markField == NULL) {\r\n\t\tLog_e(\"Failed to find field mark.\");\r\n\t\treturn false;\r\n\t}\r\n\r\n\r\n\tprcount[0]=prcount[1]=prcount[2]=prcount[3]=0;\r\n\r\n\t//globalBitmap=bitmap=(jobject)env->NewGlobalRef(bitmap);\r\n\r\n\t/////////////////////////////\r\n\t// initialize pixels array\r\n\tif (AndroidBitmap_getInfo(env, photo, &info) < 0) {\r\n\t\tLog_e(\"Failed to get Bitmap info\");\r\n\t\treturn false;\r\n\t}\r\n\twidth=info.width;\r\n\theight=info.height;\r\n\tpixelcount=width*height;\r\n\tLog_i(\"Handling Bitmap in native code... Width: %d, Height: %d\", width, height);\r\n\r\n\tif (info.format != ANDROID_BITMAP_FORMAT_RGBA_8888) {\r\n\t\tLog_e(\"Incompatible Bitmap format\");\r\n\t\treturn false;\r\n\t}\r\n\r\n\tvoid** voidpointer=(void**) &pixels;\r\n\tif (AndroidBitmap_lockPixels(env, photo, voidpointer) < 0) {\r\n\t\tLog_e(\"Failed to lock the pixels of the Bitmap\");\r\n\t}\r\n\r\n\tpublish_progress(1);\r\n\r\n\tsimple_analyze(pixels,width, height, mark, markcount, prcount);\r\n\r\n\r\n\tif(AndroidBitmap_unlockPixels(env, photo) < 0) {\r\n\t\tLog_e(\"Failed to unlock the pixels of the Bitmap\");\r\n\t\treturn false;\r\n\t}\r\n\r\n\t/////////////////////////////\r\n\t// return prcount[4] to java through jprcount array argument\r\n\tjint *eprcount=env->GetIntArrayElements(jprcount, &isCopy);\r\n\tif (eprcount==NULL) {\r\n\t\tLog_e(\"Internal Error: failed on GetIntArrayElements(jprcount, &isCopy) \");\r\n\t\treturn false;\r\n\t}\r\n\r\n\teprcount[0]=prcount[0];\r\n\teprcount[1]=prcount[1];\r\n\teprcount[2]=prcount[2];\r\n\teprcount[3]=prcount[3];\r\n\tenv->ReleaseIntArrayElements(jprcount, eprcount, JNI_COMMIT);\r\n\r\n\tjmethodID jmarkConstructor=env->GetMethodID(jmarkClass, \"<init>\", \"(III)V\");\r\n\tif (jmarkConstructor==NULL) {\r\n\t\tLog_e(\"Internal Error: failed to find constructor for java class com/poinsart/votar/Mark\");\r\n\t\treturn false;\r\n\t}\r\n\tjobjectArray jmarkArray=env->NewObjectArray(markcount, jmarkClass, NULL);\r\n\tfor (int i=0; i<markcount; i++) {\r\n\t\tjobject jmarkCurrent=env->NewObject(jmarkClass, jmarkConstructor, mark[i][0], mark[i][1], mark[i][2]);\r\n\t\tif (jmarkCurrent==NULL) {\r\n\t\t\tLog_e(\"Internal Error: failed to create jmark object (out of memory ?)\");\r\n\t\t\treturn false;\r\n\t\t}\r\n\t\tenv->SetObjectArrayElement(jmarkArray, i, jmarkCurrent);\r\n\t}\r\n\tglobalJmarkArray=(jobjectArray) env->NewGlobalRef(jmarkArray);\r\n\tenv->SetObjectField(ar, markField,globalJmarkArray);\r\n\treturn true;\r\n}",
+      "call_stacks_count": 5,
+      "call_stacks": [
+        {
+          "stack_id": 1,
+          "source_so": "libVotAR.so",
+          "call_chain_text": "[Intent Domain] Object VotarMain$AnalyzeTask :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] Void VotarMain$AnalyzeTask :: doInBackground(Bitmap[]) (W=0.50)\n    -> [Target JNI Anchor] boolean VotarMain$AnalyzeTask :: nativeAnalyze(AnalyzeReturn) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: free(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lcom/poinsart/votar/VotarMain$AnalyzeTask;",
+              "class_short_name": "VotarMain$AnalyzeTask",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "Void",
+              "class_name": "Lcom/poinsart/votar/VotarMain$AnalyzeTask;",
+              "class_short_name": "VotarMain$AnalyzeTask",
+              "method_name": "doInBackground",
+              "params": "Bitmap[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "boolean",
+              "class_name": "Lcom/poinsart/votar/VotarMain$AnalyzeTask;",
+              "class_short_name": "VotarMain$AnalyzeTask",
+              "method_name": "nativeAnalyze",
+              "params": "AnalyzeReturn",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "free",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 2,
+          "source_so": "libVotAR.so",
+          "call_chain_text": "[Intent Domain] Object VotarMain$AnalyzeTask :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] Void VotarMain$AnalyzeTask :: doInBackground(Bitmap[]) (W=0.50)\n    -> [Target JNI Anchor] boolean VotarMain$AnalyzeTask :: nativeAnalyze(AnalyzeReturn) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryAux :: opaqueInt() (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lcom/poinsart/votar/VotarMain$AnalyzeTask;",
+              "class_short_name": "VotarMain$AnalyzeTask",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "Void",
+              "class_name": "Lcom/poinsart/votar/VotarMain$AnalyzeTask;",
+              "class_short_name": "VotarMain$AnalyzeTask",
+              "method_name": "doInBackground",
+              "params": "Bitmap[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "boolean",
+              "class_name": "Lcom/poinsart/votar/VotarMain$AnalyzeTask;",
+              "class_short_name": "VotarMain$AnalyzeTask",
+              "method_name": "nativeAnalyze",
+              "params": "AnalyzeReturn",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryAux;",
+              "class_short_name": "NativeSummaryAux",
+              "method_name": "opaqueInt",
+              "params": "",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 3,
+          "source_so": "libVotAR.so",
+          "call_chain_text": "[Intent Domain] Object VotarMain$AnalyzeTask :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] Void VotarMain$AnalyzeTask :: doInBackground(Bitmap[]) (W=0.50)\n    -> [Target JNI Anchor] boolean VotarMain$AnalyzeTask :: nativeAnalyze(AnalyzeReturn) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: malloc(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lcom/poinsart/votar/VotarMain$AnalyzeTask;",
+              "class_short_name": "VotarMain$AnalyzeTask",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "Void",
+              "class_name": "Lcom/poinsart/votar/VotarMain$AnalyzeTask;",
+              "class_short_name": "VotarMain$AnalyzeTask",
+              "method_name": "doInBackground",
+              "params": "Bitmap[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "boolean",
+              "class_name": "Lcom/poinsart/votar/VotarMain$AnalyzeTask;",
+              "class_short_name": "VotarMain$AnalyzeTask",
+              "method_name": "nativeAnalyze",
+              "params": "AnalyzeReturn",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "malloc",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 4,
+          "source_so": "libVotAR.so",
+          "call_chain_text": "[Intent Domain] Object VotarMain$AnalyzeTask :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] Void VotarMain$AnalyzeTask :: doInBackground(Bitmap[]) (W=0.50)\n    -> [Target JNI Anchor] boolean VotarMain$AnalyzeTask :: nativeAnalyze(AnalyzeReturn) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: clock() (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lcom/poinsart/votar/VotarMain$AnalyzeTask;",
+              "class_short_name": "VotarMain$AnalyzeTask",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "Void",
+              "class_name": "Lcom/poinsart/votar/VotarMain$AnalyzeTask;",
+              "class_short_name": "VotarMain$AnalyzeTask",
+              "method_name": "doInBackground",
+              "params": "Bitmap[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "boolean",
+              "class_name": "Lcom/poinsart/votar/VotarMain$AnalyzeTask;",
+              "class_short_name": "VotarMain$AnalyzeTask",
+              "method_name": "nativeAnalyze",
+              "params": "AnalyzeReturn",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "clock",
+              "params": "",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 5,
+          "source_so": "libVotAR.so",
+          "call_chain_text": "[Intent Domain] Object VotarMain$AnalyzeTask :: doInBackground(Object[]) (W=0.33)\n    -> [Intent Domain] Void VotarMain$AnalyzeTask :: doInBackground(Bitmap[]) (W=0.50)\n    -> [Target JNI Anchor] boolean VotarMain$AnalyzeTask :: nativeAnalyze(AnalyzeReturn) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lcom/poinsart/votar/VotarMain$AnalyzeTask;",
+              "class_short_name": "VotarMain$AnalyzeTask",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "Void",
+              "class_name": "Lcom/poinsart/votar/VotarMain$AnalyzeTask;",
+              "class_short_name": "VotarMain$AnalyzeTask",
+              "method_name": "doInBackground",
+              "params": "Bitmap[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "boolean",
+              "class_name": "Lcom/poinsart/votar/VotarMain$AnalyzeTask;",
+              "class_short_name": "VotarMain$AnalyzeTask",
+              "method_name": "nativeAnalyze",
+              "params": "AnalyzeReturn",
+              "weight": 1.0
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,309 @@
+{
+  "app": "app.usp",
+  "commented_jni_total": 2,
+  "with_code_count": 2,
+  "with_stacks_count": 2,
+  "total_stacks_collected": 8,
+  "functions": [
+    {
+      "function_name": "Java_app_usp_Emulator_DiskChanged",
+      "class_name": "Lapp/usp/Emulator;",
+      "method_name": "DiskChanged",
+      "descriptor": "()Z",
+      "source_so": "libusp.so",
+      "file_path": "H:\\fdroid\\source_code\\app.usp\\platform\\android\\android.cpp",
+      "comment_before": null,
+      "comment_inside": "// invalid disk query result",
+      "code": "jboolean Java_app_usp_Emulator_DiskChanged(JNIEnv* env, jobject obj)\r\n{\r\n\tusing namespace xPlatform;\r\n\tswitch(Handler()->OnAction(A_DISK_QUERY))\r\n\t{\r\n\t\tcase AR_DISK_NOT_CHANGED:\treturn false;\r\n\t\tcase AR_DISK_CHANGED:\t\treturn true;\r\n\t\tdefault:\t\t\t\t\tbreak;\r\n\t}\r\n\tassert(0); // invalid disk query result\r\n\treturn false;\r\n}",
+      "call_stacks_count": 4,
+      "call_stacks": [
+        {
+          "stack_id": 12,
+          "source_so": "libusp.so",
+          "call_chain_text": "[Intent Domain] void Preferences$PreferencesFragment :: onSharedPreferenceChanged(SharedPreferences, unknown, String) (W=0.33)\n    -> [Intent Domain] void Preferences$PreferencesFragment :: UpdateDescs() (W=0.50)\n    -> [Target JNI Anchor] boolean Emulator :: DiskChanged() (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lapp/usp/Preferences$PreferencesFragment;",
+              "class_short_name": "Preferences$PreferencesFragment",
+              "method_name": "onSharedPreferenceChanged",
+              "params": "SharedPreferences, unknown, String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lapp/usp/Preferences$PreferencesFragment;",
+              "class_short_name": "Preferences$PreferencesFragment",
+              "method_name": "UpdateDescs",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "boolean",
+              "class_name": "Lapp/usp/Emulator;",
+              "class_short_name": "Emulator",
+              "method_name": "DiskChanged",
+              "params": "",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 16,
+          "source_so": "libusp.so",
+          "call_chain_text": "[Intent Domain] boolean Preferences$PreferencesFragment$2 :: onPreferenceClick(Preference) (W=0.33)\n    -> [Intent Domain] void Preferences$PreferencesFragment :: UpdateDescs() (W=0.50)\n    -> [Target JNI Anchor] boolean Emulator :: DiskChanged() (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lapp/usp/Preferences$PreferencesFragment$2;",
+              "class_short_name": "Preferences$PreferencesFragment$2",
+              "method_name": "onPreferenceClick",
+              "params": "Preference",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lapp/usp/Preferences$PreferencesFragment;",
+              "class_short_name": "Preferences$PreferencesFragment",
+              "method_name": "UpdateDescs",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "boolean",
+              "class_name": "Lapp/usp/Emulator;",
+              "class_short_name": "Emulator",
+              "method_name": "DiskChanged",
+              "params": "",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 23,
+          "source_so": "libusp.so",
+          "call_chain_text": "[Intent Domain] boolean Preferences$PreferencesFragment$1 :: onPreferenceClick(Preference) (W=0.33)\n    -> [Intent Domain] void Preferences$PreferencesFragment :: UpdateDescs() (W=0.50)\n    -> [Target JNI Anchor] boolean Emulator :: DiskChanged() (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lapp/usp/Preferences$PreferencesFragment$1;",
+              "class_short_name": "Preferences$PreferencesFragment$1",
+              "method_name": "onPreferenceClick",
+              "params": "Preference",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lapp/usp/Preferences$PreferencesFragment;",
+              "class_short_name": "Preferences$PreferencesFragment",
+              "method_name": "UpdateDescs",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "boolean",
+              "class_name": "Lapp/usp/Emulator;",
+              "class_short_name": "Emulator",
+              "method_name": "DiskChanged",
+              "params": "",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 88,
+          "source_so": "libusp.so",
+          "call_chain_text": "[Intent Domain] void Preferences$PreferencesFragment :: onCreate(Bundle) (W=0.33)\n    -> [Intent Domain] void Preferences$PreferencesFragment :: UpdateDescs() (W=0.50)\n    -> [Target JNI Anchor] boolean Emulator :: DiskChanged() (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lapp/usp/Preferences$PreferencesFragment;",
+              "class_short_name": "Preferences$PreferencesFragment",
+              "method_name": "onCreate",
+              "params": "Bundle",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lapp/usp/Preferences$PreferencesFragment;",
+              "class_short_name": "Preferences$PreferencesFragment",
+              "method_name": "UpdateDescs",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "boolean",
+              "class_name": "Lapp/usp/Emulator;",
+              "class_short_name": "Emulator",
+              "method_name": "DiskChanged",
+              "params": "",
+              "weight": 1.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function_name": "Java_app_usp_Emulator_TapeState",
+      "class_name": "Lapp/usp/Emulator;",
+      "method_name": "TapeState",
+      "descriptor": "()I",
+      "source_so": "libusp.so",
+      "file_path": "H:\\fdroid\\source_code\\app.usp\\platform\\android\\android.cpp",
+      "comment_before": null,
+      "comment_inside": "// invalid tape query result",
+      "code": "jint Java_app_usp_Emulator_TapeState(JNIEnv* env, jobject obj)\r\n{\r\n\tusing namespace xPlatform;\r\n\tswitch(Handler()->OnAction(A_TAPE_QUERY))\r\n\t{\r\n\tcase AR_TAPE_NOT_INSERTED:\treturn 0;\r\n\tcase AR_TAPE_STOPPED:\t\treturn 1;\r\n\tcase AR_TAPE_STARTED:\t\treturn 2;\r\n\tdefault:\t\t\t\t\tbreak;\r\n\t}\r\n\tassert(0); // invalid tape query result\r\n\treturn 0;\r\n}",
+      "call_stacks_count": 4,
+      "call_stacks": [
+        {
+          "stack_id": 11,
+          "source_so": "libusp.so",
+          "call_chain_text": "[Intent Domain] void Preferences$PreferencesFragment :: onSharedPreferenceChanged(SharedPreferences, unknown, String) (W=0.33)\n    -> [Intent Domain] void Preferences$PreferencesFragment :: UpdateDescs() (W=0.50)\n    -> [Target JNI Anchor] int Emulator :: TapeState() (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lapp/usp/Preferences$PreferencesFragment;",
+              "class_short_name": "Preferences$PreferencesFragment",
+              "method_name": "onSharedPreferenceChanged",
+              "params": "SharedPreferences, unknown, String",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lapp/usp/Preferences$PreferencesFragment;",
+              "class_short_name": "Preferences$PreferencesFragment",
+              "method_name": "UpdateDescs",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lapp/usp/Emulator;",
+              "class_short_name": "Emulator",
+              "method_name": "TapeState",
+              "params": "",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 15,
+          "source_so": "libusp.so",
+          "call_chain_text": "[Intent Domain] boolean Preferences$PreferencesFragment$2 :: onPreferenceClick(Preference) (W=0.33)\n    -> [Intent Domain] void Preferences$PreferencesFragment :: UpdateDescs() (W=0.50)\n    -> [Target JNI Anchor] int Emulator :: TapeState() (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lapp/usp/Preferences$PreferencesFragment$2;",
+              "class_short_name": "Preferences$PreferencesFragment$2",
+              "method_name": "onPreferenceClick",
+              "params": "Preference",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lapp/usp/Preferences$PreferencesFragment;",
+              "class_short_name": "Preferences$PreferencesFragment",
+              "method_name": "UpdateDescs",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lapp/usp/Emulator;",
+              "class_short_name": "Emulator",
+              "method_name": "TapeState",
+              "params": "",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 22,
+          "source_so": "libusp.so",
+          "call_chain_text": "[Intent Domain] boolean Preferences$PreferencesFragment$1 :: onPreferenceClick(Preference) (W=0.33)\n    -> [Intent Domain] void Preferences$PreferencesFragment :: UpdateDescs() (W=0.50)\n    -> [Target JNI Anchor] int Emulator :: TapeState() (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "boolean",
+              "class_name": "Lapp/usp/Preferences$PreferencesFragment$1;",
+              "class_short_name": "Preferences$PreferencesFragment$1",
+              "method_name": "onPreferenceClick",
+              "params": "Preference",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lapp/usp/Preferences$PreferencesFragment;",
+              "class_short_name": "Preferences$PreferencesFragment",
+              "method_name": "UpdateDescs",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lapp/usp/Emulator;",
+              "class_short_name": "Emulator",
+              "method_name": "TapeState",
+              "params": "",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 87,
+          "source_so": "libusp.so",
+          "call_chain_text": "[Intent Domain] void Preferences$PreferencesFragment :: onCreate(Bundle) (W=0.33)\n    -> [Intent Domain] void Preferences$PreferencesFragment :: UpdateDescs() (W=0.50)\n    -> [Target JNI Anchor] int Emulator :: TapeState() (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lapp/usp/Preferences$PreferencesFragment;",
+              "class_short_name": "Preferences$PreferencesFragment",
+              "method_name": "onCreate",
+              "params": "Bundle",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lapp/usp/Preferences$PreferencesFragment;",
+              "class_short_name": "Preferences$PreferencesFragment",
+              "method_name": "UpdateDescs",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lapp/usp/Emulator;",
+              "class_short_name": "Emulator",
+              "method_name": "TapeState",
+              "params": "",
+              "weight": 1.0
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

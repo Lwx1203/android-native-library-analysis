@@ -1,0 +1,233 @@
+{
+  "app": "com.oF2pks.kalturadeviceinfos",
+  "commented_jni_total": 1,
+  "with_code_count": 1,
+  "with_stacks_count": 1,
+  "total_stacks_collected": 3,
+  "functions": [
+    {
+      "function_name": "Java_com_oF2pks_kalturadeviceinfos_Collector_get_1binder_1version",
+      "class_name": "Lcom/oF2pks/kalturadeviceinfos/Collector;",
+      "method_name": "get_binder_version",
+      "descriptor": "()I",
+      "source_so": "libbinderdetector.so",
+      "file_path": "H:\\fdroid\\source_code\\com.oF2pks.kalturadeviceinfos\\app\\src\\main\\cpp\\BinderDetector.cpp",
+      "comment_before": null,
+      "comment_inside": "// NOLINT(hicpp-signed-bitwise)",
+      "code": "__unused\nJava_com_oF2pks_kalturadeviceinfos_Collector_get_1binder_1version(JNIEnv *env, jobject instance) {\n#pragma clang diagnostic pop\n    struct binder_version version{};\n    version.protocol_version = -1;\n    int fd;\n    int ret;\n    fd = open(BINDER_PATH, O_CLOEXEC | O_RDWR); // NOLINT(hicpp-signed-bitwise)\n    if (fd < 0) return -errno;\n    ret = ioctl(fd, BINDER_VERSION, &version);\n    close(fd);\n    if (ret < 0) return -abs(ret);\n    return version.protocol_version;\n}",
+      "call_stacks_count": 3,
+      "call_stacks": [
+        {
+          "stack_id": 1,
+          "source_so": "libbinderdetector.so",
+          "call_chain_text": "[Intent Domain] Object MainActivity$CollectorTask :: doInBackground(Object[]) (W=0.17)\n    -> [Intent Domain] String MainActivity$CollectorTask :: doInBackground(Boolean[]) (W=0.20)\n    -> [Intent Domain] String Collector :: getReport(Context, unknown, boolean) (W=0.25)\n    -> [Intent Domain] JSONObject Collector :: collect() (W=0.33)\n    -> [Intent Domain] JSONObject Collector :: systemArch() (W=0.50)\n    -> [Target JNI Anchor] int Collector :: get_binder_version() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: close(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lcom/oF2pks/kalturadeviceinfos/MainActivity$CollectorTask;",
+              "class_short_name": "MainActivity$CollectorTask",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/oF2pks/kalturadeviceinfos/MainActivity$CollectorTask;",
+              "class_short_name": "MainActivity$CollectorTask",
+              "method_name": "doInBackground",
+              "params": "Boolean[]",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/oF2pks/kalturadeviceinfos/Collector;",
+              "class_short_name": "Collector",
+              "method_name": "getReport",
+              "params": "Context, unknown, boolean",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "JSONObject",
+              "class_name": "Lcom/oF2pks/kalturadeviceinfos/Collector;",
+              "class_short_name": "Collector",
+              "method_name": "collect",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "JSONObject",
+              "class_name": "Lcom/oF2pks/kalturadeviceinfos/Collector;",
+              "class_short_name": "Collector",
+              "method_name": "systemArch",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lcom/oF2pks/kalturadeviceinfos/Collector;",
+              "class_short_name": "Collector",
+              "method_name": "get_binder_version",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "close",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 2,
+          "source_so": "libbinderdetector.so",
+          "call_chain_text": "[Intent Domain] Object MainActivity$CollectorTask :: doInBackground(Object[]) (W=0.17)\n    -> [Intent Domain] String MainActivity$CollectorTask :: doInBackground(Boolean[]) (W=0.20)\n    -> [Intent Domain] String Collector :: getReport(Context, unknown, boolean) (W=0.25)\n    -> [Intent Domain] JSONObject Collector :: collect() (W=0.33)\n    -> [Intent Domain] JSONObject Collector :: systemArch() (W=0.50)\n    -> [Target JNI Anchor] int Collector :: get_binder_version() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: ioctl(int, unknown, long, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lcom/oF2pks/kalturadeviceinfos/MainActivity$CollectorTask;",
+              "class_short_name": "MainActivity$CollectorTask",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/oF2pks/kalturadeviceinfos/MainActivity$CollectorTask;",
+              "class_short_name": "MainActivity$CollectorTask",
+              "method_name": "doInBackground",
+              "params": "Boolean[]",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/oF2pks/kalturadeviceinfos/Collector;",
+              "class_short_name": "Collector",
+              "method_name": "getReport",
+              "params": "Context, unknown, boolean",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "JSONObject",
+              "class_name": "Lcom/oF2pks/kalturadeviceinfos/Collector;",
+              "class_short_name": "Collector",
+              "method_name": "collect",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "JSONObject",
+              "class_name": "Lcom/oF2pks/kalturadeviceinfos/Collector;",
+              "class_short_name": "Collector",
+              "method_name": "systemArch",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lcom/oF2pks/kalturadeviceinfos/Collector;",
+              "class_short_name": "Collector",
+              "method_name": "get_binder_version",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "ioctl",
+              "params": "int, unknown, long, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 3,
+          "source_so": "libbinderdetector.so",
+          "call_chain_text": "[Intent Domain] Object MainActivity$CollectorTask :: doInBackground(Object[]) (W=0.17)\n    -> [Intent Domain] String MainActivity$CollectorTask :: doInBackground(Boolean[]) (W=0.20)\n    -> [Intent Domain] String Collector :: getReport(Context, unknown, boolean) (W=0.25)\n    -> [Intent Domain] JSONObject Collector :: collect() (W=0.33)\n    -> [Intent Domain] JSONObject Collector :: systemArch() (W=0.50)\n    -> [Target JNI Anchor] int Collector :: get_binder_version() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: open(String, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Lcom/oF2pks/kalturadeviceinfos/MainActivity$CollectorTask;",
+              "class_short_name": "MainActivity$CollectorTask",
+              "method_name": "doInBackground",
+              "params": "Object[]",
+              "weight": 0.1667
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/oF2pks/kalturadeviceinfos/MainActivity$CollectorTask;",
+              "class_short_name": "MainActivity$CollectorTask",
+              "method_name": "doInBackground",
+              "params": "Boolean[]",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "String",
+              "class_name": "Lcom/oF2pks/kalturadeviceinfos/Collector;",
+              "class_short_name": "Collector",
+              "method_name": "getReport",
+              "params": "Context, unknown, boolean",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "JSONObject",
+              "class_name": "Lcom/oF2pks/kalturadeviceinfos/Collector;",
+              "class_short_name": "Collector",
+              "method_name": "collect",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "JSONObject",
+              "class_name": "Lcom/oF2pks/kalturadeviceinfos/Collector;",
+              "class_short_name": "Collector",
+              "method_name": "systemArch",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lcom/oF2pks/kalturadeviceinfos/Collector;",
+              "class_short_name": "Collector",
+              "method_name": "get_binder_version",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "open",
+              "params": "String, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

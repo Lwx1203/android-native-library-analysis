@@ -1,0 +1,324 @@
+{
+  "app": "com.picross.nonocross",
+  "commented_jni_total": 1,
+  "with_code_count": 1,
+  "with_stacks_count": 1,
+  "total_stacks_collected": 7,
+  "functions": [
+    {
+      "function_name": "Java_com_picross_nonocross_util_usergrid_CheckUnique_checkUniqueFromJNI",
+      "class_name": "Lcom/picross/nonocross/util/usergrid/CheckUnique;",
+      "method_name": "checkUniqueFromJNI",
+      "descriptor": "(I I [I [I [I [I)I",
+      "source_so": "libjsolve.so",
+      "file_path": "H:\\fdroid\\source_code\\com.picross.nonocross\\app\\src\\main\\cpp\\jsolve.c",
+      "comment_before": null,
+      "comment_inside": "//kol = 0;\r\n/*char str[10];\r\n        sprintf(str, \"%d\", kol);\r\n        __android_log_write(ANDROID_LOG_DEBUG, \"Solutions\", str);\r\n        time2 = clock() - time1;\r\n        sprintf(str, \"%f\", (double) time2 / (double) CLOCKS_PER_SEC);\r\n        __android_log_write(ANDROID_LOG_DEBUG, \"TimeTaken\", str);*/",
+      "code": "JNICALL\r\nJava_com_picross_nonocross_util_usergrid_CheckUnique_checkUniqueFromJNI(\r\n        JNIEnv *env,\r\n        jobject this,\r\n        jint height0,\r\n        jint width0,\r\n        jintArray row_num_count0,\r\n        jintArray col_num_count0,\r\n        jintArray row_nums_flat,\r\n        jintArray col_nums_flat) {\r\n    //kol = 0;\r\n    height = height0;\r\n    width = width0;\r\n\r\n    jint *row_num_count_1 = (*env)->GetIntArrayElements(env, row_num_count0, 0);\r\n    jint *col_num_count_1 = (*env)->GetIntArrayElements(env, col_num_count0, 0);\r\n    jint *row_nums_flat0 = (*env)->GetIntArrayElements(env, row_nums_flat, 0);\r\n    jint *col_nums_flat0 = (*env)->GetIntArrayElements(env, col_nums_flat, 0);\r\n\r\n    rowNums = (int **) malloc((height + 2) * sizeof(int *));\r\n    colNums = (int **) malloc((width + 2) * sizeof(int *));\r\n    rowNumCount = (int *) malloc((height + 2) * sizeof(int));\r\n    colNumCount = (int *) malloc((width + 2) * sizeof(int));\r\n\r\n    int k = 0;\r\n    for(int i = 0; i<height; i++){\r\n        rowNumCount[i+2] = row_num_count_1[i];\r\n        rowNums[i + 2] = (int *) malloc((row_num_count_1[i] + 2) * sizeof(int));\r\n        for(int j = 0;j < rowNumCount[i+2]; j++){\r\n            rowNums[i+2][j+1] = row_nums_flat0[k];\r\n            k++;\r\n        }\r\n    }\r\n    __android_log_write(ANDROID_LOG_DEBUG, \"Parsed\", \"rows\");\r\n\r\n    (*env)->ReleaseIntArrayElements(env, row_num_count0, row_num_count_1, 0);\r\n    (*env)->ReleaseIntArrayElements(env, row_nums_flat, row_nums_flat0, 0);\r\n\r\n    k = 0;\r\n    for(int i = 0; i<width; i++){\r\n        colNumCount[i+2] = col_num_count_1[i];\r\n        colNums[i + 2] = (int *) malloc((col_num_count_1[i] + 2) * sizeof(int));\r\n        for(int j = 0;j < colNumCount[i+2]; j++){\r\n            colNums[i+2][j+1] = col_nums_flat0[k];\r\n            k++;\r\n        }\r\n    }\r\n\r\n    (*env)->ReleaseIntArrayElements(env, col_num_count0, col_num_count_1, 0);\r\n    (*env)->ReleaseIntArrayElements(env, col_nums_flat, col_nums_flat0, 0);\r\n\r\n    __android_log_write(ANDROID_LOG_DEBUG, \"Parsed\", \"cols\");\r\n\r\n    time1 = clock();\r\n    if (mainy() == 0) {\r\n        /*char str[10];\r\n        sprintf(str, \"%d\", kol);\r\n        __android_log_write(ANDROID_LOG_DEBUG, \"Solutions\", str);\r\n        time2 = clock() - time1;\r\n        sprintf(str, \"%f\", (double) time2 / (double) CLOCKS_PER_SEC);\r\n        __android_log_write(ANDROID_LOG_DEBUG, \"TimeTaken\", str);*/\r\n        postroenie(jpn);\r\n        deallocate();\r\n        return kol;\r\n    } else {\r\n        deallocate();\r\n        return 0;\r\n    }\r\n}",
+      "call_stacks_count": 7,
+      "call_stacks": [
+        {
+          "stack_id": 1,
+          "source_so": "libjsolve.so",
+          "call_chain_text": "[Intent Domain] Object k :: d(Object, unknown, Object) (W=0.33)\n    -> [Intent Domain] Object k :: k(Object) (W=0.50)\n    -> [Target JNI Anchor] int CheckUnique :: checkUniqueFromJNI(int, unknown, int, unknown, int[], unknown, int[], unknown, int[], unknown, int[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: puts(String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Li4/k;",
+              "class_short_name": "k",
+              "method_name": "d",
+              "params": "Object, unknown, Object",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Li4/k;",
+              "class_short_name": "k",
+              "method_name": "k",
+              "params": "Object",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lcom/picross/nonocross/util/usergrid/CheckUnique;",
+              "class_short_name": "CheckUnique",
+              "method_name": "checkUniqueFromJNI",
+              "params": "int, unknown, int, unknown, int[], unknown, int[], unknown, int[], unknown, int[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "puts",
+              "params": "String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 2,
+          "source_so": "libjsolve.so",
+          "call_chain_text": "[Intent Domain] Object k :: d(Object, unknown, Object) (W=0.33)\n    -> [Intent Domain] Object k :: k(Object) (W=0.50)\n    -> [Target JNI Anchor] int CheckUnique :: checkUniqueFromJNI(int, unknown, int, unknown, int[], unknown, int[], unknown, int[], unknown, int[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryAux :: opaqueInt() (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Li4/k;",
+              "class_short_name": "k",
+              "method_name": "d",
+              "params": "Object, unknown, Object",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Li4/k;",
+              "class_short_name": "k",
+              "method_name": "k",
+              "params": "Object",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lcom/picross/nonocross/util/usergrid/CheckUnique;",
+              "class_short_name": "CheckUnique",
+              "method_name": "checkUniqueFromJNI",
+              "params": "int, unknown, int, unknown, int[], unknown, int[], unknown, int[], unknown, int[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryAux;",
+              "class_short_name": "NativeSummaryAux",
+              "method_name": "opaqueInt",
+              "params": "",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 3,
+          "source_so": "libjsolve.so",
+          "call_chain_text": "[Intent Domain] Object k :: d(Object, unknown, Object) (W=0.33)\n    -> [Intent Domain] Object k :: k(Object) (W=0.50)\n    -> [Target JNI Anchor] int CheckUnique :: checkUniqueFromJNI(int, unknown, int, unknown, int[], unknown, int[], unknown, int[], unknown, int[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: malloc(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Li4/k;",
+              "class_short_name": "k",
+              "method_name": "d",
+              "params": "Object, unknown, Object",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Li4/k;",
+              "class_short_name": "k",
+              "method_name": "k",
+              "params": "Object",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lcom/picross/nonocross/util/usergrid/CheckUnique;",
+              "class_short_name": "CheckUnique",
+              "method_name": "checkUniqueFromJNI",
+              "params": "int, unknown, int, unknown, int[], unknown, int[], unknown, int[], unknown, int[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "malloc",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 4,
+          "source_so": "libjsolve.so",
+          "call_chain_text": "[Intent Domain] Object k :: d(Object, unknown, Object) (W=0.33)\n    -> [Intent Domain] Object k :: k(Object) (W=0.50)\n    -> [Target JNI Anchor] int CheckUnique :: checkUniqueFromJNI(int, unknown, int, unknown, int[], unknown, int[], unknown, int[], unknown, int[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: clock() (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Li4/k;",
+              "class_short_name": "k",
+              "method_name": "d",
+              "params": "Object, unknown, Object",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Li4/k;",
+              "class_short_name": "k",
+              "method_name": "k",
+              "params": "Object",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lcom/picross/nonocross/util/usergrid/CheckUnique;",
+              "class_short_name": "CheckUnique",
+              "method_name": "checkUniqueFromJNI",
+              "params": "int, unknown, int, unknown, int[], unknown, int[], unknown, int[], unknown, int[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "clock",
+              "params": "",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 5,
+          "source_so": "libjsolve.so",
+          "call_chain_text": "[Intent Domain] Object k :: d(Object, unknown, Object) (W=0.33)\n    -> [Intent Domain] Object k :: k(Object) (W=0.50)\n    -> [Target JNI Anchor] int CheckUnique :: checkUniqueFromJNI(int, unknown, int, unknown, int[], unknown, int[], unknown, int[], unknown, int[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: __android_log_write(int, unknown, String, unknown, String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Li4/k;",
+              "class_short_name": "k",
+              "method_name": "d",
+              "params": "Object, unknown, Object",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Li4/k;",
+              "class_short_name": "k",
+              "method_name": "k",
+              "params": "Object",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lcom/picross/nonocross/util/usergrid/CheckUnique;",
+              "class_short_name": "CheckUnique",
+              "method_name": "checkUniqueFromJNI",
+              "params": "int, unknown, int, unknown, int[], unknown, int[], unknown, int[], unknown, int[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "__android_log_write",
+              "params": "int, unknown, String, unknown, String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 6,
+          "source_so": "libjsolve.so",
+          "call_chain_text": "[Intent Domain] Object k :: d(Object, unknown, Object) (W=0.33)\n    -> [Intent Domain] Object k :: k(Object) (W=0.50)\n    -> [Target JNI Anchor] int CheckUnique :: checkUniqueFromJNI(int, unknown, int, unknown, int[], unknown, int[], unknown, int[], unknown, int[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: free(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Li4/k;",
+              "class_short_name": "k",
+              "method_name": "d",
+              "params": "Object, unknown, Object",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Li4/k;",
+              "class_short_name": "k",
+              "method_name": "k",
+              "params": "Object",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lcom/picross/nonocross/util/usergrid/CheckUnique;",
+              "class_short_name": "CheckUnique",
+              "method_name": "checkUniqueFromJNI",
+              "params": "int, unknown, int, unknown, int[], unknown, int[], unknown, int[], unknown, int[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "free",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 7,
+          "source_so": "libjsolve.so",
+          "call_chain_text": "[Intent Domain] Object k :: d(Object, unknown, Object) (W=0.33)\n    -> [Intent Domain] Object k :: k(Object) (W=0.50)\n    -> [Target JNI Anchor] int CheckUnique :: checkUniqueFromJNI(int, unknown, int, unknown, int[], unknown, int[], unknown, int[], unknown, int[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: malloc(int[]) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Li4/k;",
+              "class_short_name": "k",
+              "method_name": "d",
+              "params": "Object, unknown, Object",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "Object",
+              "class_name": "Li4/k;",
+              "class_short_name": "k",
+              "method_name": "k",
+              "params": "Object",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "int",
+              "class_name": "Lcom/picross/nonocross/util/usergrid/CheckUnique;",
+              "class_short_name": "CheckUnique",
+              "method_name": "checkUniqueFromJNI",
+              "params": "int, unknown, int, unknown, int[], unknown, int[], unknown, int[], unknown, int[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "malloc",
+              "params": "int[]",
+              "weight": 0.5
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1334 @@
+{
+  "app": "org.jwz.xscreensaver",
+  "commented_jni_total": 3,
+  "with_code_count": 3,
+  "with_stacks_count": 3,
+  "total_stacks_collected": 38,
+  "functions": [
+    {
+      "function_name": "Java_org_jwz_xscreensaver_jwxyz_nativeDone",
+      "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+      "method_name": "nativeDone",
+      "descriptor": "()V",
+      "source_so": "libxscreensaver.so",
+      "file_path": "H:\\260311\\org.jwz.xscreensaver\\xscreensaver-master\\jwxyz\\jwxyz-android.c",
+      "comment_before": null,
+      "comment_inside": "// Jump here from jwxyz_abort and return.\n// eglDestroy* probably isn't necessary here.",
+      "code": "JNICALL\nJava_org_jwz_xscreensaver_jwxyz_nativeDone (JNIEnv *env, jobject thiz)\n{\n  pthread_mutex_lock(&mutg);\n  if (setjmp (jmp_target)) goto END;  // Jump here from jwxyz_abort and return.\n\n  struct running_hack *rh = getRunningHack(env, thiz);\n\n  prepare_context (rh);\n\n  if (rh->fpst)\n    rh->xsft->fps_free (rh->fpst);\n  if (rh->initted_p)\n    rh->xsft->free_cb (rh->dpy, rh->window, rh->closure);\n  if (rh->jwxyz_gl_p)\n    XFreeGC (rh->dpy, rh->copy_gc);\n  if (rh->xsft->visual == GL_VISUAL)\n    jwzgles_free_state ();\n\n  if (rh->jwxyz_gl_p)\n    jwxyz_gl_free_display(rh->dpy);\n  else\n    jwxyz_image_free_display(rh->dpy);\n\n  if (rh->egl_p) {\n    // eglDestroy* probably isn't necessary here.\n    eglMakeCurrent (rh->egl_display, EGL_NO_SURFACE, EGL_NO_SURFACE,\n                    EGL_NO_CONTEXT);\n    eglDestroySurface (rh->egl_display, rh->egl_surface);\n    eglDestroyContext (rh->egl_display, rh->egl_ctx);\n    eglTerminate (rh->egl_display);\n  } else {\n    free_pixmap (rh, rh->window);\n    if (rh->native_window)\n      ANativeWindow_release (rh->native_window);\n  }\n\n  free(rh);\n  (*env)->SetLongField(env, thiz, runningHackField, 0);\n\n  --classRefCount;\n  if (!classRefCount) {\n    (*env)->DeleteGlobalRef(env, globalRefjwxyz);\n    (*env)->DeleteGlobalRef(env, globalRefIterable);\n    (*env)->DeleteGlobalRef(env, globalRefIterator);\n    (*env)->DeleteGlobalRef(env, globalRefMapEntry);\n  }\n\n END:\n  pthread_mutex_unlock(&mutg);\n}",
+      "call_stacks_count": 9,
+      "call_stacks": [
+        {
+          "stack_id": 4,
+          "source_so": "libxscreensaver.so",
+          "call_chain_text": "[Intent Domain] void jwxyz$2 :: run() (W=0.50)\n    -> [Target JNI Anchor] void jwxyz :: nativeDone() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: calloc(int, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz$2;",
+              "class_short_name": "jwxyz$2",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+              "class_short_name": "jwxyz",
+              "method_name": "nativeDone",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "calloc",
+              "params": "int, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 5,
+          "source_so": "libxscreensaver.so",
+          "call_chain_text": "[Intent Domain] void jwxyz$2 :: run() (W=0.50)\n    -> [Target JNI Anchor] void jwxyz :: nativeDone() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: pthread_mutex_lock(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz$2;",
+              "class_short_name": "jwxyz$2",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+              "class_short_name": "jwxyz",
+              "method_name": "nativeDone",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "pthread_mutex_lock",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 6,
+          "source_so": "libxscreensaver.so",
+          "call_chain_text": "[Intent Domain] void jwxyz$2 :: run() (W=0.50)\n    -> [Target JNI Anchor] void jwxyz :: nativeDone() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: setjmp(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz$2;",
+              "class_short_name": "jwxyz$2",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+              "class_short_name": "jwxyz",
+              "method_name": "nativeDone",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "setjmp",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 7,
+          "source_so": "libxscreensaver.so",
+          "call_chain_text": "[Intent Domain] void jwxyz$2 :: run() (W=0.50)\n    -> [Target JNI Anchor] void jwxyz :: nativeDone() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: free(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz$2;",
+              "class_short_name": "jwxyz$2",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+              "class_short_name": "jwxyz",
+              "method_name": "nativeDone",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "free",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 8,
+          "source_so": "libxscreensaver.so",
+          "call_chain_text": "[Intent Domain] void jwxyz$2 :: run() (W=0.50)\n    -> [Target JNI Anchor] void jwxyz :: nativeDone() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: memset(Object, unknown, int, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz$2;",
+              "class_short_name": "jwxyz$2",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+              "class_short_name": "jwxyz",
+              "method_name": "nativeDone",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "memset",
+              "params": "Object, unknown, int, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 9,
+          "source_so": "libxscreensaver.so",
+          "call_chain_text": "[Intent Domain] void jwxyz$2 :: run() (W=0.50)\n    -> [Target JNI Anchor] void jwxyz :: nativeDone() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryAux :: opaqueInt() (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz$2;",
+              "class_short_name": "jwxyz$2",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+              "class_short_name": "jwxyz",
+              "method_name": "nativeDone",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryAux;",
+              "class_short_name": "NativeSummaryAux",
+              "method_name": "opaqueInt",
+              "params": "",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 10,
+          "source_so": "libxscreensaver.so",
+          "call_chain_text": "[Intent Domain] void jwxyz$2 :: run() (W=0.50)\n    -> [Target JNI Anchor] void jwxyz :: nativeDone() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: malloc(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz$2;",
+              "class_short_name": "jwxyz$2",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+              "class_short_name": "jwxyz",
+              "method_name": "nativeDone",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "malloc",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 11,
+          "source_so": "libxscreensaver.so",
+          "call_chain_text": "[Intent Domain] void jwxyz$2 :: run() (W=0.50)\n    -> [Target JNI Anchor] void jwxyz :: nativeDone() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: abort() (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz$2;",
+              "class_short_name": "jwxyz$2",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+              "class_short_name": "jwxyz",
+              "method_name": "nativeDone",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "abort",
+              "params": "",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 12,
+          "source_so": "libxscreensaver.so",
+          "call_chain_text": "[Intent Domain] void jwxyz$2 :: run() (W=0.50)\n    -> [Target JNI Anchor] void jwxyz :: nativeDone() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: pthread_mutex_unlock(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz$2;",
+              "class_short_name": "jwxyz$2",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+              "class_short_name": "jwxyz",
+              "method_name": "nativeDone",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "pthread_mutex_unlock",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function_name": "Java_org_jwz_xscreensaver_jwxyz_nativeInit",
+      "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+      "method_name": "nativeInit",
+      "descriptor": "(Ljava/lang/String; Ljava/util/Hashtable; I I Landroid/view/Surface;)J",
+      "source_so": "libxscreensaver.so",
+      "file_path": "H:\\260311\\org.jwz.xscreensaver\\xscreensaver-master\\jwxyz\\jwxyz-android.c",
+      "comment_before": null,
+      "comment_inside": "// #### simplify\n// Store the C struct into the Java object.\n// TODO: Sort the list so binary search works.",
+      "code": "JNICALL\nJava_org_jwz_xscreensaver_jwxyz_nativeInit (JNIEnv *env, jobject thiz,\n                                            jstring jhack, jobject defaults,\n                                            jint w, jint h,\n                                            jobject jni_surface)\n{\n  pthread_mutex_lock(&mutg);\n\n  struct running_hack *rh = calloc(1, sizeof(struct running_hack));\n\n  if ((*env)->ExceptionOccurred(env)) abort();\n\n  // #### simplify\n  if (!classRefCount) {\n    jclass classjwxyz = (*env)->GetObjectClass(env, thiz);\n    globalRefjwxyz = (*env)->NewGlobalRef(env, classjwxyz);\n    runningHackField = (*env)->GetFieldID\n      (env, classjwxyz, \"nativeRunningHackPtr\", \"J\");\n    if ((*env)->ExceptionOccurred(env)) abort();\n\n    jclass classIterable =\n      acquireClass(env, \"java/lang/Iterable\", &globalRefIterable);\n    iterableIterator = (*env)->GetMethodID\n      (env, classIterable, \"iterator\", \"()Ljava/util/Iterator;\");\n    if ((*env)->ExceptionOccurred(env)) abort();\n\n    jclass classIterator =\n      acquireClass(env, \"java/util/Iterator\", &globalRefIterator);\n    iteratorHasNext = (*env)->GetMethodID\n      (env, classIterator, \"hasNext\", \"()Z\");\n    iteratorNext = (*env)->GetMethodID\n      (env, classIterator, \"next\", \"()Ljava/lang/Object;\");\n    if ((*env)->ExceptionOccurred(env)) abort();\n\n    jclass classMapEntry =\n      acquireClass(env, \"java/util/Map$Entry\", &globalRefMapEntry);\n    entryGetKey = (*env)->GetMethodID\n      (env, classMapEntry, \"getKey\", \"()Ljava/lang/Object;\");\n    entryGetValue = (*env)->GetMethodID\n      (env, classMapEntry, \"getValue\", \"()Ljava/lang/Object;\");\n    if ((*env)->ExceptionOccurred(env)) abort();\n  }\n\n  ++classRefCount;\n\n  // Store the C struct into the Java object.\n  (*env)->SetLongField(env, thiz, runningHackField, (jlong)(intptr_t)rh);\n\n  // TODO: Sort the list so binary search works.\n  const char *hack =(*env)->GetStringUTFChars(env, jhack, NULL);\n\n  int chosen = 0;\n  for (;;) {\n    if (chosen == countof(function_table)) {\n      Log (\"Hack not found: %s\", hack);\n      abort();\n    }\n    if (!strcmp(function_table[chosen].progname, hack))\n      break;\n    chosen++;\n  }\n\n  (*env)->ReleaseStringUTFChars(env, jhack, hack);\n\n  doinit (thiz, rh, env, &function_table[chosen], defaults, w, h,\n          jni_surface);\n\n  pthread_mutex_unlock(&mutg);\n}",
+      "call_stacks_count": 20,
+      "call_stacks": [
+        {
+          "stack_id": 58,
+          "source_so": "libxscreensaver.so",
+          "call_chain_text": "[Intent Domain] void jwxyz$2 :: run() (W=0.50)\n    -> [Target JNI Anchor] long jwxyz :: nativeInit(String, unknown, Hashtable, unknown, int, unknown, int, unknown, Surface) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: gettimeofday(Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz$2;",
+              "class_short_name": "jwxyz$2",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "long",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+              "class_short_name": "jwxyz",
+              "method_name": "nativeInit",
+              "params": "String, unknown, Hashtable, unknown, int, unknown, int, unknown, Surface",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "gettimeofday",
+              "params": "Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 59,
+          "source_so": "libxscreensaver.so",
+          "call_chain_text": "[Intent Domain] void jwxyz$2 :: run() (W=0.50)\n    -> [Target JNI Anchor] long jwxyz :: nativeInit(String, unknown, Hashtable, unknown, int, unknown, int, unknown, Surface) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: memset(Object, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz$2;",
+              "class_short_name": "jwxyz$2",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "long",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+              "class_short_name": "jwxyz",
+              "method_name": "nativeInit",
+              "params": "String, unknown, Hashtable, unknown, int, unknown, int, unknown, Surface",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "memset",
+              "params": "Object, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 60,
+          "source_so": "libxscreensaver.so",
+          "call_chain_text": "[Intent Domain] void jwxyz$2 :: run() (W=0.50)\n    -> [Target JNI Anchor] long jwxyz :: nativeInit(String, unknown, Hashtable, unknown, int, unknown, int, unknown, Surface) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: calloc(int, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz$2;",
+              "class_short_name": "jwxyz$2",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "long",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+              "class_short_name": "jwxyz",
+              "method_name": "nativeInit",
+              "params": "String, unknown, Hashtable, unknown, int, unknown, int, unknown, Surface",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "calloc",
+              "params": "int, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 61,
+          "source_so": "libxscreensaver.so",
+          "call_chain_text": "[Intent Domain] void jwxyz$2 :: run() (W=0.50)\n    -> [Target JNI Anchor] long jwxyz :: nativeInit(String, unknown, Hashtable, unknown, int, unknown, int, unknown, Surface) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: pthread_mutex_lock(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz$2;",
+              "class_short_name": "jwxyz$2",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "long",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+              "class_short_name": "jwxyz",
+              "method_name": "nativeInit",
+              "params": "String, unknown, Hashtable, unknown, int, unknown, int, unknown, Surface",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "pthread_mutex_lock",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 62,
+          "source_so": "libxscreensaver.so",
+          "call_chain_text": "[Intent Domain] void jwxyz$2 :: run() (W=0.50)\n    -> [Target JNI Anchor] long jwxyz :: nativeInit(String, unknown, Hashtable, unknown, int, unknown, int, unknown, Surface) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: free(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz$2;",
+              "class_short_name": "jwxyz$2",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "long",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+              "class_short_name": "jwxyz",
+              "method_name": "nativeInit",
+              "params": "String, unknown, Hashtable, unknown, int, unknown, int, unknown, Surface",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "free",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 63,
+          "source_so": "libxscreensaver.so",
+          "call_chain_text": "[Intent Domain] void jwxyz$2 :: run() (W=0.50)\n    -> [Target JNI Anchor] long jwxyz :: nativeInit(String, unknown, Hashtable, unknown, int, unknown, int, unknown, Surface) (W=1.00)\n    -> [Interaction Domain] String jwxyz :: getStringResource(String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz$2;",
+              "class_short_name": "jwxyz$2",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "long",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+              "class_short_name": "jwxyz",
+              "method_name": "nativeInit",
+              "params": "String, unknown, Hashtable, unknown, int, unknown, int, unknown, Surface",
+              "weight": 1.0
+            },
+            {
+              "label": "Interaction Domain",
+              "return_type": "String",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+              "class_short_name": "jwxyz",
+              "method_name": "getStringResource",
+              "params": "String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 64,
+          "source_so": "libxscreensaver.so",
+          "call_chain_text": "[Intent Domain] void jwxyz$2 :: run() (W=0.50)\n    -> [Target JNI Anchor] long jwxyz :: nativeInit(String, unknown, Hashtable, unknown, int, unknown, int, unknown, Surface) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: free(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz$2;",
+              "class_short_name": "jwxyz$2",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "long",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+              "class_short_name": "jwxyz",
+              "method_name": "nativeInit",
+              "params": "String, unknown, Hashtable, unknown, int, unknown, int, unknown, Surface",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "free",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 65,
+          "source_so": "libxscreensaver.so",
+          "call_chain_text": "[Intent Domain] void jwxyz$2 :: run() (W=0.50)\n    -> [Target JNI Anchor] long jwxyz :: nativeInit(String, unknown, Hashtable, unknown, int, unknown, int, unknown, Surface) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: __vsprintf_chk(Object, unknown, Object, unknown, int, unknown, String, unknown, Object, unknown, Object, unknown, Object, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz$2;",
+              "class_short_name": "jwxyz$2",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "long",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+              "class_short_name": "jwxyz",
+              "method_name": "nativeInit",
+              "params": "String, unknown, Hashtable, unknown, int, unknown, int, unknown, Surface",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "__vsprintf_chk",
+              "params": "Object, unknown, Object, unknown, int, unknown, String, unknown, Object, unknown, Object, unknown, Object, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 66,
+          "source_so": "libxscreensaver.so",
+          "call_chain_text": "[Intent Domain] void jwxyz$2 :: run() (W=0.50)\n    -> [Target JNI Anchor] long jwxyz :: nativeInit(String, unknown, Hashtable, unknown, int, unknown, int, unknown, Surface) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: malloc(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz$2;",
+              "class_short_name": "jwxyz$2",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "long",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+              "class_short_name": "jwxyz",
+              "method_name": "nativeInit",
+              "params": "String, unknown, Hashtable, unknown, int, unknown, int, unknown, Surface",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "malloc",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 67,
+          "source_so": "libxscreensaver.so",
+          "call_chain_text": "[Intent Domain] void jwxyz$2 :: run() (W=0.50)\n    -> [Target JNI Anchor] long jwxyz :: nativeInit(String, unknown, Hashtable, unknown, int, unknown, int, unknown, Surface) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: __android_log_write(int, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz$2;",
+              "class_short_name": "jwxyz$2",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "long",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+              "class_short_name": "jwxyz",
+              "method_name": "nativeInit",
+              "params": "String, unknown, Hashtable, unknown, int, unknown, int, unknown, Surface",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "__android_log_write",
+              "params": "int, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 68,
+          "source_so": "libxscreensaver.so",
+          "call_chain_text": "[Intent Domain] void jwxyz$2 :: run() (W=0.50)\n    -> [Target JNI Anchor] long jwxyz :: nativeInit(String, unknown, Hashtable, unknown, int, unknown, int, unknown, Surface) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: getpid() (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz$2;",
+              "class_short_name": "jwxyz$2",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "long",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+              "class_short_name": "jwxyz",
+              "method_name": "nativeInit",
+              "params": "String, unknown, Hashtable, unknown, int, unknown, int, unknown, Surface",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "getpid",
+              "params": "",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 69,
+          "source_so": "libxscreensaver.so",
+          "call_chain_text": "[Intent Domain] void jwxyz$2 :: run() (W=0.50)\n    -> [Target JNI Anchor] long jwxyz :: nativeInit(String, unknown, Hashtable, unknown, int, unknown, int, unknown, Surface) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: setjmp(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz$2;",
+              "class_short_name": "jwxyz$2",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "long",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+              "class_short_name": "jwxyz",
+              "method_name": "nativeInit",
+              "params": "String, unknown, Hashtable, unknown, int, unknown, int, unknown, Surface",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "setjmp",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 70,
+          "source_so": "libxscreensaver.so",
+          "call_chain_text": "[Intent Domain] void jwxyz$2 :: run() (W=0.50)\n    -> [Target JNI Anchor] long jwxyz :: nativeInit(String, unknown, Hashtable, unknown, int, unknown, int, unknown, Surface) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: ExceptionOccurred(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz$2;",
+              "class_short_name": "jwxyz$2",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "long",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+              "class_short_name": "jwxyz",
+              "method_name": "nativeInit",
+              "params": "String, unknown, Hashtable, unknown, int, unknown, int, unknown, Surface",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "ExceptionOccurred",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 71,
+          "source_so": "libxscreensaver.so",
+          "call_chain_text": "[Intent Domain] void jwxyz$2 :: run() (W=0.50)\n    -> [Target JNI Anchor] long jwxyz :: nativeInit(String, unknown, Hashtable, unknown, int, unknown, int, unknown, Surface) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryAux :: opaqueInt() (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz$2;",
+              "class_short_name": "jwxyz$2",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "long",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+              "class_short_name": "jwxyz",
+              "method_name": "nativeInit",
+              "params": "String, unknown, Hashtable, unknown, int, unknown, int, unknown, Surface",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryAux;",
+              "class_short_name": "NativeSummaryAux",
+              "method_name": "opaqueInt",
+              "params": "",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 72,
+          "source_so": "libxscreensaver.so",
+          "call_chain_text": "[Intent Domain] void jwxyz$2 :: run() (W=0.50)\n    -> [Target JNI Anchor] long jwxyz :: nativeInit(String, unknown, Hashtable, unknown, int, unknown, int, unknown, Surface) (W=1.00)\n    -> [Core Execution Domain] long NativeSummaryFuncs :: pthread_mutex_unlock(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz$2;",
+              "class_short_name": "jwxyz$2",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "long",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+              "class_short_name": "jwxyz",
+              "method_name": "nativeInit",
+              "params": "String, unknown, Hashtable, unknown, int, unknown, int, unknown, Surface",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "long",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "pthread_mutex_unlock",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 73,
+          "source_so": "libxscreensaver.so",
+          "call_chain_text": "[Intent Domain] void jwxyz$2 :: run() (W=0.50)\n    -> [Target JNI Anchor] long jwxyz :: nativeInit(String, unknown, Hashtable, unknown, int, unknown, int, unknown, Surface) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: malloc(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz$2;",
+              "class_short_name": "jwxyz$2",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "long",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+              "class_short_name": "jwxyz",
+              "method_name": "nativeInit",
+              "params": "String, unknown, Hashtable, unknown, int, unknown, int, unknown, Surface",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "malloc",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 74,
+          "source_so": "libxscreensaver.so",
+          "call_chain_text": "[Intent Domain] void jwxyz$2 :: run() (W=0.50)\n    -> [Target JNI Anchor] long jwxyz :: nativeInit(String, unknown, Hashtable, unknown, int, unknown, int, unknown, Surface) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: __android_log_vprint(int, unknown, String, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz$2;",
+              "class_short_name": "jwxyz$2",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "long",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+              "class_short_name": "jwxyz",
+              "method_name": "nativeInit",
+              "params": "String, unknown, Hashtable, unknown, int, unknown, int, unknown, Surface",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "__android_log_vprint",
+              "params": "int, unknown, String, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 75,
+          "source_so": "libxscreensaver.so",
+          "call_chain_text": "[Intent Domain] void jwxyz$2 :: run() (W=0.50)\n    -> [Target JNI Anchor] long jwxyz :: nativeInit(String, unknown, Hashtable, unknown, int, unknown, int, unknown, Surface) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: strdup(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz$2;",
+              "class_short_name": "jwxyz$2",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "long",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+              "class_short_name": "jwxyz",
+              "method_name": "nativeInit",
+              "params": "String, unknown, Hashtable, unknown, int, unknown, int, unknown, Surface",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "strdup",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 76,
+          "source_so": "libxscreensaver.so",
+          "call_chain_text": "[Intent Domain] void jwxyz$2 :: run() (W=0.50)\n    -> [Target JNI Anchor] long jwxyz :: nativeInit(String, unknown, Hashtable, unknown, int, unknown, int, unknown, Surface) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz$2;",
+              "class_short_name": "jwxyz$2",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "long",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+              "class_short_name": "jwxyz",
+              "method_name": "nativeInit",
+              "params": "String, unknown, Hashtable, unknown, int, unknown, int, unknown, Surface",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 77,
+          "source_so": "libxscreensaver.so",
+          "call_chain_text": "[Intent Domain] void jwxyz$2 :: run() (W=0.50)\n    -> [Target JNI Anchor] long jwxyz :: nativeInit(String, unknown, Hashtable, unknown, int, unknown, int, unknown, Surface) (W=1.00)\n    -> [Core Execution Domain] String NativeSummaryFuncs :: strstr(String, unknown, String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz$2;",
+              "class_short_name": "jwxyz$2",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "long",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+              "class_short_name": "jwxyz",
+              "method_name": "nativeInit",
+              "params": "String, unknown, Hashtable, unknown, int, unknown, int, unknown, Surface",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "String",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "strstr",
+              "params": "String, unknown, String",
+              "weight": 0.5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function_name": "Java_org_jwz_xscreensaver_jwxyz_nativeResize",
+      "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+      "method_name": "nativeResize",
+      "descriptor": "(I I D)V",
+      "source_so": "libxscreensaver.so",
+      "file_path": "H:\\260311\\org.jwz.xscreensaver\\xscreensaver-master\\jwxyz\\jwxyz-android.c",
+      "comment_before": null,
+      "comment_inside": "// Jump here from jwxyz_abort and return.\n// TODO: This is lame. Copy the bits.",
+      "code": "JNICALL\nJava_org_jwz_xscreensaver_jwxyz_nativeResize (JNIEnv *env, jobject thiz,\n                                              jint w, jint h, jdouble rot)\n{\n  pthread_mutex_lock(&mutg);\n  if (setjmp (jmp_target)) goto END;  // Jump here from jwxyz_abort and return.\n\n  current_rotation = rot;\n\n  Log (\"native rotation: %f\", current_rotation);\n\n  struct running_hack *rh = getRunningHack(env, thiz);\n\n  prepare_context (rh);\n\n  if (rh->egl_p) {\n    glViewport (0, 0, w, h);\n  } else {\n    int result = ANativeWindow_setBuffersGeometry (rh->native_window, w, h,\n                                                   WINDOW_FORMAT_RGBX_8888);\n    if (result < 0)\n      Log (\"failed to resize surface (%d)\", result);\n  }\n\n  Window wnd = rh->window;\n  wnd->frame.x = 0;\n  wnd->frame.y = 0;\n  wnd->frame.width  = w;\n  wnd->frame.height = h;\n\n  if (ignore_rotation_p(rh->dpy) &&\n      rot != 0 && rot != 180 && rot != -180) {\n    int swap = w;\n    w = h;\n    h = swap;\n    wnd->frame.width  = w;\n    wnd->frame.height = h;\n  }\n\n  if (rh->jwxyz_gl_p) {\n    if (rh->frontbuffer_p) {\n      free_pixmap (rh, wnd);\n      create_pixmap (wnd, wnd);\n\n      rh->frontbuffer.frame = wnd->frame;\n      if (!rh->gl_fbo_p)\n        rh->frontbuffer.egl_surface = rh->egl_surface;\n    }\n\n    jwxyz_window_resized (rh->dpy);\n  } else {\n    free_pixmap (rh, wnd);\n    create_pixmap (wnd, wnd);\n    XClearWindow (rh->dpy, wnd); // TODO: This is lame. Copy the bits.\n  }\n\n  if (rh->initted_p)\n    rh->xsft->reshape_cb (rh->dpy, rh->window, rh->closure,\n                          wnd->frame.width, wnd->frame.height);\n\n  if (rh->xsft->visual == GL_VISUAL) {\n    glMatrixMode (GL_PROJECTION);\n    glRotatef (-rot, 0, 0, 1);\n    glMatrixMode (GL_MODELVIEW);\n  }\n\n END:\n  pthread_mutex_unlock(&mutg);\n}",
+      "call_stacks_count": 9,
+      "call_stacks": [
+        {
+          "stack_id": 49,
+          "source_so": "libxscreensaver.so",
+          "call_chain_text": "[Intent Domain] void jwxyz$2 :: run() (W=0.50)\n    -> [Target JNI Anchor] void jwxyz :: nativeResize(int, unknown, int, unknown, double) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: pthread_mutex_lock(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz$2;",
+              "class_short_name": "jwxyz$2",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+              "class_short_name": "jwxyz",
+              "method_name": "nativeResize",
+              "params": "int, unknown, int, unknown, double",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "pthread_mutex_lock",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 50,
+          "source_so": "libxscreensaver.so",
+          "call_chain_text": "[Intent Domain] void jwxyz$2 :: run() (W=0.50)\n    -> [Target JNI Anchor] void jwxyz :: nativeResize(int, unknown, int, unknown, double) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: __android_log_vprint(int, unknown, String, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz$2;",
+              "class_short_name": "jwxyz$2",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+              "class_short_name": "jwxyz",
+              "method_name": "nativeResize",
+              "params": "int, unknown, int, unknown, double",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "__android_log_vprint",
+              "params": "int, unknown, String, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 51,
+          "source_so": "libxscreensaver.so",
+          "call_chain_text": "[Intent Domain] void jwxyz$2 :: run() (W=0.50)\n    -> [Target JNI Anchor] void jwxyz :: nativeResize(int, unknown, int, unknown, double) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: setjmp(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz$2;",
+              "class_short_name": "jwxyz$2",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+              "class_short_name": "jwxyz",
+              "method_name": "nativeResize",
+              "params": "int, unknown, int, unknown, double",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "setjmp",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 52,
+          "source_so": "libxscreensaver.so",
+          "call_chain_text": "[Intent Domain] void jwxyz$2 :: run() (W=0.50)\n    -> [Target JNI Anchor] void jwxyz :: nativeResize(int, unknown, int, unknown, double) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: free(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz$2;",
+              "class_short_name": "jwxyz$2",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+              "class_short_name": "jwxyz",
+              "method_name": "nativeResize",
+              "params": "int, unknown, int, unknown, double",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "free",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 53,
+          "source_so": "libxscreensaver.so",
+          "call_chain_text": "[Intent Domain] void jwxyz$2 :: run() (W=0.50)\n    -> [Target JNI Anchor] void jwxyz :: nativeResize(int, unknown, int, unknown, double) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: __vsprintf_chk(Object, unknown, Object, unknown, int, unknown, String, unknown, Object, unknown, Object, unknown, Object, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz$2;",
+              "class_short_name": "jwxyz$2",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+              "class_short_name": "jwxyz",
+              "method_name": "nativeResize",
+              "params": "int, unknown, int, unknown, double",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "__vsprintf_chk",
+              "params": "Object, unknown, Object, unknown, int, unknown, String, unknown, Object, unknown, Object, unknown, Object, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 54,
+          "source_so": "libxscreensaver.so",
+          "call_chain_text": "[Intent Domain] void jwxyz$2 :: run() (W=0.50)\n    -> [Target JNI Anchor] void jwxyz :: nativeResize(int, unknown, int, unknown, double) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryAux :: opaqueInt() (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz$2;",
+              "class_short_name": "jwxyz$2",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+              "class_short_name": "jwxyz",
+              "method_name": "nativeResize",
+              "params": "int, unknown, int, unknown, double",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryAux;",
+              "class_short_name": "NativeSummaryAux",
+              "method_name": "opaqueInt",
+              "params": "",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 55,
+          "source_so": "libxscreensaver.so",
+          "call_chain_text": "[Intent Domain] void jwxyz$2 :: run() (W=0.50)\n    -> [Target JNI Anchor] void jwxyz :: nativeResize(int, unknown, int, unknown, double) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: malloc(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz$2;",
+              "class_short_name": "jwxyz$2",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+              "class_short_name": "jwxyz",
+              "method_name": "nativeResize",
+              "params": "int, unknown, int, unknown, double",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "malloc",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 56,
+          "source_so": "libxscreensaver.so",
+          "call_chain_text": "[Intent Domain] void jwxyz$2 :: run() (W=0.50)\n    -> [Target JNI Anchor] void jwxyz :: nativeResize(int, unknown, int, unknown, double) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: __android_log_write(int, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz$2;",
+              "class_short_name": "jwxyz$2",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+              "class_short_name": "jwxyz",
+              "method_name": "nativeResize",
+              "params": "int, unknown, int, unknown, double",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "__android_log_write",
+              "params": "int, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 57,
+          "source_so": "libxscreensaver.so",
+          "call_chain_text": "[Intent Domain] void jwxyz$2 :: run() (W=0.50)\n    -> [Target JNI Anchor] void jwxyz :: nativeResize(int, unknown, int, unknown, double) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: pthread_mutex_unlock(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz$2;",
+              "class_short_name": "jwxyz$2",
+              "method_name": "run",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lorg/jwz/xscreensaver/jwxyz;",
+              "class_short_name": "jwxyz",
+              "method_name": "nativeResize",
+              "params": "int, unknown, int, unknown, double",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "pthread_mutex_unlock",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

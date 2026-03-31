@@ -1,0 +1,1461 @@
+{
+  "app": "io.github.pedrolcl.vmpk",
+  "commented_jni_total": 7,
+  "with_code_count": 7,
+  "with_stacks_count": 7,
+  "total_stacks_collected": 34,
+  "functions": [
+    {
+      "function_name": "Java_io_github_pedrolcl_vmpk_MIDISynth_close",
+      "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+      "method_name": "close",
+      "descriptor": "(Ljava/nio/ByteBuffer;)V",
+      "source_so": "libmidisynth.so",
+      "file_path": "H:\\fdroid\\source_code\\io.github.pedrolcl.vmpk\\app\\src\\main\\jni\\midisynth\\midisynth.c",
+      "comment_before": null,
+      "comment_inside": "//LOGW(\"EAS_CloseMIDIStream error: %ld\", eas_res);\r\n//LOGW(\"EAS_Shutdown error: %ld\", eas_res);",
+      "code": "JNICALL Java_io_github_pedrolcl_vmpk_MIDISynth_close(JNIEnv *env, jclass clazz, jobject ctx)\r\n{\r\n  struct LibraryContext *lc = (struct LibraryContext *) (*env)->GetDirectBufferAddress(env, ctx);\r\n  EAS_RESULT eas_res;\r\n\r\n  if (lc->easData != NULL && lc->easHandle != NULL) {\r\n\teas_res = EAS_CloseMIDIStream(lc->easData, lc->easHandle);\r\n\tif (eas_res != EAS_SUCCESS) {\r\n\t\t//LOGW(\"EAS_CloseMIDIStream error: %ld\", eas_res);\r\n\t}\r\n\teas_res = EAS_Shutdown(lc->easData);\r\n\tif (eas_res != EAS_SUCCESS) {\r\n\t\t//LOGW(\"EAS_Shutdown error: %ld\", eas_res);\r\n\t}\r\n  }\r\n\r\n  opensl_close(lc->os);\r\n  free(lc);\r\n}",
+      "call_stacks_count": 4,
+      "call_stacks": [
+        {
+          "stack_id": 33,
+          "source_so": "libmidisynth.so",
+          "call_chain_text": "[Intent Domain] void g :: d() (W=0.33)\n    -> [Intent Domain] void MIDISynth :: b() (W=0.50)\n    -> [Target JNI Anchor] void MIDISynth :: close(ByteBuffer) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: free(ByteBuffer) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "d",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "b",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "close",
+              "params": "ByteBuffer",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "free",
+              "params": "ByteBuffer",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 34,
+          "source_so": "libmidisynth.so",
+          "call_chain_text": "[Intent Domain] void g :: d() (W=0.33)\n    -> [Intent Domain] void MIDISynth :: b() (W=0.50)\n    -> [Target JNI Anchor] void MIDISynth :: close(ByteBuffer) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryAux :: opaqueInt() (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "d",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "b",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "close",
+              "params": "ByteBuffer",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryAux;",
+              "class_short_name": "NativeSummaryAux",
+              "method_name": "opaqueInt",
+              "params": "",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 35,
+          "source_so": "libmidisynth.so",
+          "call_chain_text": "[Intent Domain] void g :: d() (W=0.33)\n    -> [Intent Domain] void MIDISynth :: b() (W=0.50)\n    -> [Target JNI Anchor] void MIDISynth :: close(ByteBuffer) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: free(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "d",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "b",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "close",
+              "params": "ByteBuffer",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "free",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 36,
+          "source_so": "libmidisynth.so",
+          "call_chain_text": "[Intent Domain] void g :: d() (W=0.33)\n    -> [Intent Domain] void MIDISynth :: b() (W=0.50)\n    -> [Target JNI Anchor] void MIDISynth :: close(ByteBuffer) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: usleep(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "d",
+              "params": "",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "b",
+              "params": "",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "close",
+              "params": "ByteBuffer",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "usleep",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function_name": "Java_io_github_pedrolcl_vmpk_MIDISynth_initChorus",
+      "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+      "method_name": "initChorus",
+      "descriptor": "(Ljava/nio/ByteBuffer; I)V",
+      "source_so": "libmidisynth.so",
+      "file_path": "H:\\fdroid\\source_code\\io.github.pedrolcl.vmpk\\app\\src\\main\\jni\\midisynth\\midisynth.c",
+      "comment_before": null,
+      "comment_inside": "//LOGW(\"EAS_SetParameter error: %ld\", eas_res);\r\n//LOGW(\"EAS_SetParameter error: %ld\", eas_res);",
+      "code": "JNICALL Java_io_github_pedrolcl_vmpk_MIDISynth_initChorus(JNIEnv *env, jclass clazz, jobject ctx, jint chorus_type)\r\n{\r\n  EAS_RESULT eas_res;\r\n  EAS_BOOL sw = EAS_TRUE;\r\n  struct LibraryContext *lc = (struct LibraryContext *) (*env)->GetDirectBufferAddress(env, ctx);\r\n  if (chorus_type >= EAS_PARAM_CHORUS_PRESET1 && chorus_type <= EAS_PARAM_CHORUS_PRESET4 ) {\r\n\t  sw = EAS_FALSE;\r\n\t  eas_res = EAS_SetParameter(lc->easData, EAS_MODULE_CHORUS, EAS_PARAM_CHORUS_PRESET, (EAS_I32) chorus_type);\r\n\t  if (eas_res != EAS_SUCCESS) {\r\n\t\t//LOGW(\"EAS_SetParameter error: %ld\", eas_res);\r\n\t  }\r\n  }\r\n  eas_res = EAS_SetParameter(lc->easData, EAS_MODULE_CHORUS, EAS_PARAM_CHORUS_BYPASS, sw);\r\n  if (eas_res != EAS_SUCCESS) {\r\n\t//LOGW(\"EAS_SetParameter error: %ld\", eas_res);\r\n  }\r\n}",
+      "call_stacks_count": 1,
+      "call_stacks": [
+        {
+          "stack_id": 1,
+          "source_so": "libmidisynth.so",
+          "call_chain_text": "[Intent Domain] void g :: i(Activity) (W=0.33)\n    -> [Intent Domain] void MIDISynth :: c(int) (W=0.50)\n    -> [Target JNI Anchor] void MIDISynth :: initChorus(ByteBuffer, unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "i",
+              "params": "Activity",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "c",
+              "params": "int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "initChorus",
+              "params": "ByteBuffer, unknown, int",
+              "weight": 1.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function_name": "Java_io_github_pedrolcl_vmpk_MIDISynth_initReverb",
+      "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+      "method_name": "initReverb",
+      "descriptor": "(Ljava/nio/ByteBuffer; I)V",
+      "source_so": "libmidisynth.so",
+      "file_path": "H:\\fdroid\\source_code\\io.github.pedrolcl.vmpk\\app\\src\\main\\jni\\midisynth\\midisynth.c",
+      "comment_before": null,
+      "comment_inside": "//LOGW(\"EAS_SetParameter error: %ld\", eas_res);\r\n//LOGW(\"EAS_SetParameter error: %ld\", eas_res);",
+      "code": "JNICALL Java_io_github_pedrolcl_vmpk_MIDISynth_initReverb(JNIEnv *env, jclass clazz, jobject ctx, jint reverb_type)\r\n{\r\n  EAS_RESULT eas_res;\r\n  EAS_BOOL sw = EAS_TRUE;\r\n  struct LibraryContext *lc = (struct LibraryContext *) (*env)->GetDirectBufferAddress(env, ctx);\r\n  if ( reverb_type >= EAS_PARAM_REVERB_LARGE_HALL && reverb_type <= EAS_PARAM_REVERB_ROOM ) {\r\n\t  sw = EAS_FALSE;\r\n\t  eas_res = EAS_SetParameter(lc->easData, EAS_MODULE_REVERB, EAS_PARAM_REVERB_PRESET, (EAS_I32) reverb_type);\r\n\t  if (eas_res != EAS_SUCCESS) {\r\n\t\t//LOGW(\"EAS_SetParameter error: %ld\", eas_res);\r\n\t  }\r\n  }\r\n  eas_res = EAS_SetParameter(lc->easData, EAS_MODULE_REVERB, EAS_PARAM_REVERB_BYPASS, sw);\r\n  if (eas_res != EAS_SUCCESS) {\r\n\t//LOGW(\"EAS_SetParameter error: %ld\", eas_res);\r\n  }\r\n}",
+      "call_stacks_count": 1,
+      "call_stacks": [
+        {
+          "stack_id": 20,
+          "source_so": "libmidisynth.so",
+          "call_chain_text": "[Intent Domain] void g :: i(Activity) (W=0.33)\n    -> [Intent Domain] void MIDISynth :: d(int) (W=0.50)\n    -> [Target JNI Anchor] void MIDISynth :: initReverb(ByteBuffer, unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "i",
+              "params": "Activity",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "d",
+              "params": "int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "initReverb",
+              "params": "ByteBuffer, unknown, int",
+              "weight": 1.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function_name": "Java_io_github_pedrolcl_vmpk_MIDISynth_open",
+      "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+      "method_name": "open",
+      "descriptor": "()Ljava/nio/ByteBuffer;",
+      "source_so": "libmidisynth.so",
+      "file_path": "H:\\fdroid\\source_code\\io.github.pedrolcl.vmpk\\app\\src\\main\\jni\\midisynth\\midisynth.c",
+      "comment_before": null,
+      "comment_inside": "//LOGW(\"EAS_Config returns null\");\r\n//LOGW(\"EAS_Init error: %ld\", eas_res);\r\n//LOGW(\"EAS_OpenMIDIStream error: %ld\", eas_res);\r\n//LOGW(\"opensl_open returns null\");\r\n//LOGI(\"EAS bufferSize=%d, sampleRate=%d, channels=%d\", lc->bufferSize, lc->sampleRate, lc->channels);",
+      "code": "JNICALL Java_io_github_pedrolcl_vmpk_MIDISynth_open(JNIEnv *env, jclass clazz)\r\n{\r\n  EAS_RESULT eas_res;\r\n  EAS_DATA_HANDLE dataHandle;\r\n  EAS_HANDLE handle;\r\n  int bufferFrames = 0;\r\n\r\n  const S_EAS_LIB_CONFIG *easConfig = EAS_Config();\r\n  if (easConfig == NULL) {\r\n\t  //LOGW(\"EAS_Config returns null\");\r\n\t  return NULL;\r\n  }\r\n\r\n  eas_res = EAS_Init(&dataHandle);\r\n  if (eas_res != EAS_SUCCESS) {\r\n\t//LOGW(\"EAS_Init error: %ld\", eas_res);\r\n\treturn NULL;\r\n  }\r\n\r\n  eas_res = EAS_OpenMIDIStream(dataHandle, &handle, NULL);\r\n  if (eas_res != EAS_SUCCESS) {\r\n\t//LOGW(\"EAS_OpenMIDIStream error: %ld\", eas_res);\r\n\tEAS_Shutdown(dataHandle);\r\n\treturn NULL;\r\n  }\r\n\r\n  struct LibraryContext *lc = malloc(sizeof(struct LibraryContext));\r\n  if (lc) {\r\n    lc->os = opensl_open(easConfig->sampleRate, 0, easConfig->numChannels, easConfig->mixBufferSize, process, lc);\r\n    if (!lc->os) {\r\n      //LOGW(\"opensl_open returns null\");\r\n      free(lc);\r\n      lc = NULL;\r\n      EAS_Shutdown(dataHandle);\r\n      return NULL;\r\n    }\r\n    lc->easData = dataHandle;\r\n    lc->easHandle = handle;\r\n    lc->sampleRate = easConfig->sampleRate;\r\n    lc->bufferSize = easConfig->mixBufferSize;\r\n    lc->channels = easConfig->numChannels;\r\n    //LOGI(\"EAS bufferSize=%d, sampleRate=%d, channels=%d\", lc->bufferSize, lc->sampleRate, lc->channels);\r\n  }\r\n  return (*env)->NewDirectByteBuffer(env, (void *) lc, sizeof(struct LibraryContext));\r\n}",
+      "call_stacks_count": 16,
+      "call_stacks": [
+        {
+          "stack_id": 4,
+          "source_so": "libmidisynth.so",
+          "call_chain_text": "[Intent Domain] void g :: i(Activity) (W=0.50)\n    -> [Target JNI Anchor] ByteBuffer MIDISynth :: open() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: calloc(int, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "i",
+              "params": "Activity",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "ByteBuffer",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "open",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "calloc",
+              "params": "int, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 5,
+          "source_so": "libmidisynth.so",
+          "call_chain_text": "[Intent Domain] void g :: i(Activity) (W=0.50)\n    -> [Target JNI Anchor] ByteBuffer MIDISynth :: open() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: exit(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "i",
+              "params": "Activity",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "ByteBuffer",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "open",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "exit",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 6,
+          "source_so": "libmidisynth.so",
+          "call_chain_text": "[Intent Domain] void g :: i(Activity) (W=0.50)\n    -> [Target JNI Anchor] ByteBuffer MIDISynth :: open() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: free(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "i",
+              "params": "Activity",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "ByteBuffer",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "open",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "free",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 7,
+          "source_so": "libmidisynth.so",
+          "call_chain_text": "[Intent Domain] void g :: i(Activity) (W=0.50)\n    -> [Target JNI Anchor] ByteBuffer MIDISynth :: open() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: vprintf(Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "i",
+              "params": "Activity",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "ByteBuffer",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "open",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "vprintf",
+              "params": "Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 8,
+          "source_so": "libmidisynth.so",
+          "call_chain_text": "[Intent Domain] void g :: i(Activity) (W=0.50)\n    -> [Target JNI Anchor] ByteBuffer MIDISynth :: open() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: memset(int, unknown, Object, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "i",
+              "params": "Activity",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "ByteBuffer",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "open",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "memset",
+              "params": "int, unknown, Object, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 9,
+          "source_so": "libmidisynth.so",
+          "call_chain_text": "[Intent Domain] void g :: i(Activity) (W=0.50)\n    -> [Target JNI Anchor] ByteBuffer MIDISynth :: open() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: free(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "i",
+              "params": "Activity",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "ByteBuffer",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "open",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "free",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 10,
+          "source_so": "libmidisynth.so",
+          "call_chain_text": "[Intent Domain] void g :: i(Activity) (W=0.50)\n    -> [Target JNI Anchor] ByteBuffer MIDISynth :: open() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: vfprintf(Object, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "i",
+              "params": "Activity",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "ByteBuffer",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "open",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "vfprintf",
+              "params": "Object, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 11,
+          "source_so": "libmidisynth.so",
+          "call_chain_text": "[Intent Domain] void g :: i(Activity) (W=0.50)\n    -> [Target JNI Anchor] ByteBuffer MIDISynth :: open() (W=1.00)\n    -> [Core Execution Domain] String NativeSummaryFuncs :: malloc(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "i",
+              "params": "Activity",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "ByteBuffer",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "open",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "String",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "malloc",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 12,
+          "source_so": "libmidisynth.so",
+          "call_chain_text": "[Intent Domain] void g :: i(Activity) (W=0.50)\n    -> [Target JNI Anchor] ByteBuffer MIDISynth :: open() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: calloc(Object, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "i",
+              "params": "Activity",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "ByteBuffer",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "open",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "calloc",
+              "params": "Object, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 13,
+          "source_so": "libmidisynth.so",
+          "call_chain_text": "[Intent Domain] void g :: i(Activity) (W=0.50)\n    -> [Target JNI Anchor] ByteBuffer MIDISynth :: open() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: usleep(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "i",
+              "params": "Activity",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "ByteBuffer",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "open",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "usleep",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 14,
+          "source_so": "libmidisynth.so",
+          "call_chain_text": "[Intent Domain] void g :: i(Activity) (W=0.50)\n    -> [Target JNI Anchor] ByteBuffer MIDISynth :: open() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: free(String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "i",
+              "params": "Activity",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "ByteBuffer",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "open",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "free",
+              "params": "String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 15,
+          "source_so": "libmidisynth.so",
+          "call_chain_text": "[Intent Domain] void g :: i(Activity) (W=0.50)\n    -> [Target JNI Anchor] ByteBuffer MIDISynth :: open() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: fflush(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "i",
+              "params": "Activity",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "ByteBuffer",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "open",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fflush",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 16,
+          "source_so": "libmidisynth.so",
+          "call_chain_text": "[Intent Domain] void g :: i(Activity) (W=0.50)\n    -> [Target JNI Anchor] ByteBuffer MIDISynth :: open() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: malloc(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "i",
+              "params": "Activity",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "ByteBuffer",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "open",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "malloc",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 17,
+          "source_so": "libmidisynth.so",
+          "call_chain_text": "[Intent Domain] void g :: i(Activity) (W=0.50)\n    -> [Target JNI Anchor] ByteBuffer MIDISynth :: open() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryAux :: opaqueInt() (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "i",
+              "params": "Activity",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "ByteBuffer",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "open",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryAux;",
+              "class_short_name": "NativeSummaryAux",
+              "method_name": "opaqueInt",
+              "params": "",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 18,
+          "source_so": "libmidisynth.so",
+          "call_chain_text": "[Intent Domain] void g :: i(Activity) (W=0.50)\n    -> [Target JNI Anchor] ByteBuffer MIDISynth :: open() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: memset(String, unknown, Object, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "i",
+              "params": "Activity",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "ByteBuffer",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "open",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "memset",
+              "params": "String, unknown, Object, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 19,
+          "source_so": "libmidisynth.so",
+          "call_chain_text": "[Intent Domain] void g :: i(Activity) (W=0.50)\n    -> [Target JNI Anchor] ByteBuffer MIDISynth :: open() (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: printf(String, unknown, Object, unknown, int, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "i",
+              "params": "Activity",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "ByteBuffer",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "open",
+              "params": "",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "printf",
+              "params": "String, unknown, Object, unknown, int, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function_name": "Java_io_github_pedrolcl_vmpk_MIDISynth_setChorusLevel",
+      "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+      "method_name": "setChorusLevel",
+      "descriptor": "(Ljava/nio/ByteBuffer; I)V",
+      "source_so": "libmidisynth.so",
+      "file_path": "H:\\fdroid\\source_code\\io.github.pedrolcl.vmpk\\app\\src\\main\\jni\\midisynth\\midisynth.c",
+      "comment_before": null,
+      "comment_inside": "//LOGW(\"EAS_SetParameter error: %ld\", eas_res);",
+      "code": "JNICALL Java_io_github_pedrolcl_vmpk_MIDISynth_setChorusLevel(JNIEnv *env, jclass clazz, jobject ctx, jint amount)\r\n{\r\n  struct LibraryContext *lc = (struct LibraryContext *) (*env)->GetDirectBufferAddress(env, ctx);\r\n\r\n  EAS_RESULT eas_res = EAS_SetParameter(lc->easData, EAS_MODULE_CHORUS, EAS_PARAM_CHORUS_LEVEL, (EAS_I32) amount);\r\n  if (eas_res != EAS_SUCCESS) {\r\n\t//LOGW(\"EAS_SetParameter error: %ld\", eas_res);\r\n  }\r\n}",
+      "call_stacks_count": 3,
+      "call_stacks": [
+        {
+          "stack_id": 3,
+          "source_so": "libmidisynth.so",
+          "call_chain_text": "[Intent Domain] void g :: i(Activity) (W=0.33)\n    -> [Intent Domain] void MIDISynth :: a(int) (W=0.50)\n    -> [Target JNI Anchor] void MIDISynth :: setChorusLevel(ByteBuffer, unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "i",
+              "params": "Activity",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "a",
+              "params": "int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "setChorusLevel",
+              "params": "ByteBuffer, unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 27,
+          "source_so": "libmidisynth.so",
+          "call_chain_text": "[Intent Domain] void g :: e() (W=0.25)\n    -> [Intent Domain] void g :: f(int, unknown, int, unknown, int) (W=0.33)\n    -> [Intent Domain] void MIDISynth :: a(int) (W=0.50)\n    -> [Target JNI Anchor] void MIDISynth :: setChorusLevel(ByteBuffer, unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "e",
+              "params": "",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "f",
+              "params": "int, unknown, int, unknown, int",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "a",
+              "params": "int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "setChorusLevel",
+              "params": "ByteBuffer, unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 38,
+          "source_so": "libmidisynth.so",
+          "call_chain_text": "[Intent Domain] void g :: h() (W=0.25)\n    -> [Intent Domain] void g :: f(int, unknown, int, unknown, int) (W=0.33)\n    -> [Intent Domain] void MIDISynth :: a(int) (W=0.50)\n    -> [Target JNI Anchor] void MIDISynth :: setChorusLevel(ByteBuffer, unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "h",
+              "params": "",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "f",
+              "params": "int, unknown, int, unknown, int",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "a",
+              "params": "int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "setChorusLevel",
+              "params": "ByteBuffer, unknown, int",
+              "weight": 1.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function_name": "Java_io_github_pedrolcl_vmpk_MIDISynth_setReverbWet",
+      "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+      "method_name": "setReverbWet",
+      "descriptor": "(Ljava/nio/ByteBuffer; I)V",
+      "source_so": "libmidisynth.so",
+      "file_path": "H:\\fdroid\\source_code\\io.github.pedrolcl.vmpk\\app\\src\\main\\jni\\midisynth\\midisynth.c",
+      "comment_before": null,
+      "comment_inside": "//LOGW(\"EAS_SetParameter error: %ld\", eas_res);",
+      "code": "JNICALL Java_io_github_pedrolcl_vmpk_MIDISynth_setReverbWet(JNIEnv *env, jclass clazz, jobject ctx, jint amount)\r\n{\r\n  struct LibraryContext *lc = (struct LibraryContext *) (*env)->GetDirectBufferAddress(env, ctx);\r\n\r\n  EAS_RESULT eas_res = EAS_SetParameter(lc->easData, EAS_MODULE_REVERB, EAS_PARAM_REVERB_WET, (EAS_I32) amount);\r\n  if (eas_res != EAS_SUCCESS) {\r\n\t//LOGW(\"EAS_SetParameter error: %ld\", eas_res);\r\n  }\r\n}",
+      "call_stacks_count": 3,
+      "call_stacks": [
+        {
+          "stack_id": 2,
+          "source_so": "libmidisynth.so",
+          "call_chain_text": "[Intent Domain] void g :: i(Activity) (W=0.33)\n    -> [Intent Domain] void MIDISynth :: e(int) (W=0.50)\n    -> [Target JNI Anchor] void MIDISynth :: setReverbWet(ByteBuffer, unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "i",
+              "params": "Activity",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "e",
+              "params": "int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "setReverbWet",
+              "params": "ByteBuffer, unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 26,
+          "source_so": "libmidisynth.so",
+          "call_chain_text": "[Intent Domain] void g :: e() (W=0.25)\n    -> [Intent Domain] void g :: f(int, unknown, int, unknown, int) (W=0.33)\n    -> [Intent Domain] void MIDISynth :: e(int) (W=0.50)\n    -> [Target JNI Anchor] void MIDISynth :: setReverbWet(ByteBuffer, unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "e",
+              "params": "",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "f",
+              "params": "int, unknown, int, unknown, int",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "e",
+              "params": "int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "setReverbWet",
+              "params": "ByteBuffer, unknown, int",
+              "weight": 1.0
+            }
+          ]
+        },
+        {
+          "stack_id": 37,
+          "source_so": "libmidisynth.so",
+          "call_chain_text": "[Intent Domain] void g :: h() (W=0.25)\n    -> [Intent Domain] void g :: f(int, unknown, int, unknown, int) (W=0.33)\n    -> [Intent Domain] void MIDISynth :: e(int) (W=0.50)\n    -> [Target JNI Anchor] void MIDISynth :: setReverbWet(ByteBuffer, unknown, int) (W=1.00)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "h",
+              "params": "",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "f",
+              "params": "int, unknown, int, unknown, int",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "e",
+              "params": "int",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "setReverbWet",
+              "params": "ByteBuffer, unknown, int",
+              "weight": 1.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function_name": "Java_io_github_pedrolcl_vmpk_MIDISynth_write",
+      "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+      "method_name": "write",
+      "descriptor": "(Ljava/nio/ByteBuffer; [B)V",
+      "source_so": "libmidisynth.so",
+      "file_path": "H:\\fdroid\\source_code\\io.github.pedrolcl.vmpk\\app\\src\\main\\jni\\midisynth\\midisynth.c",
+      "comment_before": null,
+      "comment_inside": "//LOGW(\"EAS_WriteMIDIStream error: %ld\", eas_res);",
+      "code": "JNICALL Java_io_github_pedrolcl_vmpk_MIDISynth_write(JNIEnv *env, jclass clazz, jobject ctx, jbyteArray ba)\r\n{\r\n    EAS_RESULT eas_res = EAS_ERROR_ALREADY_STOPPED;\r\n    EAS_I32 count;\r\n    EAS_U8 *buffer;\r\n    jboolean bc;\r\n\r\n    struct LibraryContext *lc = (struct LibraryContext *) (*env)->GetDirectBufferAddress(env, ctx);\r\n    if (lc != NULL &&\r\n    \tlc->easData != NULL &&\r\n    \tlc->easHandle != NULL &&\r\n    \tlc->os != NULL &&\r\n    \topensl_is_running(lc->os) != 0)\r\n    {\r\n\t\tbuffer = (EAS_U8 *)(*env)->GetByteArrayElements(env, ba, &bc);\r\n\t\tcount = (*env)->GetArrayLength(env, ba);\r\n\t\teas_res = EAS_WriteMIDIStream(lc->easData, lc->easHandle, buffer, count);\r\n\t\t(*env)->ReleaseByteArrayElements(env, ba, (jbyte  *)buffer, 0);\r\n    }\r\n\tif (eas_res != EAS_SUCCESS) {\r\n\t\t//LOGW(\"EAS_WriteMIDIStream error: %ld\", eas_res);\r\n\t}\r\n\treturn (eas_res == EAS_SUCCESS) ? JNI_TRUE : JNI_FALSE;\r\n}",
+      "call_stacks_count": 6,
+      "call_stacks": [
+        {
+          "stack_id": 25,
+          "source_so": "libmidisynth.so",
+          "call_chain_text": "[Intent Domain] void g :: b(int, unknown, int, unknown, int) (W=0.25)\n    -> [Intent Domain] void g :: l(int, unknown, int, unknown, int) (W=0.33)\n    -> [Intent Domain] void MIDISynth :: h(byte[]) (W=0.50)\n    -> [Target JNI Anchor] void MIDISynth :: write(ByteBuffer, unknown, byte[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: GetArrayLength(Object, unknown, byte[]) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "b",
+              "params": "int, unknown, int, unknown, int",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "l",
+              "params": "int, unknown, int, unknown, int",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "h",
+              "params": "byte[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "write",
+              "params": "ByteBuffer, unknown, byte[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "GetArrayLength",
+              "params": "Object, unknown, byte[]",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 28,
+          "source_so": "libmidisynth.so",
+          "call_chain_text": "[Intent Domain] void g :: e() (W=0.20)\n    -> [Intent Domain] void g :: f(int, unknown, int, unknown, int) (W=0.25)\n    -> [Intent Domain] void g :: l(int, unknown, int, unknown, int) (W=0.33)\n    -> [Intent Domain] void MIDISynth :: h(byte[]) (W=0.50)\n    -> [Target JNI Anchor] void MIDISynth :: write(ByteBuffer, unknown, byte[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: GetArrayLength(Object, unknown, byte[]) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "e",
+              "params": "",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "f",
+              "params": "int, unknown, int, unknown, int",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "l",
+              "params": "int, unknown, int, unknown, int",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "h",
+              "params": "byte[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "write",
+              "params": "ByteBuffer, unknown, byte[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "GetArrayLength",
+              "params": "Object, unknown, byte[]",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 29,
+          "source_so": "libmidisynth.so",
+          "call_chain_text": "[Intent Domain] void g :: a(int, unknown, int, unknown, int) (W=0.25)\n    -> [Intent Domain] void g :: l(int, unknown, int, unknown, int) (W=0.33)\n    -> [Intent Domain] void MIDISynth :: h(byte[]) (W=0.50)\n    -> [Target JNI Anchor] void MIDISynth :: write(ByteBuffer, unknown, byte[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: GetArrayLength(Object, unknown, byte[]) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "a",
+              "params": "int, unknown, int, unknown, int",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "l",
+              "params": "int, unknown, int, unknown, int",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "h",
+              "params": "byte[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "write",
+              "params": "ByteBuffer, unknown, byte[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "GetArrayLength",
+              "params": "Object, unknown, byte[]",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 30,
+          "source_so": "libmidisynth.so",
+          "call_chain_text": "[Intent Domain] void g :: c(int, unknown, int) (W=0.25)\n    -> [Intent Domain] void g :: l(int, unknown, int, unknown, int) (W=0.33)\n    -> [Intent Domain] void MIDISynth :: h(byte[]) (W=0.50)\n    -> [Target JNI Anchor] void MIDISynth :: write(ByteBuffer, unknown, byte[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: GetArrayLength(Object, unknown, byte[]) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "c",
+              "params": "int, unknown, int",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "l",
+              "params": "int, unknown, int, unknown, int",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "h",
+              "params": "byte[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "write",
+              "params": "ByteBuffer, unknown, byte[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "GetArrayLength",
+              "params": "Object, unknown, byte[]",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 39,
+          "source_so": "libmidisynth.so",
+          "call_chain_text": "[Intent Domain] void g :: h() (W=0.20)\n    -> [Intent Domain] void g :: f(int, unknown, int, unknown, int) (W=0.25)\n    -> [Intent Domain] void g :: l(int, unknown, int, unknown, int) (W=0.33)\n    -> [Intent Domain] void MIDISynth :: h(byte[]) (W=0.50)\n    -> [Target JNI Anchor] void MIDISynth :: write(ByteBuffer, unknown, byte[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: GetArrayLength(Object, unknown, byte[]) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "h",
+              "params": "",
+              "weight": 0.2
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "f",
+              "params": "int, unknown, int, unknown, int",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "l",
+              "params": "int, unknown, int, unknown, int",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "h",
+              "params": "byte[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "write",
+              "params": "ByteBuffer, unknown, byte[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "GetArrayLength",
+              "params": "Object, unknown, byte[]",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 40,
+          "source_so": "libmidisynth.so",
+          "call_chain_text": "[Intent Domain] void g :: g(int, unknown, int) (W=0.25)\n    -> [Intent Domain] void g :: k(int, unknown, int) (W=0.33)\n    -> [Intent Domain] void MIDISynth :: h(byte[]) (W=0.50)\n    -> [Target JNI Anchor] void MIDISynth :: write(ByteBuffer, unknown, byte[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: GetArrayLength(Object, unknown, byte[]) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "g",
+              "params": "int, unknown, int",
+              "weight": 0.25
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lc/g;",
+              "class_short_name": "g",
+              "method_name": "k",
+              "params": "int, unknown, int",
+              "weight": 0.3333
+            },
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "h",
+              "params": "byte[]",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "void",
+              "class_name": "Lio/github/pedrolcl/vmpk/MIDISynth;",
+              "class_short_name": "MIDISynth",
+              "method_name": "write",
+              "params": "ByteBuffer, unknown, byte[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "GetArrayLength",
+              "params": "Object, unknown, byte[]",
+              "weight": 0.5
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

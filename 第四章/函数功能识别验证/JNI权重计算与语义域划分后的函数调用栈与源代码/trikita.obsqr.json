@@ -1,0 +1,975 @@
+{
+  "app": "trikita.obsqr",
+  "commented_jni_total": 1,
+  "with_code_count": 1,
+  "with_stacks_count": 1,
+  "total_stacks_collected": 28,
+  "functions": [
+    {
+      "function_name": "Java_trikita_obsqr_QrDecoder_decode",
+      "class_name": "Ltrikita/obsqr/QrDecoder;",
+      "method_name": "decode",
+      "descriptor": "(I I [B)Ljava/lang/String;",
+      "source_so": "libzbar.so",
+      "file_path": "H:\\260311\\trikita.obsqr\\obsqr-master\\libzbar\\jni\\trikita_zbar.c",
+      "comment_before": null,
+      "comment_inside": "// XXX",
+      "code": "JNICALL Java_trikita_obsqr_QrDecoder_decode\n\t(JNIEnv *env, jobject obj, jint w, jint h, jbyteArray img) {\n\n\tzbar_image_scanner_t *scanner;\n\tzbar_image_t *zimage;\n\tzbar_image_t *zgrayimage;\n\n\tjbyte *pixbuf;\n\tjstring s = NULL;\n\n\tzbar_set_verbosity(10); // XXX\n\t\n\tpixbuf = (*env)->GetByteArrayElements(env, img, 0);\n\n\tzimage = zbar_image_create();\n\tif (zimage == NULL) {\n\t\t(*env)->ReleaseByteArrayElements(env, img, pixbuf, 0);\n\t\treturn NULL;\n\t}\n\tzbar_image_set_format(zimage, *(unsigned long *) \"Y800\");\n\tzbar_image_set_size(zimage, w, h);\n\tzbar_image_set_data(zimage, pixbuf, (*env)->GetArrayLength(env, img), \n\t\t\tzbar_image_free_data);\n\n\tzgrayimage = zbar_image_convert(zimage, *(unsigned long *) \"Y800\");\n\tif (zgrayimage == NULL) {\n\t\t(*env)->ReleaseByteArrayElements(env, img, pixbuf, 0);\n\t\treturn NULL;\n\t}\n\n\tzbar_image_destroy(zimage);\n\n\tscanner = zbar_image_scanner_create();\n\tzbar_image_scanner_set_config(scanner, 0, ZBAR_CFG_ENABLE, 1);\n\tzbar_scan_image(scanner, zgrayimage);\n\n\tconst zbar_symbol_t *sym;\n\n\tsym = zbar_image_first_symbol(zgrayimage);\n\tif (sym != NULL) {\n\t\tconst char *sym_data = zbar_symbol_get_data(sym);\n\t\ts = (*env)->NewStringUTF(env, sym_data);\n\t}\n\n\tzbar_image_scanner_destroy(scanner);\n\n\t(*env)->ReleaseByteArrayElements(env, img, pixbuf, 0);\n\n\treturn s;\n}",
+      "call_stacks_count": 28,
+      "call_stacks": [
+        {
+          "stack_id": 1,
+          "source_so": "libzbar.so",
+          "call_chain_text": "[Intent Domain] void CameraPreview :: onPreviewFrame(byte[], unknown, Camera) (W=0.50)\n    -> [Target JNI Anchor] String QrDecoder :: decode(int, unknown, int, unknown, byte[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: memmove(int, unknown, int, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ltrikita/obsqr/CameraPreview;",
+              "class_short_name": "CameraPreview",
+              "method_name": "onPreviewFrame",
+              "params": "byte[], unknown, Camera",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Ltrikita/obsqr/QrDecoder;",
+              "class_short_name": "QrDecoder",
+              "method_name": "decode",
+              "params": "int, unknown, int, unknown, byte[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "memmove",
+              "params": "int, unknown, int, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 2,
+          "source_so": "libzbar.so",
+          "call_chain_text": "[Intent Domain] void CameraPreview :: onPreviewFrame(byte[], unknown, Camera) (W=0.50)\n    -> [Target JNI Anchor] String QrDecoder :: decode(int, unknown, int, unknown, byte[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: memset(Object, unknown, Object, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ltrikita/obsqr/CameraPreview;",
+              "class_short_name": "CameraPreview",
+              "method_name": "onPreviewFrame",
+              "params": "byte[], unknown, Camera",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Ltrikita/obsqr/QrDecoder;",
+              "class_short_name": "QrDecoder",
+              "method_name": "decode",
+              "params": "int, unknown, int, unknown, byte[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "memset",
+              "params": "Object, unknown, Object, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 3,
+          "source_so": "libzbar.so",
+          "call_chain_text": "[Intent Domain] void CameraPreview :: onPreviewFrame(byte[], unknown, Camera) (W=0.50)\n    -> [Target JNI Anchor] String QrDecoder :: decode(int, unknown, int, unknown, byte[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: GetArrayLength(Object, unknown, byte[]) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ltrikita/obsqr/CameraPreview;",
+              "class_short_name": "CameraPreview",
+              "method_name": "onPreviewFrame",
+              "params": "byte[], unknown, Camera",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Ltrikita/obsqr/QrDecoder;",
+              "class_short_name": "QrDecoder",
+              "method_name": "decode",
+              "params": "int, unknown, int, unknown, byte[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "GetArrayLength",
+              "params": "Object, unknown, byte[]",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 4,
+          "source_so": "libzbar.so",
+          "call_chain_text": "[Intent Domain] void CameraPreview :: onPreviewFrame(byte[], unknown, Camera) (W=0.50)\n    -> [Target JNI Anchor] String QrDecoder :: decode(int, unknown, int, unknown, byte[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: memset(Object, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ltrikita/obsqr/CameraPreview;",
+              "class_short_name": "CameraPreview",
+              "method_name": "onPreviewFrame",
+              "params": "byte[], unknown, Camera",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Ltrikita/obsqr/QrDecoder;",
+              "class_short_name": "QrDecoder",
+              "method_name": "decode",
+              "params": "int, unknown, int, unknown, byte[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "memset",
+              "params": "Object, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 5,
+          "source_so": "libzbar.so",
+          "call_chain_text": "[Intent Domain] void CameraPreview :: onPreviewFrame(byte[], unknown, Camera) (W=0.50)\n    -> [Target JNI Anchor] String QrDecoder :: decode(int, unknown, int, unknown, byte[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: calloc(int, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ltrikita/obsqr/CameraPreview;",
+              "class_short_name": "CameraPreview",
+              "method_name": "onPreviewFrame",
+              "params": "byte[], unknown, Camera",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Ltrikita/obsqr/QrDecoder;",
+              "class_short_name": "QrDecoder",
+              "method_name": "decode",
+              "params": "int, unknown, int, unknown, byte[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "calloc",
+              "params": "int, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 6,
+          "source_so": "libzbar.so",
+          "call_chain_text": "[Intent Domain] void CameraPreview :: onPreviewFrame(byte[], unknown, Camera) (W=0.50)\n    -> [Target JNI Anchor] String QrDecoder :: decode(int, unknown, int, unknown, byte[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: realloc(int, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ltrikita/obsqr/CameraPreview;",
+              "class_short_name": "CameraPreview",
+              "method_name": "onPreviewFrame",
+              "params": "byte[], unknown, Camera",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Ltrikita/obsqr/QrDecoder;",
+              "class_short_name": "QrDecoder",
+              "method_name": "decode",
+              "params": "int, unknown, int, unknown, byte[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "realloc",
+              "params": "int, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 7,
+          "source_so": "libzbar.so",
+          "call_chain_text": "[Intent Domain] void CameraPreview :: onPreviewFrame(byte[], unknown, Camera) (W=0.50)\n    -> [Target JNI Anchor] String QrDecoder :: decode(int, unknown, int, unknown, byte[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: fprintf(Object, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ltrikita/obsqr/CameraPreview;",
+              "class_short_name": "CameraPreview",
+              "method_name": "onPreviewFrame",
+              "params": "byte[], unknown, Camera",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Ltrikita/obsqr/QrDecoder;",
+              "class_short_name": "QrDecoder",
+              "method_name": "decode",
+              "params": "int, unknown, int, unknown, byte[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fprintf",
+              "params": "Object, unknown, String, unknown, String, unknown, int, unknown, int, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 8,
+          "source_so": "libzbar.so",
+          "call_chain_text": "[Intent Domain] void CameraPreview :: onPreviewFrame(byte[], unknown, Camera) (W=0.50)\n    -> [Target JNI Anchor] String QrDecoder :: decode(int, unknown, int, unknown, byte[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: fprintf(Object, unknown, String, unknown, String, unknown, Object, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ltrikita/obsqr/CameraPreview;",
+              "class_short_name": "CameraPreview",
+              "method_name": "onPreviewFrame",
+              "params": "byte[], unknown, Camera",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Ltrikita/obsqr/QrDecoder;",
+              "class_short_name": "QrDecoder",
+              "method_name": "decode",
+              "params": "int, unknown, int, unknown, byte[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fprintf",
+              "params": "Object, unknown, String, unknown, String, unknown, Object, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 9,
+          "source_so": "libzbar.so",
+          "call_chain_text": "[Intent Domain] void CameraPreview :: onPreviewFrame(byte[], unknown, Camera) (W=0.50)\n    -> [Target JNI Anchor] String QrDecoder :: decode(int, unknown, int, unknown, byte[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: free(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ltrikita/obsqr/CameraPreview;",
+              "class_short_name": "CameraPreview",
+              "method_name": "onPreviewFrame",
+              "params": "byte[], unknown, Camera",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Ltrikita/obsqr/QrDecoder;",
+              "class_short_name": "QrDecoder",
+              "method_name": "decode",
+              "params": "int, unknown, int, unknown, byte[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "free",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 10,
+          "source_so": "libzbar.so",
+          "call_chain_text": "[Intent Domain] void CameraPreview :: onPreviewFrame(byte[], unknown, Camera) (W=0.50)\n    -> [Target JNI Anchor] String QrDecoder :: decode(int, unknown, int, unknown, byte[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: memmove(Object, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ltrikita/obsqr/CameraPreview;",
+              "class_short_name": "CameraPreview",
+              "method_name": "onPreviewFrame",
+              "params": "byte[], unknown, Camera",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Ltrikita/obsqr/QrDecoder;",
+              "class_short_name": "QrDecoder",
+              "method_name": "decode",
+              "params": "int, unknown, int, unknown, byte[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "memmove",
+              "params": "Object, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 11,
+          "source_so": "libzbar.so",
+          "call_chain_text": "[Intent Domain] void CameraPreview :: onPreviewFrame(byte[], unknown, Camera) (W=0.50)\n    -> [Target JNI Anchor] String QrDecoder :: decode(int, unknown, int, unknown, byte[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: clock_gettime(Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ltrikita/obsqr/CameraPreview;",
+              "class_short_name": "CameraPreview",
+              "method_name": "onPreviewFrame",
+              "params": "byte[], unknown, Camera",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Ltrikita/obsqr/QrDecoder;",
+              "class_short_name": "QrDecoder",
+              "method_name": "decode",
+              "params": "int, unknown, int, unknown, byte[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "clock_gettime",
+              "params": "Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 12,
+          "source_so": "libzbar.so",
+          "call_chain_text": "[Intent Domain] void CameraPreview :: onPreviewFrame(byte[], unknown, Camera) (W=0.50)\n    -> [Target JNI Anchor] String QrDecoder :: decode(int, unknown, int, unknown, byte[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: memset(int, unknown, Object, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ltrikita/obsqr/CameraPreview;",
+              "class_short_name": "CameraPreview",
+              "method_name": "onPreviewFrame",
+              "params": "byte[], unknown, Camera",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Ltrikita/obsqr/QrDecoder;",
+              "class_short_name": "QrDecoder",
+              "method_name": "decode",
+              "params": "int, unknown, int, unknown, byte[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "memset",
+              "params": "int, unknown, Object, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 13,
+          "source_so": "libzbar.so",
+          "call_chain_text": "[Intent Domain] void CameraPreview :: onPreviewFrame(byte[], unknown, Camera) (W=0.50)\n    -> [Target JNI Anchor] String QrDecoder :: decode(int, unknown, int, unknown, byte[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: free(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ltrikita/obsqr/CameraPreview;",
+              "class_short_name": "CameraPreview",
+              "method_name": "onPreviewFrame",
+              "params": "byte[], unknown, Camera",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Ltrikita/obsqr/QrDecoder;",
+              "class_short_name": "QrDecoder",
+              "method_name": "decode",
+              "params": "int, unknown, int, unknown, byte[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "free",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 14,
+          "source_so": "libzbar.so",
+          "call_chain_text": "[Intent Domain] void CameraPreview :: onPreviewFrame(byte[], unknown, Camera) (W=0.50)\n    -> [Target JNI Anchor] String QrDecoder :: decode(int, unknown, int, unknown, byte[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: malloc(Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ltrikita/obsqr/CameraPreview;",
+              "class_short_name": "CameraPreview",
+              "method_name": "onPreviewFrame",
+              "params": "byte[], unknown, Camera",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Ltrikita/obsqr/QrDecoder;",
+              "class_short_name": "QrDecoder",
+              "method_name": "decode",
+              "params": "int, unknown, int, unknown, byte[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "malloc",
+              "params": "Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 15,
+          "source_so": "libzbar.so",
+          "call_chain_text": "[Intent Domain] void CameraPreview :: onPreviewFrame(byte[], unknown, Camera) (W=0.50)\n    -> [Target JNI Anchor] String QrDecoder :: decode(int, unknown, int, unknown, byte[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: calloc(Object, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ltrikita/obsqr/CameraPreview;",
+              "class_short_name": "CameraPreview",
+              "method_name": "onPreviewFrame",
+              "params": "byte[], unknown, Camera",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Ltrikita/obsqr/QrDecoder;",
+              "class_short_name": "QrDecoder",
+              "method_name": "decode",
+              "params": "int, unknown, int, unknown, byte[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "calloc",
+              "params": "Object, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 16,
+          "source_so": "libzbar.so",
+          "call_chain_text": "[Intent Domain] void CameraPreview :: onPreviewFrame(byte[], unknown, Camera) (W=0.50)\n    -> [Target JNI Anchor] String QrDecoder :: decode(int, unknown, int, unknown, byte[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: qsort(int, unknown, Object, unknown, int, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ltrikita/obsqr/CameraPreview;",
+              "class_short_name": "CameraPreview",
+              "method_name": "onPreviewFrame",
+              "params": "byte[], unknown, Camera",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Ltrikita/obsqr/QrDecoder;",
+              "class_short_name": "QrDecoder",
+              "method_name": "decode",
+              "params": "int, unknown, int, unknown, byte[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "qsort",
+              "params": "int, unknown, Object, unknown, int, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 17,
+          "source_so": "libzbar.so",
+          "call_chain_text": "[Intent Domain] void CameraPreview :: onPreviewFrame(byte[], unknown, Camera) (W=0.50)\n    -> [Target JNI Anchor] String QrDecoder :: decode(int, unknown, int, unknown, byte[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: realloc(String, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ltrikita/obsqr/CameraPreview;",
+              "class_short_name": "CameraPreview",
+              "method_name": "onPreviewFrame",
+              "params": "byte[], unknown, Camera",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Ltrikita/obsqr/QrDecoder;",
+              "class_short_name": "QrDecoder",
+              "method_name": "decode",
+              "params": "int, unknown, int, unknown, byte[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "realloc",
+              "params": "String, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 18,
+          "source_so": "libzbar.so",
+          "call_chain_text": "[Intent Domain] void CameraPreview :: onPreviewFrame(byte[], unknown, Camera) (W=0.50)\n    -> [Target JNI Anchor] String QrDecoder :: decode(int, unknown, int, unknown, byte[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: fprintf(Object, unknown, String, unknown, String, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ltrikita/obsqr/CameraPreview;",
+              "class_short_name": "CameraPreview",
+              "method_name": "onPreviewFrame",
+              "params": "byte[], unknown, Camera",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Ltrikita/obsqr/QrDecoder;",
+              "class_short_name": "QrDecoder",
+              "method_name": "decode",
+              "params": "int, unknown, int, unknown, byte[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fprintf",
+              "params": "Object, unknown, String, unknown, String, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 19,
+          "source_so": "libzbar.so",
+          "call_chain_text": "[Intent Domain] void CameraPreview :: onPreviewFrame(byte[], unknown, Camera) (W=0.50)\n    -> [Target JNI Anchor] String QrDecoder :: decode(int, unknown, int, unknown, byte[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: fprintf(Object, unknown, String, unknown, String, unknown, int, unknown, int, unknown, Object, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ltrikita/obsqr/CameraPreview;",
+              "class_short_name": "CameraPreview",
+              "method_name": "onPreviewFrame",
+              "params": "byte[], unknown, Camera",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Ltrikita/obsqr/QrDecoder;",
+              "class_short_name": "QrDecoder",
+              "method_name": "decode",
+              "params": "int, unknown, int, unknown, byte[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fprintf",
+              "params": "Object, unknown, String, unknown, String, unknown, int, unknown, int, unknown, Object, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 20,
+          "source_so": "libzbar.so",
+          "call_chain_text": "[Intent Domain] void CameraPreview :: onPreviewFrame(byte[], unknown, Camera) (W=0.50)\n    -> [Target JNI Anchor] String QrDecoder :: decode(int, unknown, int, unknown, byte[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: free(String) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ltrikita/obsqr/CameraPreview;",
+              "class_short_name": "CameraPreview",
+              "method_name": "onPreviewFrame",
+              "params": "byte[], unknown, Camera",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Ltrikita/obsqr/QrDecoder;",
+              "class_short_name": "QrDecoder",
+              "method_name": "decode",
+              "params": "int, unknown, int, unknown, byte[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "free",
+              "params": "String",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 21,
+          "source_so": "libzbar.so",
+          "call_chain_text": "[Intent Domain] void CameraPreview :: onPreviewFrame(byte[], unknown, Camera) (W=0.50)\n    -> [Target JNI Anchor] String QrDecoder :: decode(int, unknown, int, unknown, byte[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: memcmp(Object, unknown, int, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ltrikita/obsqr/CameraPreview;",
+              "class_short_name": "CameraPreview",
+              "method_name": "onPreviewFrame",
+              "params": "byte[], unknown, Camera",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Ltrikita/obsqr/QrDecoder;",
+              "class_short_name": "QrDecoder",
+              "method_name": "decode",
+              "params": "int, unknown, int, unknown, byte[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "memcmp",
+              "params": "Object, unknown, int, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 22,
+          "source_so": "libzbar.so",
+          "call_chain_text": "[Intent Domain] void CameraPreview :: onPreviewFrame(byte[], unknown, Camera) (W=0.50)\n    -> [Target JNI Anchor] String QrDecoder :: decode(int, unknown, int, unknown, byte[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: memset(int, unknown, int, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ltrikita/obsqr/CameraPreview;",
+              "class_short_name": "CameraPreview",
+              "method_name": "onPreviewFrame",
+              "params": "byte[], unknown, Camera",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Ltrikita/obsqr/QrDecoder;",
+              "class_short_name": "QrDecoder",
+              "method_name": "decode",
+              "params": "int, unknown, int, unknown, byte[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "memset",
+              "params": "int, unknown, int, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 23,
+          "source_so": "libzbar.so",
+          "call_chain_text": "[Intent Domain] void CameraPreview :: onPreviewFrame(byte[], unknown, Camera) (W=0.50)\n    -> [Target JNI Anchor] String QrDecoder :: decode(int, unknown, int, unknown, byte[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: qsort(Object, unknown, Object, unknown, int, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ltrikita/obsqr/CameraPreview;",
+              "class_short_name": "CameraPreview",
+              "method_name": "onPreviewFrame",
+              "params": "byte[], unknown, Camera",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Ltrikita/obsqr/QrDecoder;",
+              "class_short_name": "QrDecoder",
+              "method_name": "decode",
+              "params": "int, unknown, int, unknown, byte[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "qsort",
+              "params": "Object, unknown, Object, unknown, int, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 24,
+          "source_so": "libzbar.so",
+          "call_chain_text": "[Intent Domain] void CameraPreview :: onPreviewFrame(byte[], unknown, Camera) (W=0.50)\n    -> [Target JNI Anchor] String QrDecoder :: decode(int, unknown, int, unknown, byte[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: fprintf(Object, unknown, String, unknown, String, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ltrikita/obsqr/CameraPreview;",
+              "class_short_name": "CameraPreview",
+              "method_name": "onPreviewFrame",
+              "params": "byte[], unknown, Camera",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Ltrikita/obsqr/QrDecoder;",
+              "class_short_name": "QrDecoder",
+              "method_name": "decode",
+              "params": "int, unknown, int, unknown, byte[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fprintf",
+              "params": "Object, unknown, String, unknown, String, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 25,
+          "source_so": "libzbar.so",
+          "call_chain_text": "[Intent Domain] void CameraPreview :: onPreviewFrame(byte[], unknown, Camera) (W=0.50)\n    -> [Target JNI Anchor] String QrDecoder :: decode(int, unknown, int, unknown, byte[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: malloc(int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ltrikita/obsqr/CameraPreview;",
+              "class_short_name": "CameraPreview",
+              "method_name": "onPreviewFrame",
+              "params": "byte[], unknown, Camera",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Ltrikita/obsqr/QrDecoder;",
+              "class_short_name": "QrDecoder",
+              "method_name": "decode",
+              "params": "int, unknown, int, unknown, byte[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "malloc",
+              "params": "int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 26,
+          "source_so": "libzbar.so",
+          "call_chain_text": "[Intent Domain] void CameraPreview :: onPreviewFrame(byte[], unknown, Camera) (W=0.50)\n    -> [Target JNI Anchor] String QrDecoder :: decode(int, unknown, int, unknown, byte[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryAux :: opaqueInt() (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ltrikita/obsqr/CameraPreview;",
+              "class_short_name": "CameraPreview",
+              "method_name": "onPreviewFrame",
+              "params": "byte[], unknown, Camera",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Ltrikita/obsqr/QrDecoder;",
+              "class_short_name": "QrDecoder",
+              "method_name": "decode",
+              "params": "int, unknown, int, unknown, byte[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryAux;",
+              "class_short_name": "NativeSummaryAux",
+              "method_name": "opaqueInt",
+              "params": "",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 27,
+          "source_so": "libzbar.so",
+          "call_chain_text": "[Intent Domain] void CameraPreview :: onPreviewFrame(byte[], unknown, Camera) (W=0.50)\n    -> [Target JNI Anchor] String QrDecoder :: decode(int, unknown, int, unknown, byte[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: fprintf(Object, unknown, String, unknown, String, unknown, int, unknown, int) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ltrikita/obsqr/CameraPreview;",
+              "class_short_name": "CameraPreview",
+              "method_name": "onPreviewFrame",
+              "params": "byte[], unknown, Camera",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Ltrikita/obsqr/QrDecoder;",
+              "class_short_name": "QrDecoder",
+              "method_name": "decode",
+              "params": "int, unknown, int, unknown, byte[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "fprintf",
+              "params": "Object, unknown, String, unknown, String, unknown, int, unknown, int",
+              "weight": 0.5
+            }
+          ]
+        },
+        {
+          "stack_id": 28,
+          "source_so": "libzbar.so",
+          "call_chain_text": "[Intent Domain] void CameraPreview :: onPreviewFrame(byte[], unknown, Camera) (W=0.50)\n    -> [Target JNI Anchor] String QrDecoder :: decode(int, unknown, int, unknown, byte[]) (W=1.00)\n    -> [Core Execution Domain] int NativeSummaryFuncs :: memcmp(Object, unknown, Object, unknown, Object) (W=0.50)",
+          "annotated_nodes": [
+            {
+              "label": "Intent Domain",
+              "return_type": "void",
+              "class_name": "Ltrikita/obsqr/CameraPreview;",
+              "class_short_name": "CameraPreview",
+              "method_name": "onPreviewFrame",
+              "params": "byte[], unknown, Camera",
+              "weight": 0.5
+            },
+            {
+              "label": "Target JNI Anchor",
+              "return_type": "String",
+              "class_name": "Ltrikita/obsqr/QrDecoder;",
+              "class_short_name": "QrDecoder",
+              "method_name": "decode",
+              "params": "int, unknown, int, unknown, byte[]",
+              "weight": 1.0
+            },
+            {
+              "label": "Core Execution Domain",
+              "return_type": "int",
+              "class_name": "Lorg/example/NativeSummaryFuncs;",
+              "class_short_name": "NativeSummaryFuncs",
+              "method_name": "memcmp",
+              "params": "Object, unknown, Object, unknown, Object",
+              "weight": 0.5
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
